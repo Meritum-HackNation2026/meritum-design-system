@@ -5,7 +5,7 @@ name: Copy
 on:
   push:
     branches: ["**"]
-    paths: ["copy/**", "tests/**", ".github/workflows/copy.yml"]
+    paths: ["copy/**", "docs/**", "tests/**", ".github/workflows/copy.yml"]
 
 permissions:
   contents: read
