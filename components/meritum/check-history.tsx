@@ -23,6 +23,10 @@ const TIME = new Intl.DateTimeFormat("pl-PL", { hour: "2-digit", minute: "2-digi
  * "Twoje sprawdzenia" under the form (DESIGN_SYSTEM.md 6.1, points 5 and 6): newest first, a click opens the result.
  * Anonymous history lives in sessionStorage, signed-in history on the server; sign-in is optional.
  * Without `account` (or with `account={false}`) the sign-in block is left out, for a page without accounts (design-system#74).
+ *
+ * @param props - History items, optional account (`false` or left out: no sign-in block), `onOpen` and optional CSS class.
+ * @returns The history section.
+ * @feature US-BEZ-05, F-20
  */
 export function CheckHistory({ items, account, onOpen, className }: { items: HistoryItem[]; account?: Account | false; onOpen: (checkId: string) => void; className?: string }) {
   return (
