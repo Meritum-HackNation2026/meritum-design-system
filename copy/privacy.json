@@ -99,8 +99,8 @@
         "id": "gcp_europe_central2",
         "name": "GCP europe-central2",
         "region": "UE (Warszawa)",
-        "data": "Przesłane pliki w buckecie i wywołania Vertex AI; aplikacja i baza tu nie działają",
-        "purpose": "Projekt GCP z bucketem na pliki i Vertex AI"
+        "data": "Przesłane pliki i wywołania modeli; aplikacja i baza tu nie działają",
+        "purpose": "Magazyn plików i modele Vertex AI"
       },
       {
         "id": "vertex_ai",
