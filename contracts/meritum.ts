@@ -1,4 +1,4 @@
-/* Generated from contracts/meritum_contracts.py by contracts/generate.sh. Do not edit. */
+/* Generated from meritum-core src/meritum_core/checks/contracts.py by scripts/generate-contracts.sh. Do not edit. */
 
 export type Channel = "web" | "extension" | "discord" | "sms" | "mcp";
 export type Text = string | null;
@@ -233,6 +233,8 @@ export interface ClaimResult {
   incident?: IncidentMatch | null;
 }
 /**
+ * Strength level together with the premises it follows from.
+ *
  * This interface was referenced by `MeritumContracts`'s JSON-Schema
  * via the `definition` "EvidenceStrength".
  */
@@ -306,6 +308,8 @@ export interface CheckResult {
   ai_disclosure?: AiDisclosure;
 }
 /**
+ * One step of the processing strip shown between „Sprawdź” and the result.
+ *
  * This interface was referenced by `MeritumContracts`'s JSON-Schema
  * via the `definition` "AnalysisStep".
  */
@@ -336,6 +340,8 @@ export interface InjectionEvent {
   excerpt: Excerpt;
 }
 /**
+ * One model call: provider, model, region of processing, tokens and cost.
+ *
  * This interface was referenced by `MeritumContracts`'s JSON-Schema
  * via the `definition` "ModelUsage".
  */

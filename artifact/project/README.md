@@ -274,7 +274,7 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
   - awaria, prośba o doprecyzowanie i pytanie poza zakresem nie są werdyktami i nie mają twierdzeń;
   - zalecenie przekazania sprawy moderatorowi różni się od faktycznego przekazania;
   - cytat przechodzi tylko wtedy, gdy fragment znaleziono w źródle dosłownie.
-- `contracts/generate.sh` tworzy `meritum.schema.json` (JSON Schema) i `meritum.ts` (typy TypeScript) oraz sprawdza przykłady z `examples.json` i to, czy złe dane są odrzucane.
+- `contracts/sync.sh` kopiuje z meritum-core `meritum.schema.json` (JSON Schema), `meritum.ts` (typy TypeScript), `examples.json` i kod modeli; generowanie i testy reguł (przykłady, odrzucanie złych danych) są w CI meritum-core, a CI tego repo sprawdza sumy kontrolne kopii.
 - `copy/pl.json`: wszystkie teksty interfejsu: formularz, werdykty z podpowiedziami, siła podstawy, stany techniczne, przekazanie moderatorom, ostrzeżenia o statusie źródła, kroki analizy, techniki manipulacji z „jak rozpoznać”, kolejka moderatorów, historia sprawdzeń, logowanie, SMS, polityka prywatności kanałów, błędy. Klucze odpowiadają kodom z kontraktów.
 
 ### Prezentacje i film (cały zespół)

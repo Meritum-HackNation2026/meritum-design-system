@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Meritum contracts",
+  "x-contract-version": 1,
   "$defs": {
     "CheckRequest": {
       "additionalProperties": false,
@@ -248,6 +249,7 @@
     },
     "EvidenceStrength": {
       "additionalProperties": false,
+      "description": "Strength level together with the premises it follows from.",
       "properties": {
         "level": {
           "enum": [
@@ -611,6 +613,7 @@
     },
     "AnalysisStep": {
       "additionalProperties": false,
+      "description": "One step of the processing strip shown between „Sprawdź” and the result.",
       "properties": {
         "code": {
           "enum": [
@@ -722,6 +725,7 @@
     },
     "ModelUsage": {
       "additionalProperties": false,
+      "description": "One model call: provider, model, region of processing, tokens and cost.",
       "properties": {
         "provider": {
           "maxLength": 60,
