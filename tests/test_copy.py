@@ -228,6 +228,9 @@ class Tone(unittest.TestCase):
         source = (Path(__file__).parent.parent / "components" / "meritum" / "moderation-queue.tsx").read_text(encoding="utf-8")
         self.assertNotIn("asked - 1", source)
         self.assertIn("plural(t.moderation.similar, asked)", source)
+        # the panel in meritum-frontend picks moderation.askers forms with the same helper
+        index = (Path(__file__).parent.parent / "components" / "meritum" / "index.ts").read_text(encoding="utf-8")
+        self.assertRegex(index, r"export \{[^}]*\bplural\b[^}]*\} from \"\./copy\"")
 
     def test_discord_skin_in_platform_skins(self) -> None:
         tokens = (Path(__file__).parent.parent / "tokens" / "meritum.css").read_text(encoding="utf-8")
