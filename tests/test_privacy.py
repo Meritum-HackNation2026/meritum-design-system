@@ -13,7 +13,9 @@ from test_copy import EMOJI, MAX_SENTENCE_WORDS, lookup, texts
 
 PRIVACY = json.loads((Path(__file__).parent.parent / "copy" / "privacy.json").read_text(encoding="utf-8"))
 POLICIES = PRIVACY["policies"]
-PROCESSORS = {item["id"]: item for item in PRIVACY["processors"]["items"]}
+ACTIVE = {item["id"]: item for item in PRIVACY["processors"]["items"]}
+PLANNED = {item["id"]: item for item in PRIVACY["processors"]["planned_items"]}
+PROCESSORS = ACTIVE | PLANNED
 
 CHANNELS = ("web", "discord", "extension", "sms")
 POLICY_SECTIONS = ("title", "data", "purpose", "retention", "deletion", "telemetry", "ip_addresses", "processors_lead")
@@ -36,7 +38,7 @@ REQUIRED_PROCESSORS = (
     "crawl4ai",
     "firecrawl",
     "discord",
-    "mcp_chat_apps",
+    "sms_gateway",
     "sign_in",
     "moderator_notifications",
     "fact_check_tools",
@@ -46,6 +48,8 @@ REQUIRED_PROCESSORS = (
 # AI Act art. 50 notice at first contact in every channel, plus the result card line
 AI_NOTICE_KEYS = ("ai_notice.first_contact", "ai_notice.discord", "ai_notice.sms", "ai_notice.mcp", "result.ai_disclosure")
 SMS_UCS2_CHARS = 70
+# team answers on PR #20: candidates and the SMS gateway are planned, not active
+PLANNED_PROCESSORS = ("sms_gateway", "cloudflare_workers_ai", "vertex_ai_ranking")
 
 
 def policy_text(channel: str) -> str:
@@ -93,6 +97,39 @@ class Policies(unittest.TestCase):
         self.assertIn("USUN", POLICIES["sms"]["deletion"])
         self.assertIn("sms_gateway", POLICIES["sms"]["processors"])
 
+    def test_controller_and_contact(self) -> None:
+        controller = PRIVACY["controller"]
+        self.assertIn("Zespół Meritum", controller["name"])
+        self.assertIn("HackNation 2026", controller["name"])
+        self.assertIn("nie ma partnerstwa z MSZ", controller["no_partnership"])
+        self.assertIn("podmiot wdrażający", controller["deployment"])
+        self.assertIn("{contact}", controller["contact"])
+
+    def test_ip_logs_kept_14_days_and_rate_limits_in_memory(self) -> None:
+        for channel in CHANNELS:
+            with self.subTest(channel=channel):
+                text = POLICIES[channel]["ip_addresses"]
+                self.assertIn("14 dniach", text)
+                self.assertIn("pamięci", text)
+                self.assertIn("Cloudflare", text)
+
+    def test_web_history_30_days_account_until_deleted(self) -> None:
+        retention = POLICIES["web"]["retention"]
+        self.assertIn("30 dniach", retention)
+        self.assertIn("powiadomienia", retention.lower())
+        self.assertIn("do kliknięcia „Usuń konto”", retention)
+
+    def test_extension_explains_why_no_manual_deletion(self) -> None:
+        deletion = POLICIES["extension"]["deletion"]
+        self.assertIn("identyfikatora", deletion)
+        self.assertIn("30 dniach", deletion)
+
+    def test_mcp_clients_are_separate_controllers(self) -> None:
+        self.assertNotIn("mcp_chat_apps", PROCESSORS)
+        note = PRIVACY["external_mcp_clients"]
+        self.assertIn("odrębni administratorzy", note["title"].lower())
+        self.assertIn("nie mamy na to wpływu", note["text"].lower())
+
     def test_extension_sends_only_after_click(self) -> None:
         self.assertIn("dopiero po kliknięciu", policy_text("extension"))
 
@@ -109,6 +146,17 @@ class Processors(unittest.TestCase):
                 with self.subTest(processor=processor, field=field):
                     self.assertIsInstance(item.get(field), str)
                     self.assertTrue(item[field].strip())
+
+    def test_candidates_and_sms_gateway_are_planned(self) -> None:
+        self.assertEqual(set(PLANNED), set(PLANNED_PROCESSORS))
+        self.assertTrue(PRIVACY["processors"]["planned_lead"].strip())
+
+    def test_conservative_regions(self) -> None:
+        for processor in ("fact_check_tools", "moderator_notifications"):
+            with self.subTest(processor=processor):
+                self.assertIn("poza gwarancją EOG", ACTIVE[processor]["region"])
+        self.assertIn("europe-central2", ACTIVE["vertex_ai_embeddings"]["region"])
+        self.assertIn("bez danych osobowych", ACTIVE["jasnopis"]["data"])
 
     def test_columns_have_headers(self) -> None:
         for field in PROCESSOR_FIELDS:
