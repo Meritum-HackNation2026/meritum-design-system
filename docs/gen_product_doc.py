@@ -1,10 +1,14 @@
 """Generates design-system/docs/product-doc.html (source for the Google Doc)."""
 
+import json
 import re
 from html import escape as e
 from pathlib import Path
 
-OUT = Path("/Users/cyprian/Documents/GitHub/HackNation2026/design-system/docs/product-doc.html")
+OUT = Path(__file__).parent / "product-doc.html"
+# controller and contact come from the privacy policies (copy/privacy.json), the single source
+_CONTROLLER = json.loads((Path(__file__).parent.parent / "copy" / "privacy.json").read_text(encoding="utf-8"))["controller"]
+CONTROLLER = f'{_CONTROLLER["name"]} {_CONTROLLER["no_partnership"]} {_CONTROLLER["contact"]}'
 
 FONT = "font-family:Archivo,Arial,sans-serif;"
 INK, ACC, PALE, PALE_TXT, RED, BORDER = "#14191E", "#1D6A86", "#E1EDF2", "#13506A", "#C8213A", "#D9DEDD"
@@ -293,7 +297,7 @@ STORIES: list[tuple[str, str, list[tuple[str, list[tuple]]]]] = [
              MVP, "ClaimResult.citations, ResultCard"),
             ("US-ZRD-12", "Jako obywatel", "przeczytać na stronie „Jak działa Meritum”, jak system sprawdza informacje",
              "ocenić, czy mogę mu ufać",
-             ["Strona opisuje metodę według zasad IFCN i EFCSN: jak wybieramy i sprawdzamy źródła, jak liczymy werdykt i siłę, kto prowadzi projekt.", "Pokazuje katalog źródeł z ewidencją (sekcja 7), mierniki z ostatniego przebiegu ewaluacji z datą i politykę poprawek.", "Opisuje drogę do pilotażu z §9 treści zadania.", "Mówi, co dzieje się po kliknięciu „Zgłoś błąd” (US-MOD-06)."],
+             ["Strona opisuje metodę według zasad IFCN i EFCSN: jak wybieramy i sprawdzamy źródła, jak liczymy werdykt i siłę, kto prowadzi projekt.", "Pokazuje katalog źródeł z ewidencją (sekcja 7), mierniki z ostatniego przebiegu ewaluacji z datą i politykę poprawek.", "Opisuje drogę do pilotażu z §9 treści zadania.", "Mówi, co dzieje się po kliknięciu „Zgłoś błąd” (US-MOD-06).", "Podaje administratora danych i kontakt tak jak polityki prywatności: " + CONTROLLER],
              MVP, "CatalogEntry"),
         ]),
     ]),
@@ -345,7 +349,7 @@ STORIES: list[tuple[str, str, list[tuple[str, list[tuple]]]]] = [
              MVP, "InjectionEvent"),
             ("US-BEZ-02", "Jako administrator", "walidować wejście i limitować liczbę zapytań",
              "ograniczyć nadużycia i koszty",
-             ["Limit na adres IP, region, kanał i inne miary ruchu, w gotowym middleware slowapi (biblioteka MIT dla FastAPI i Starlette); własny middleware piszemy tylko wtedy, gdy slowapi nie wystarczy.", "Cloudflare przed API chroni przed DDoS i ma własne reguły limitów.", "slowapi liczy w pamięci każdego procesu osobno, więc przy kilku instancjach limit się rozjeżdża; zalecamy wspólny licznik w PostgreSQL albo Redisie (ADR-18).", "Sposób przetwarzania adresów IP i retencję logów określa polityka prywatności.", "Przekroczenie limitu daje komunikat, nie werdykt."],
+             ["Limit na adres IP, region, kanał i inne miary ruchu, w gotowym middleware slowapi (biblioteka MIT dla FastAPI i Starlette); własny middleware piszemy tylko wtedy, gdy slowapi nie wystarczy.", "Cloudflare przed API chroni przed DDoS i ma własne reguły limitów.", "slowapi liczy w pamięci każdego procesu osobno, więc przy kilku instancjach limit się rozjeżdża; zalecamy wspólny licznik w PostgreSQL albo Redisie (ADR-18).", "Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach (polityka prywatności, copy/privacy.json).", "Przekroczenie limitu daje komunikat, nie werdykt."],
              MVP, "CheckRequest"),
             ("US-BEZ-03", "Jako administrator", "żeby brak klucza, limit albo awaria dostawcy modelu lub wyszukiwania kończyły się stanem „Problem techniczny”",
              "nigdy nie pokazać pozornego wyniku",
@@ -359,7 +363,7 @@ STORIES: list[tuple[str, str, list[tuple[str, list[tuple]]]]] = [
              MVP, "CheckRecord.question_masked"),
             ("US-BEZ-05", "Jako obywatel", "usunąć swoje sprawdzenia i wiedzieć, jak długo są przechowywane",
              "mieć kontrolę nad swoimi danymi",
-             ["Retencja 30 dni, potem automatyczne usunięcie (workflow DBOS). Retencja i usuwanie obejmują też tabele systemowe DBOS z wejściami i wynikami kroków.", "Przycisk „Usuń moje sprawdzenia” usuwa wszystkie zapisy z losowym identyfikatorem sesji z przeglądarki, łącznie z danymi workflowów DBOS i powiązaniami ze sprawami moderatora.", "Zalogowany użytkownik tak samo usuwa wszystkie zapisy ze swoim identyfikatorem (przycisk „Usuń moją historię”), a „Usuń konto” kasuje także konto. Okres przechowywania historii zalogowanych określa polityka prywatności."],
+             ["Retencja 30 dni, potem automatyczne usunięcie (workflow DBOS). Retencja i usuwanie obejmują też tabele systemowe DBOS z wejściami i wynikami kroków.", "Przycisk „Usuń moje sprawdzenia” usuwa wszystkie zapisy z losowym identyfikatorem sesji z przeglądarki, łącznie z danymi workflowów DBOS i powiązaniami ze sprawami moderatora.", "Zalogowany użytkownik tak samo usuwa wszystkie zapisy ze swoim identyfikatorem (przycisk „Usuń moją historię”), a „Usuń konto” kasuje także konto.", "Historię zalogowanych i powiadomienia usuwamy automatycznie po 30 dniach, a identyfikator konta przechowujemy do kliknięcia „Usuń konto”.", "Strona i polityki prywatności podają administratora i kontakt: " + CONTROLLER],
              MVP, "CheckRecord.session_id, CheckRecord.user_id"),
             ("US-BEZ-06", "Jako użytkownik Discorda, SMS-ów albo wtyczki", "przeczytać politykę prywatności mojego kanału",
              "wiedzieć, jakie dane przetwarzacie poza przeglądarką",
@@ -696,7 +700,7 @@ ADRS = [
      "Tylko instrukcja w prompcie „nie słuchaj poleceń z treści”; Model Armor jako jedyna warstwa."),
     ("ADR-13", "Prywatność: maskowanie, retencja, usuwanie danych, konta opcjonalne", A,
      "MSZ wymaga minimalizacji danych, maskowania oczywistych danych osobowych, retencji i usuwania sesji demonstracyjnej.",
-     "Maskowanie telefonów, e-maili i PESEL-i przez Google Sensitive Data Protection w UE (ADR-35) w API, zanim wystartuje workflow DBOS (DBOS zapisuje wejścia w bazie), więc ani zapis, ani dostawca modelu nie dostają danych w jawnej postaci. Tak samo maskujemy wyniki kroków, które DBOS zapisuje (pobrane strony, odpowiedzi modelu). Retencja 30 dni, usuwanie workflowem DBOS; obie obejmują tabele systemowe DBOS. Konto nie jest potrzebne: sesja ma losowy identyfikator w przeglądarce (CheckRecord.session_id), historia rozmowy zostaje w sessionStorage, a „Usuń moje sprawdzenia” czyści też dane workflowów i powiązania ze sprawami. Kto zaloguje się kontem Google albo Microsoft, ma na serwerze identyfikator konta od dostawcy logowania (CheckRecord.user_id) i historię sprawdzeń z zamaskowanym pytaniem. Usuwa ją przyciskiem „Usuń moją historię”, a razem z kontem przyciskiem „Usuń konto”. Sposób przetwarzania adresów IP (limit zapytań) i retencję logów określa polityka prywatności. Kanały inne niż strona (Discord, SMS, wtyczka) mają osobne polityki. Discord daje nazwę i identyfikator użytkownika, SMS numer telefonu: przetwarzamy je tylko, żeby odpowiedzieć i policzyć powtórzenia, przechowujemy jako skrót z solą (CheckRecord.channel_user_hash) z retencją 30 dni i nie pokazujemy moderatorom. W tych kanałach i w MCP ten skrót jest też identyfikatorem sesji (session_id). Powiadomienia mają tę samą retencję 30 dni. Polecenie /usun-moje-dane na Discordzie i SMS ze słowem USUN usuwają zapisy dla identyfikatora. Telemetria użycia służy tylko zbiorczym miarom liczbowym, a adresy IP i regiony możemy przetwarzać dla ochrony przed DDoS i innymi atakami (US-BEZ-06).",
+     "Maskowanie telefonów, e-maili i PESEL-i przez Google Sensitive Data Protection w UE (ADR-35) w API, zanim wystartuje workflow DBOS (DBOS zapisuje wejścia w bazie), więc ani zapis, ani dostawca modelu nie dostają danych w jawnej postaci. Tak samo maskujemy wyniki kroków, które DBOS zapisuje (pobrane strony, odpowiedzi modelu). Retencja 30 dni, usuwanie workflowem DBOS; obie obejmują tabele systemowe DBOS. Konto nie jest potrzebne: sesja ma losowy identyfikator w przeglądarce (CheckRecord.session_id), historia rozmowy zostaje w sessionStorage, a „Usuń moje sprawdzenia” czyści też dane workflowów i powiązania ze sprawami. Kto zaloguje się kontem Google albo Microsoft, ma na serwerze identyfikator konta od dostawcy logowania (CheckRecord.user_id) i historię sprawdzeń z zamaskowanym pytaniem. Usuwa ją przyciskiem „Usuń moją historię”, a razem z kontem przyciskiem „Usuń konto”. Licznik limitu zapytań na adres IP trzymamy tylko przez czas okna limitu, bez trwałego zapisu, a logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Identyfikator konta zalogowanego przechowujemy do kliknięcia „Usuń konto”. Kanały inne niż strona (Discord, SMS, wtyczka) mają osobne polityki. Discord daje nazwę i identyfikator użytkownika, SMS numer telefonu: przetwarzamy je tylko, żeby odpowiedzieć i policzyć powtórzenia, przechowujemy jako skrót z solą (CheckRecord.channel_user_hash) z retencją 30 dni i nie pokazujemy moderatorom. W tych kanałach i w MCP ten skrót jest też identyfikatorem sesji (session_id). Powiadomienia mają tę samą retencję 30 dni. Polecenie /usun-moje-dane na Discordzie i SMS ze słowem USUN usuwają zapisy dla identyfikatora. Telemetria użycia służy tylko zbiorczym miarom liczbowym, a adresy IP i regiony możemy przetwarzać dla ochrony przed DDoS i innymi atakami (US-BEZ-06). " + CONTROLLER,
      "Mniej danych osobowych w systemie i u dostawców. " + risk("maskowanie regułami nie złapie wszystkiego; opisujemy to w ograniczeniach."),
      "Pełne logi bez maskowania; obowiązkowe konta użytkowników."),
     ("ADR-14", "GCP w UE (europe-central2) jako docelowe miejsce demo; rejestr podmiotów przetwarzających", "Proponowana (w toku)",
