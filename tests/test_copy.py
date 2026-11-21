@@ -24,6 +24,8 @@ REQUIRED_KEYS = (
     "staff.sign_in.title",
     "staff.sign_in.lead",
     "staff.sign_in.no_access",
+    "staff.sign_in.failed",
+    "staff.sign_in.session_expired",
     "staff.sign_in.signed_in_as",
     "staff.sign_in.signed_out",
     # administration of staff accounts and high-risk topics
@@ -65,7 +67,7 @@ REQUIRED_KEYS = (
 
 
 def lookup(path: str) -> object:
-    """Returns the value at a dotted key path, or None when any part is missing."""
+    """Return the value at a dotted key path, or None when any part is missing."""
     node: object = COPY
     for part in path.split("."):
         if not isinstance(node, dict) or part not in node:
@@ -75,7 +77,7 @@ def lookup(path: str) -> object:
 
 
 def texts(node: object, path: str = "") -> Iterator[tuple[str, object]]:
-    """Yields (path, text) for every user-facing string, skipping $comment."""
+    """Yield (path, text) for every user-facing string, skipping $comment."""
     if isinstance(node, dict):
         for key, value in node.items():
             if key != "$comment":
@@ -108,6 +110,7 @@ class Tone(unittest.TestCase):
 
     def test_expired_jury_link_says_whom_to_write_without_technical_details(self) -> None:
         # Gherkin "link jury po terminie" from design-system#9
+        # {contact} is the team address (jury.$comment): it is the "whom to write"
         self.assertIn("wygasł", str(lookup("jury.expired")))
         for key in ("jury.expired", "jury.used"):
             with self.subTest(key=key):
@@ -116,6 +119,7 @@ class Tone(unittest.TestCase):
                 self.assertIn("{contact}", text)
                 for term in TECHNICAL_TERMS:
                     self.assertNotIn(term, text.lower())
+
 
 if __name__ == "__main__":
     unittest.main()

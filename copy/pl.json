@@ -9,6 +9,7 @@
     ]
   },
   "form": {
+    "$comment": "audio_transcription_warning is shown next to the audio field before sending; result.transcript_hint is shown on the result card next to the transcript (meritum-frontend#22, frontend/007).",
     "title": "Sprawdź informację",
     "lead": "Wklej tekst albo link. Sprawdzimy twierdzenia w opisanych źródłach i pokażemy, na czym opieramy odpowiedź.",
     "input_label": "Tekst albo link",
@@ -248,6 +249,8 @@
       "title": "Panel Meritum dla zespołu",
       "lead": "Zaloguj się kontem Google albo Microsoft z adresem, któremu administrator nadał rolę.",
       "no_access": "To konto nie ma dostępu do panelu. Poproś administratora o nadanie roli.",
+      "failed": "Nie udało się zalogować. Spróbuj jeszcze raz.",
+      "session_expired": "Minął czas logowania. Zaloguj się ponownie, żeby wrócić do panelu.",
       "signed_in_as": "{email}, rola: {role}",
       "signed_out": "Wylogowano z panelu."
     },
