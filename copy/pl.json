@@ -404,7 +404,7 @@
         "Meritum buduje Zespół Meritum na HackNation 2026, w konkursie MSZ „Prawdowid”.",
         "Projekt nie ma partnerstw z MSZ ani z organizacjami fact-checkingowymi.",
         "Aplikacja działa na serwerze zespołu w Polsce. Główny model językowy i model wektorów gemini-embedding-001 działają w Vertex AI w Warszawie (Google Cloud, europe-central2).",
-        "Część dostawców działa poza UE, na przykład Cloudflare, przez który przechodzi ruch do aplikacji, i wyszukiwarka Vertex AI Search. Pełny wykaz jest w polityce prywatności.",
+        "Część dostawców działa poza UE albo bez gwarancji przetwarzania w UE, na przykład Cloudflare i wyszukiwarka Vertex AI Search. Pełny wykaz jest w polityce prywatności.",
         "Na koniec prac udostępnimy publicznie wszystkie repozytoria i system."
       ]
     },
@@ -423,14 +423,13 @@
       "unavailable": "Katalog źródeł nie jest jeszcze opublikowany. Pokażemy go tutaj, gdy będzie gotowy."
     },
     "metrics": {
-      "$comment": "The page shows the last finished run on the golden set only. {date} in run_date: a long Polish date, e.g. „20 listopada 2026”.",
+      "$comment": "The page shows the last finished run on the golden set only. {date} in run_date: a long Polish date, e.g. „20 listopada 2026”. names: Keys follow the metrics listed in meritum-core#36 (EvalMetrics); rename them when the contract lands.",
       "title": "Mierniki jakości",
       "lead": "Pokazujemy tylko liczby zmierzone naszym skryptem ewaluacji na golden secie, czyli zestawie deweloperskim. Zestaw jury jest dla nas ukryty, więc nie stroimy na nim progów.",
       "run_date": "Ostatni przebieg ewaluacji: {date}.",
       "reproduce": "Paczka do odtworzenia przebiegu",
       "no_run": "Nie ma jeszcze zakończonego przebiegu ewaluacji, więc nie pokazujemy liczb.",
       "names": {
-        "$comment": "Keys follow the metrics listed in meritum-core#36 (EvalMetrics); rename them when the contract lands.",
         "macro_f1": "Trafność werdyktów (macro-F1)",
         "citation_coverage": "Pokrycie twierdzeń cytatami",
         "citation_accuracy": "Poprawność cytatów",
