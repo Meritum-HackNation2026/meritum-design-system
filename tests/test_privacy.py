@@ -208,6 +208,7 @@ class Processors(unittest.TestCase):
             with self.subTest(processor=processor):
                 entry = ACTIVE[processor]
                 self.assertIn("poza eog", entry["region"].lower())
+                self.assertIn("podstaw", entry["region"].lower())
                 self.assertIn("zamaskowane twierdzenia", entry["data"].lower())
                 self.assertIn("ZDR", entry["data"])
                 for channel in CHANNELS:

@@ -443,7 +443,7 @@
         "Meritum buduje Zespół Meritum na HackNation 2026, w konkursie MSZ „Prawdowid”.",
         "Projekt nie ma partnerstw z MSZ ani z organizacjami fact-checkingowymi.",
         "Aplikacja działa na serwerze zespołu w Polsce. Model wektorów gemini-embedding-001 działa w Vertex AI w Warszawie (Google Cloud, europe-central2).",
-        "Model językowy Claude Haiku 5.5 od Anthropic działa poza UE. Łączymy się z nim przez OpenRouter, który nie przechowuje pytań ani odpowiedzi. Poza UE działają też na przykład Cloudflare i wyszukiwarka Vertex AI Search. Pełny wykaz jest w polityce prywatności.",
+        "Model językowy Claude Haiku 5.5 od Anthropic działa poza UE. Łączymy się z nim przez OpenRouter z ustawieniem, w którym pytania i odpowiedzi nie są rutynowo przechowywane. Poza UE działają też na przykład Cloudflare i wyszukiwarka Vertex AI Search. Pełny wykaz jest w polityce prywatności.",
         "Na koniec prac udostępnimy publicznie wszystkie repozytoria i system."
       ]
     },

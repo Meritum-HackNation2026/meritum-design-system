@@ -112,14 +112,14 @@
         "id": "openrouter",
         "name": "OpenRouter (pośrednik do modelu językowego)",
         "region": "USA (OpenRouter, Inc., Nowy Jork), poza EOG. Przekazanie na podstawie standardowych klauzul umownych (moduł 2) z umowy powierzenia OpenRouter",
-        "data": "Zamaskowane twierdzenia, fragmenty źródeł i odpowiedzi modelu. Ustawienie ZDR (zero przechowywania danych): OpenRouter nie przechowuje zapytań ani odpowiedzi. Kieruje je tylko do dostawców, którzy też ich nie przechowują i nie zbierają",
+        "data": "Zamaskowane twierdzenia, fragmenty źródeł i odpowiedzi modelu. Ustawienie ZDR (zero przechowywania danych): OpenRouter nie przechowuje rutynowo zapytań ani odpowiedzi. Wyjątki to kontrola pod kątem materiałów CSAM i obowiązki prawne",
         "purpose": "Dostęp do głównego modelu językowego: wyodrębnianie twierdzeń, ocena wymowy, odpowiedź"
       },
       {
         "id": "anthropic",
-        "name": "Anthropic (model Claude Haiku 5.5), uruchamiany przez Google albo Amazon",
-        "region": "Bez gwarancji EOG, możliwie poza EOG. Model działa u Google (Vertex AI, global) albo Amazon (Bedrock), z którymi umowy ma OpenRouter",
-        "data": "Zamaskowane twierdzenia, fragmenty źródeł i odpowiedzi modelu. Tylko wersje modelu z ZDR, które nie przechowują danych",
+        "name": "Anthropic (Claude Haiku 5.5) w Google Vertex AI albo Amazon Bedrock",
+        "region": "Bez gwarancji EOG, możliwie poza EOG. Model działa u Google (Vertex AI, global) albo Amazon (Bedrock). Podstawa przekazania to umowy OpenRouter z tymi firmami. Ich treści jeszcze nie sprawdziliśmy",
+        "data": "Zamaskowane twierdzenia, fragmenty źródeł i odpowiedzi modelu. Tylko wersje modelu z listy ZDR w OpenRouter",
         "purpose": "Główny model językowy"
       },
       {
