@@ -374,7 +374,7 @@
     "audio_too_large": "Plik jest za duży. Wyślij nagranie do {max_mb} MB albo je przytnij.",
     "audio_too_long": "Nagranie jest za długie. Wyślij najwyżej {max_minutes} min albo je przytnij.",
     "check_not_found": "Nie mamy zapisanego wyniku pod tym adresem. Zapis mógł zostać usunięty albo adres jest nieprawidłowy. To nie jest ocena treści. Wklej treść jeszcze raz i kliknij „Sprawdź”.",
-    "rate_limited_handoff": "Wysłano za dużo zgłoszeń w krótkim czasie. Spróbuj za minutę.",
+    "rate_limited_handoff": "Za dużo zgłoszeń w krótkim czasie. Spróbuj za minutę.",
     "handoff_not_found": "Tego wyniku nie da się już przekazać, bo nie mamy go zapisanego. Sprawdź treść jeszcze raz.",
     "handoff_rejected": "Nie udało się zapisać uzasadnienia. Skróć je do 4000 znaków i wyślij jeszcze raz."
   },
