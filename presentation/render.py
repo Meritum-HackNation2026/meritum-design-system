@@ -1,6 +1,6 @@
 """Renders Meritum PNG assets with system Chrome.
 
-  uv run --with playwright python presentation/render.py brand|shots|social|deck [out_dir]
+  uv run --with playwright python presentation/render.py brand|shots|social|icons|deck [out_dir]
 
 shots needs design-system/ served over HTTP, by default on http://localhost:52990 (MERITUM_BASE overrides it).
 """
@@ -94,6 +94,30 @@ def social(b):
                        "story-1080x1920.html": (1080, 1920), "linkedin-banner-1584x396.html": (1584, 396)})
 
 
+def icons(b):
+    """Lucide SVGs in presentation/icons/ -> an inline <symbol> sprite in slides/index.html (CSS masks and external
+    <use> do not load from file://) and accent-coloured PNGs for build_pptx.py."""
+    import re
+    src = DS / "presentation" / "icons"
+    deck = DS / "presentation" / "slides" / "index.html"
+    syms = []
+    for f in sorted(src.glob("*.svg")):
+        inner = re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(), re.S).group(1).strip()
+        syms.append(f'<symbol id="i-{f.stem}" viewBox="0 0 24 24">{re.sub(chr(10) + " *", "", inner)}</symbol>')
+    html = deck.read_text()
+    a, z = "<!-- icons:start -->", "<!-- icons:end -->"
+    assert a in html and z in html, "icon sprite markers missing in slides/index.html"
+    deck.write_text(html[:html.index(a) + len(a)] + "\n" + "\n".join(syms) + "\n" + html[html.index(z):])
+    out = src / "png"
+    out.mkdir(exist_ok=True)
+    pg = b.new_page(viewport={"width": 128, "height": 128})
+    for f in sorted(src.glob("*.svg")):
+        for suffix, colour in (("", "#1D6A86"), ("-white", "#FFFFFF")):
+            svg = f.read_text().replace('width="24"', 'width="128"').replace('height="24"', 'height="128"').replace("currentColor", colour)
+            pg.set_content(f"<html><body style='margin:0;background:transparent'>{svg}</body></html>")
+            pg.screenshot(path=out / f"{f.stem}{suffix}.png", omit_background=True, clip={"x": 0, "y": 0, "width": 128, "height": 128})
+
+
 def deck(b, out):
     pg = b.new_page(viewport={"width": 1920, "height": 1080})
     pg.goto((DS / "presentation" / "slides" / "index.html").as_uri()); pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(800)
@@ -110,5 +134,5 @@ if __name__ == "__main__":
     out.mkdir(parents=True, exist_ok=True); EXP.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         b = p.chromium.launch(channel="chrome")
-        {"brand": lambda: brand(b), "shots": lambda: shots(b, out), "social": lambda: social(b), "deck": lambda: deck(b, out)}[what]()
+        {"brand": lambda: brand(b), "shots": lambda: shots(b, out), "social": lambda: social(b), "icons": lambda: icons(b), "deck": lambda: deck(b, out)}[what]()
         b.close()

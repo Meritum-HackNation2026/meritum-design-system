@@ -12,6 +12,8 @@ Meritum startuje tylko w konkursie MSZ „Prawdowid”. Cały zestaw jest już p
 | `slides/index.html` | ta sama prezentacja w przeglądarce, z notatkami prowadzącego |
 | `screenshots/` | zrzuty z makiet: formularz, pasek analizy, przycisk „Sprawdź” i karta wyniku pod postem, brak dowodów ze sprawą dla moderatora, sprzeczne źródła, próba wstrzyknięcia polecenia |
 | `social/` | obraz do linków (1200×630), post kwadratowy (1080×1080), story (1080×1920), baner LinkedIn (1584×396): pliki PNG gotowe do wrzucenia |
+| `photos/` | zdjęcia z Unsplash do slajdów 1, 2, 3, 10 i 12, autorzy w `photos/CREDITS.md` |
+| `icons/` | ikony Lucide (SVG, licencja ISC) i ich wersje PNG dla PPTX w `icons/png/` |
 | `../brand/exports/` | logo w PNG (znak, ikona aplikacji, logo ze słowem „meritum”) |
 
 ### Które logo wziąć
@@ -100,6 +102,7 @@ uv run --with playwright python presentation/render.py shots    # zrzuty z makie
 uv run --with playwright python presentation/render.py deck out/ # slajdy HTML jako PNG i PDF do folderu out/
 uv run --with playwright python presentation/render.py brand    # logo w PNG
 uv run --with playwright python presentation/render.py social   # grafiki do social mediów
+uv run --with playwright python presentation/render.py icons    # ikony z icons/*.svg do slajdów HTML i PNG do PPTX
 uv run --with python-pptx python presentation/build_pptx.py     # szablon PPTX
 ```
 
@@ -110,7 +113,8 @@ uv run --with python-pptx python presentation/build_pptx.py     # szablon PPTX
 | Jedna myśl na slajd, tytuł do dwóch linii: „Gdy dowodów brakuje, mówimy to wprost” | Trzy akapity i lista punktorów na jednym slajdzie |
 | Tło `#F6F7F5`, białe karty z cienką szarą ramką | Gradienty, fiolet, neonowe poświaty, zielony tekst na czarnym tle |
 | Czerwień `#C8213A` tylko przy werdykcie „Fałszywe”, zawsze ze słowem | Czerwone nagłówki „dla uwagi”, czerwone tło całego slajdu |
-| Prawdziwe zrzuty działającego Meritum | Zdjęcia stockowe, ludzie przy laptopach, kłódki i tarcze |
+| Prawdziwe zrzuty działającego Meritum; zdjęcia z Unsplash tylko jako świat pogłoski, z autorem | Zdjęcia stockowe udające nasz produkt, ludzie przy laptopach, kłódki i tarcze |
+| Ikona Lucide w kolorze akcentu przy punkcie listy | Duża ikona nad nagłówkiem karty, siatka identycznych kafelków z ikoną |
 | Wyniki testów z raportu, z linkiem do danych; liczby z makiet z dopiskiem „dane symulowane” | „Trafność 98%” albo każda liczba, której nie zmierzyliśmy |
 | Przykłady z prawdziwymi, sprawdzalnymi źródłami z korpusu | Wymyślone źródła, cytaty albo daty |
 | „Eksport do JSON i CSV z kodami technik DISARM” | „Współpracujemy z MSZ”, dopóki to nieprawda |
@@ -140,7 +144,8 @@ tekst #14191E, tekst drugorzędny #4C5862, akcent i „Potwierdzone” #1D6A86,
 brak dowodów i stany techniczne neutralne.
 Kroje: Archivo do wszystkiego, Azeret Mono tylko do liczb, dat, godzin, ID i domen.
 Logo Meritum (małe „m” z dwóch łuków) w lewym dolnym rogu, 30 px, obok słowo „meritum”.
-Zamiast zdjęć: zrzuty interfejsu Meritum.
+Obrazy: zrzuty interfejsu Meritum; zdjęcie tylko jako świat pogłoski (pasażerowie z telefonami, ulica),
+z autorem, nigdy jako nasz produkt. Ikony Lucide w kolorze akcentu przy punktach listy.
 Wykresy: etykiety przy liniach, próg z treści zadania zaznaczony linią.
 Ton: opisujemy twierdzenia, nie ludzi; każde ustalenie ze źródłem; uczciwa niepewność;
 krótkie zdania w stronie czynnej.

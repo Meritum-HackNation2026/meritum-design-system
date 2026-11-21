@@ -22,6 +22,8 @@ from pptx.util import Emu, Pt
 HERE = Path(__file__).resolve().parent
 EXP = HERE.parent / "brand" / "exports"
 SHOTS = HERE / "screenshots"
+PHOTOS = HERE / "photos"
+ICONS = HERE / "icons" / "png"  # made by `render.py icons`
 
 BG, CARD, INK, INK2, LINE, RAISED = "F6F7F5", "FFFFFF", "14191E", "4C5862", "D9DEDD", "E8ECEB"
 SEA, SEA_T, SEA_D = "1D6A86", "E1EDF2", "13506A"
@@ -118,14 +120,14 @@ def image(slide, path, x, y, w=None, h=None):
     return slide.shapes.add_picture(str(path), px(x), px(y), px(w) if w else None, px(h) if h else None)
 
 
-def new_slide(n, total, notes, footer=True):
+def new_slide(n, total, notes, footer=True, num_x=1592):
     s = prs.slides.add_slide(BLANK)
     s.background.fill.solid()
     s.background.fill.fore_color.rgb = rgb(BG)
     if footer:
         image(s, EXP / "meritum-mark-light-512.png", 124, 1000, 36, 36)
         text(s, 166, 1004, 300, 32, "meritum", size=24, bold=True)
-        text(s, 1592, 1006, 200, 30, f"{n} / {total}", size=20, color=INK2, align=PP_ALIGN.RIGHT)
+        text(s, num_x, 1006, 200, 30, f"{n} / {total}", size=20, color=INK2, align=PP_ALIGN.RIGHT, font=MONO)
     s.notes_slide.notes_text_frame.text = notes
     return s
 
@@ -135,21 +137,37 @@ def title(s, t, y=112, w=1500, size=72):
 
 
 
+
 def _plain(fragment):
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", fragment))).strip()
 
 
-SECTIONS = re.findall(r'<section class="slide".*?</section>', (HERE / "slides" / "index.html").read_text(), re.S)
+SECTIONS = re.findall(r'<section class="slide.*?</section>', (HERE / "slides" / "index.html").read_text(), re.S)
 TITLES = [_plain(re.search(r"<h[12][^>]*>(.*?)</h[12]>", sec, re.S).group(1)) for sec in SECTIONS]
 NOTES = [_plain(re.search(r"<aside>(.*?)</aside>", sec, re.S).group(1)) for sec in SECTIONS]
 TOTAL = len(SECTIONS)
 assert TOTAL <= 12, f"MSZ brief allows at most 12 slides, the HTML deck has {TOTAL}"
 
 
+def _size(path):
+    return struct.unpack(">II", path.read_bytes()[16:24]) if path.suffix == ".png" else _jpeg_size(path)
+
+
+def _jpeg_size(path):
+    b = path.read_bytes()
+    i = 2
+    while i < len(b):
+        marker, length = b[i + 1], int.from_bytes(b[i + 2:i + 4], "big")
+        if marker in (0xC0, 0xC1, 0xC2):
+            return int.from_bytes(b[i + 7:i + 9], "big"), int.from_bytes(b[i + 5:i + 7], "big")
+        i += 2 + length
+    raise ValueError(f"no JPEG size in {path}")
+
+
 def shot(s, name, x, y, w, h=None):
     """Screenshot at width w; with h, cut off at the bottom like the HTML .crop boxes."""
     path = SHOTS / name
-    pw, ph = struct.unpack(">II", path.read_bytes()[16:24])
+    pw, ph = _size(path)
     full = w * ph / pw
     pic = image(s, path, x, y, w=w, h=min(h, full) if h else None)
     if h and h < full:
@@ -159,77 +177,103 @@ def shot(s, name, x, y, w, h=None):
     return pic
 
 
+def photo(s, name, x, y, w, h, fy=0.5):
+    """A photograph filling the box like CSS object-fit: cover; fy is the vertical focus (object-position)."""
+    path = PHOTOS / name
+    pw, ph = _size(path)
+    pic = image(s, path, x, y, w=w, h=h)
+    if pw / ph > w / h:  # wider than the box: trim the sides
+        cut = 1 - (w / h) / (pw / ph)
+        pic.crop_left = pic.crop_right = cut / 2
+    else:
+        cut = 1 - (pw / ph) / (w / h)
+        pic.crop_top, pic.crop_bottom = cut * fy, cut * (1 - fy)
+    return pic
+
+
+def icon(s, name, x, y, size=32, white=False):
+    return image(s, ICONS / f"{name}{'-white' if white else ''}.png", x, y, size, size)
+
+
 def cap(s, x, y, w, t):
     return text(s, x, y, w, 60, t, size=20, color=INK2, spacing=1.35)
 
 
-def points(s, x, y, w, items, gap=110, size=28, sub=24):
-    """Bold line + grey line, separated by hairlines (the HTML .pts list)."""
-    for b, t in items:
-        hline(s, x, y, w)
-        text(s, x, y + 18, w, 40, b, size=size, bold=True)
-        text(s, x, y + 18 + size * 1.45, w, 70, t, size=sub, color=INK2, spacing=1.35)
+def points(s, x, y, w, items, gap=110, size=28, sub=24, rule=LINE, subcolor=INK2, lines=1):
+    """Icon + bold line + grey line, separated by hairlines (the HTML .pts list)."""
+    for ic, b, t in items:
+        hline(s, x, y, w, color=rule)
+        icon(s, ic, x, y + 24)
+        text(s, x + 52, y + 18, w - 52, 40 * lines, b, size=size, bold=True, spacing=1.2)
+        text(s, x + 52, y + 18 + size * 1.3 * lines + 6, w - 52, 70, t, size=sub, color=subcolor, spacing=1.35)
         y += gap
-    hline(s, x, y, w)
+    hline(s, x, y, w, color=rule)
 
 
-def slide(i, footer=True):
-    s = new_slide(i + 1, TOTAL, NOTES[i], footer=footer)
+def slide(i, footer=True, title_w=1500, **kw):
+    s = new_slide(i + 1, TOTAL, NOTES[i], footer=footer, **kw)
     if footer:
-        title(s, TITLES[i], size=64)
+        title(s, TITLES[i], size=64, w=title_w)
     return s
 
 
 EXAMPLE = "Przykład do pokazu, cytaty ilustracyjne."
+TINT_RULE = "C4D9E2"
 
 # 1. Tytuł
 s = slide(0, footer=False)
+photo(s, "bus-night.jpg", 1120, 0, 800, 1080)
 image(s, EXP / "meritum-lockup-subtitle-light@2x.png", 128, 168, w=420)
-text(s, 128, 400, 1000, 260, TITLES[0], size=104, bold=True, spacing=1.05)
-text(s, 128, 690, 1000, 180, "Wklejasz tekst albo link, a Meritum sprawdza każde twierdzenie w opisanych źródłach, "
+text(s, 128, 380, 780, 220, TITLES[0], size=88, bold=True, spacing=1.05)
+text(s, 128, 600, 700, 180, "Wklejasz tekst albo link, a Meritum sprawdza każde twierdzenie w opisanych źródłach, "
      "cytuje dosłowny fragment i mówi wprost, gdy dowodów brakuje.", size=30, color=INK2, spacing=1.4)
-shot(s, "x-02-card.png", 1192, 72, 600, 856)
-text(s, 128, 1000, 1300, 32, "HackNation 2026 · konkurs MSZ „Prawdowid” · " + EXAMPLE.lower(), size=22, color=INK2)
+shot(s, "x-02-card.png", 930, 200, 500, 660)
+text(s, 128, 1000, 760, 32, "HackNation 2026, konkurs MSZ „Prawdowid”. Karta to przykład do pokazu, cytaty ilustracyjne.", size=20, color=INK2)
 
 # 2. Problem
-s = slide(1)
-rows = [("Co się dzieje", "Dlaczego to trudne"),
-        ("Pogłoska dociera kanałem, którego używa obywatel", "post, wiadomość, link od znajomego; sprawdzenie wymaga wyjścia z tego kanału"),
-        ("Sprawdzenie wymaga wiedzy i czasu", "trzeba wiedzieć, które źródło jest wiarygodne, i znaleźć w nim właściwy fragment"),
-        ("Czat AI odpowiada płynnie, ale bez źródła", "płynny język nie gwarantuje poprawności, a wymyślony cytat wygląda jak prawdziwy")]
-y = 330
-for k, (a, b) in enumerate(rows):
-    if k:
-        hline(s, 128, y - 24, 1664)
-    text(s, 128, y, 580, 90, a, size=24 if k == 0 else 28, bold=True, color=INK2 if k == 0 else INK)
-    text(s, 748, y, 1040, 90, b, size=24 if k == 0 else 28, bold=k == 0, color=INK2)
-    y += 60 if k == 0 else 120
+s = slide(1, num_x=992, title_w=1100)
+photo(s, "commuters-phones.jpg", 1320, 0, 600, 1080)
+y = 320
+for ic, a, b in [("smartphone", "Pogłoska dociera kanałem, którego używa obywatel", "post, wiadomość, link od znajomego; sprawdzenie wymaga wyjścia z tego kanału"),
+                 ("clock-3", "Sprawdzenie wymaga wiedzy i czasu", "trzeba wiedzieć, które źródło jest wiarygodne, i znaleźć w nim właściwy fragment"),
+                 ("triangle-alert", "Czat AI odpowiada płynnie, ale bez źródła", "płynny język nie gwarantuje poprawności, a wymyślony cytat wygląda jak prawdziwy")]:
+    hline(s, 128, y, 1100)
+    icon(s, ic, 128, y + 30)
+    text(s, 200, y + 26, 450, 90, a, size=28, bold=True)
+    text(s, 690, y + 26, 530, 90, b, size=26, color=INK2)
+    y += 132
+hline(s, 128, y, 1100)
+icon(s, "message-circle", 128, y + 62, 40)
+text(s, 200, y + 52, 1020, 60, "„Od stycznia nie zapłacisz w sklepie gotówką”", size=36, bold=True)
+text(s, 200, y + 110, 1020, 40, "Pogłoska z naszego pokazu: krąży w wiadomościach, a obowiązujące przepisy mówią co innego.", size=22, color=INK2)
 
 # 3. Użytkownicy
 s = slide(2)
-for x, head, items in (
-    (128, "Obywatel", [("Bez instalacji i bez konta", "formularz działa na telefonie, przycisk „Sprawdź” pod postem to opcja"),
-                       ("Prosty język", "także dla osób o niskich kompetencjach cyfrowych, WCAG 2.2 AA"),
-                       ("Uczy rozpoznawania", "odpowiedź nazywa technikę manipulacji i mówi, jak ją rozpoznać")]),
-    (992, "Moderator lub analityk", [("Sprawy bez odpowiedzi", "twierdzenia z werdyktem „brak wystarczających dowodów” w tematach wysokiego ryzyka"),
-                                     ("Podobne twierdzenia w jednej sprawie", "powtórzenia łączą się, zamiast zalewać kolejkę"),
-                                     ("Jakość pod kontrolą", "wstrzymania, próby wstrzyknięcia poleceń, czas odpowiedzi, koszt")])):
-    text(s, x, 340, 800, 44, head, size=30, bold=True)
-    points(s, x, 400, 800, items, gap=130)
+photo(s, "reader-phone.jpg", 128, 300, 480, 680)
+for x, ic, head, items in (
+    (672, "user-round", "Obywatel", [("smartphone", "Bez instalacji i bez konta", "formularz działa na telefonie, przycisk „Sprawdź” pod postem to opcja"),
+                                      ("accessibility", "Prosty język", "także dla osób o niskich kompetencjach cyfrowych, WCAG 2.2 AA"),
+                                      ("scan-search", "Uczy rozpoznawania", "odpowiedź nazywa technikę manipulacji i mówi, jak ją rozpoznać")]),
+    (1256, "users", "Moderator lub analityk", [("list-filter", "Sprawy bez odpowiedzi", "twierdzenia z werdyktem „brak wystarczających dowodów” w tematach wysokiego ryzyka"),
+                                                ("git-compare-arrows", "Podobne twierdzenia w jednej sprawie", "powtórzenia łączą się, zamiast zalewać kolejkę"),
+                                                ("gauge", "Jakość pod kontrolą", "wstrzymania, próby wstrzyknięcia poleceń, czas odpowiedzi, koszt")])):
+    icon(s, ic, x, 304, 40)
+    text(s, x + 54, 302, 480, 44, head, size=32, bold=True)
+    points(s, x, 370, 536, items, gap=190, size=26, sub=23)
 
 # 4. Jak to działa
 s = slide(3)
-hline(s, 128, 368, 1664, color=INK, weight=2)
-for k, (b, t) in enumerate([("Wklejasz tekst albo link", "na stronie albo przyciskiem „Sprawdź” pod postem"),
-                            ("Wyodrębniamy twierdzenia", "fakty oddzielamy od opinii, dane osobowe maskujemy"),
-                            ("Szukamy w katalogu", "baza źródeł, świeże publikacje z zatwierdzonych serwisów, fact-checkerzy"),
-                            ("Werdykt z cytatem", "cytat przechodzi, tylko gdy fragment występuje w źródle dosłownie")]):
+hline(s, 128, 370, 1664, color=INK, weight=2)
+for k, (ic, b, t) in enumerate([("clipboard-paste", "Wklejasz tekst albo link", "na stronie albo przyciskiem „Sprawdź” pod postem"),
+                                ("list-checks", "Wyodrębniamy twierdzenia", "fakty oddzielamy od opinii, dane osobowe maskujemy"),
+                                ("search", "Szukamy w katalogu", "baza źródeł, świeże publikacje z zatwierdzonych serwisów, fact-checkerzy"),
+                                ("quote", "Werdykt z cytatem", "cytat przechodzi, tylko gdy fragment występuje w źródle dosłownie")]):
     x = 128 + k * 416
     last = k == 3
-    d = box(s, x, 340, 56, 56, fill=SEA if last else BG, line=SEA if last else INK, radius=28, weight=2)
-    text(s, x, 340, 56, 56, str(k + 1), size=22, font=MONO, color="FFFFFF" if last else INK, align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
-    text(s, x, 424, 370, 100, b, size=34, bold=True, spacing=1.1)
-    text(s, x, 530, 370, 120, t, size=24, color=INK2, spacing=1.35)
+    box(s, x, 330, 80, 80, fill=SEA if last else BG, line=SEA if last else INK, radius=40, weight=2)
+    icon(s, ic, x + 22, 352, 36, white=last)
+    text(s, x, 440, 370, 100, b, size=34, bold=True, spacing=1.1)
+    text(s, x, 546, 370, 120, t, size=24, color=INK2, spacing=1.35)
 text(s, 128, 724, 240, 40, "Pięć werdyktów:", size=24, color=INK2)
 x = 330
 for label, fill, color in (("Potwierdzone", SEA_T, SEA_D), ("Fałszywe", RED_T, RED_D), ("Wprowadzające w błąd", AMBER_T, AMBER_D),
@@ -237,76 +281,84 @@ for label, fill, color in (("Potwierdzone", SEA_T, SEA_D), ("Fałszywe", RED_T, 
     w = 32 + len(label) * 12
     pill(s, x, 720, label, fill, color, w=w)
     x += w + 12
-text(s, 128, 800, 1600, 100, [[("Siła podstawy liczona regułą, nie przez model. ", {"bold": True, "color": INK}),
+box(s, 128, 800, 1664, 120, fill=SEA_T, line=None)
+icon(s, "scale", 160, 826)
+text(s, 212, 822, 1540, 90, [[("Siła podstawy liczona regułą, nie przez model. ", {"bold": True, "color": INK}),
      ("Mocna: co najmniej 2 niezależnych wydawców zgodnych z werdyktem, w tym urzędowy, i świeże dowody. "
-      "Umiarkowana: 2 wydawców albo 1 urzędowy. Słaba: jeden nieurzędowy albo dowód archiwalny.", {})]], size=24, color=INK2, spacing=1.4)
+      "Umiarkowana: 2 wydawców albo 1 urzędowy. Słaba: jeden nieurzędowy albo dowód archiwalny.", {})]], size=24, color=SEA_D, spacing=1.4)
 
 # 5. Formularz WWW
 s = slide(4)
-shot(s, "web-01-form.png", 128, 330, 1040)
-cap(s, 128, 840, 1040, "Formularz „Sprawdź informację”, kanał podstawowy. Teksty z copy/pl.json.")
-shot(s, "widgets-01-steps.png", 1232, 330, 560)
-cap(s, 1232, 900, 560, "Pasek analizy. Agenty szukają równolegle, więc kilka kroków trwa naraz. Przykład do pokazu.")
+shot(s, "web-01-form.png", 128, 300, 1040)
+points(s, 128, 840, 1040, [("globe", "Kanał podstawowy, bez konta", "teksty z copy/pl.json; dane osobowe maskujemy przed analizą")])
+shot(s, "widgets-01-steps.png", 1232, 300, 560)
+cap(s, 1232, 870, 560, "Pasek analizy. Agenty szukają równolegle, więc kilka kroków trwa naraz. Przykład do pokazu.")
 
 # 6. Pod postem
 s = slide(5)
 shot(s, "x-02-false.png", 128, 300, 600, 660)
-points(s, 808, 300, 984, [("Werdykt dla twierdzenia, nie dla autora", "„Fałszywe”, z krótkim wyjaśnieniem oznaczonym jako interpretacja AI"),
-                          ("Dosłowny cytat, wydawca, data, link", "fragment sprawdzamy w kodzie, zanim trafi do odpowiedzi"),
-                          ("Siła z przesłanek: umiarkowana", "2 niezależnych wydawców, 0 urzędowych, źródła zgodne"),
-                          ("Technika i ograniczenia", "„Teoria spiskowa” z podpowiedzią, jak ją rozpoznać; zawsze sekcja „Ograniczenia”")])
-cap(s, 808, 790, 984, "Makieta X z demo/live/x/, odpowiedź z atrapy API. " + EXAMPLE)
+points(s, 808, 300, 984, [("scale", "Werdykt dla twierdzenia, nie dla autora", "„Fałszywe”, z krótkim wyjaśnieniem oznaczonym jako interpretacja AI"),
+                          ("quote", "Dosłowny cytat, wydawca, data, link", "fragment sprawdzamy w kodzie, zanim trafi do odpowiedzi"),
+                          ("badge-check", "Siła z przesłanek: umiarkowana", "2 niezależnych wydawców, 0 urzędowych, źródła zgodne"),
+                          ("scan-search", "Technika i ograniczenia", "„Teoria spiskowa” z podpowiedzią, jak ją rozpoznać; zawsze sekcja „Ograniczenia”")])
+cap(s, 808, 760, 984, "Makieta X z demo/live/x/, odpowiedź z atrapy API. " + EXAMPLE)
 
 # 7. Uczciwa niepewność
 s = slide(6)
 shot(s, "x-03-card.png", 128, 300, 520, 640)
 shot(s, "widgets-02-conflict.png", 704, 300, 400, 640)
-points(s, 1160, 300, 632, [("Brak dowodów to werdykt", "z opisem, czego nie ustaliliśmy; kontrakt odrzuca go bez tego opisu"),
-                           ("Sprzeczne źródła obok siebie", "bez siły i bez rozstrzygania za czytelnika"),
-                           ("Sprawa dla moderatora", "„przekazano” i „zalecamy przekazanie” to różne komunikaty")], gap=140)
-cap(s, 1160, 760, 632, "Po lewej demo/live/x/, w środku demo/widgets/. " + EXAMPLE)
+points(s, 1160, 300, 632, [("scale", "Brak dowodów to werdykt", "z opisem, czego nie ustaliliśmy; kontrakt odrzuca go bez tego opisu"),
+                           ("git-compare-arrows", "Sprzeczne źródła obok siebie", "bez siły i bez rozstrzygania za czytelnika"),
+                           ("users", "Sprawa dla moderatora", "„przekazano” i „zalecamy przekazanie” to różne komunikaty")], gap=140)
+cap(s, 1160, 740, 632, "Po lewej demo/live/x/, w środku demo/widgets/. " + EXAMPLE)
 
 # 8. Prompt injection
 s = slide(7)
 shot(s, "web-02-injection-input.png", 128, 330, 780)
-text(s, 128, 510, 300, 44, "Werdykt bez zmian:", size=26, anchor=MSO_ANCHOR.MIDDLE)
-pill(s, 370, 512, "Fałszywe", RED_T, RED_D, w=140)
+icon(s, "scissors", 128, 518)
+text(s, 176, 510, 480, 44, "Polecenie wycięte, werdykt bez zmian:", size=26, anchor=MSO_ANCHOR.MIDDLE)
+pill(s, 640, 512, "Fałszywe", RED_T, RED_D, w=140)
 shot(s, "web-03-injection-log.png", 128, 580, 780)
 cap(s, 128, 734, 780, "Pole injection_events z kontraktu CheckRecord. Przykład do pokazu.")
-points(s, 988, 330, 804, [("Warstwa kontroli przed każdym wywołaniem modelu", "proxy LLM albo Google Cloud Model Armor, w każdym kroku"),
-                          ("Polecenie wycinamy, resztę sprawdzamy", "źródło z poleceniem wypada z dowodów"),
-                          ("Strony skanujemy przed użyciem", "katalog przy wczytywaniu, wyniki wyszukiwania w kwarantannie"),
-                          ("Model nie ma narzędzi, które coś zmieniają", "każdą próbę zapisujemy w przebiegu")])
+box(s, 980, 330, 812, 470, fill=SEA_T, line=None)
+points(s, 1016, 342, 740, [("scan-search", "Warstwa kontroli przed każdym wywołaniem modelu", "proxy LLM albo Google Cloud Model Armor, w każdym kroku"),
+                           ("scissors", "Polecenie wycinamy, resztę sprawdzamy", "źródło z poleceniem wypada z dowodów"),
+                           ("file-check-2", "Strony skanujemy przed użyciem", "katalog przy wczytywaniu, wyniki wyszukiwania w kwarantannie"),
+                           ("ban", "Model nie ma narzędzi, które coś zmieniają", "każdą próbę zapisujemy w przebiegu")], size=25, sub=23, rule=TINT_RULE, subcolor=SEA_D)
 
 # 9. Architektura
 s = slide(8)
-layers = [("Kanały", [("Formularz WWW", "kanał podstawowy, bez konta"), ("Bot na Discordzie", "drugi kanał, ten sam wynik"),
-                      ("Wtyczka „Sprawdź”", "pod postem na 5 platformach, opcja"), ("Panel moderatora", "sprawy, role, jakość")]),
-          ("Rdzeń weryfikacji", [("Workflow DBOS z kontraktami", "kontrola poleceń, twierdzenia, wyszukiwanie, ocena dowodów, "
-                                  "weryfikacja cytatów, odpowiedź, zapis przebiegu")]),
-          ("Porty i adaptery", [("Model", "Vertex AI w GCP, wymiana konfiguracją"), ("Korpus", "wyszukiwanie hybrydowe w migawkach katalogu"),
-                                ("Wyszukiwarka", "Firecrawl na żywo, tylko domeny z katalogu"), ("Fact-checkerzy", "Google Fact Check Tools API")])]
-y = 300
+layers = [("Kanały", [("globe", "Formularz WWW", "kanał podstawowy, bez konta"), ("message-circle", "Bot na Discordzie", "drugi kanał, ten sam wynik"),
+                      ("puzzle", "Wtyczka „Sprawdź”", "pod postem na 5 platformach, opcja"), ("users", "Panel moderatora", "sprawy, role, jakość")]),
+          ("Rdzeń weryfikacji", [("workflow", "Workflow DBOS z kontraktami", "kontrola poleceń, twierdzenia, wyszukiwanie, ocena dowodów, weryfikacja cytatów, "
+                                  "odpowiedź. Kontrakty z meritum-core; awaria modelu albo wyszukiwania daje „Problem techniczny”, nigdy werdykt.")]),
+          ("Porty i adaptery", [("scale", "Model", "Vertex AI w GCP, wymiana konfiguracją"), ("library", "Korpus", "wyszukiwanie hybrydowe w migawkach katalogu"),
+                                ("search", "Wyszukiwarka", "Firecrawl na żywo, tylko domeny z katalogu"), ("badge-check", "Fact-checkerzy", "Google Fact Check Tools API")]),
+          ("Zapis i uruchomienie", [("file-check-2", "Zapis przebiegu", "każde sprawdzenie: źródła, modele, region, koszt, czas, próby wstrzyknięcia poleceń; dane osobowe zamaskowane"),
+                                    ("gauge", "Jedno polecenie", "docker compose up uruchamia całość, także dla jury")])]
+y = 290
 for name, cells in layers:
-    text(s, 128, y + 20, 220, 40, name, size=22, color=INK2)
+    text(s, 128, y + 22, 220, 60, name, size=22, color=INK2)
     w = (1408 - 18 * (len(cells) - 1)) / len(cells)
-    for k, (b, t) in enumerate(cells):
+    for k, (ic, b, t) in enumerate(cells):
         x = 384 + k * (w + 18)
-        core = len(cells) == 1
-        box(s, x, y, w, 130, line=SEA if core else LINE, weight=2 if core else 1)
-        text(s, x + 24, y + 18, w - 48, 40, b, size=27, bold=True)
-        text(s, x + 24, y + 58, w - 48, 70, t, size=21, color=INK2, spacing=1.35)
-    y += 148
-cap(s, 128, 760, 1664, "Kontrakty w meritum-core są jedynym źródłem prawdy. Awaria modelu albo wyszukiwania daje stan „Problem techniczny”, nigdy werdykt.")
+        core = name == "Rdzeń weryfikacji"
+        box(s, x, y, w, 158, fill=SEA_T if core else CARD, line=SEA if core else LINE, weight=2 if core else 1)
+        icon(s, ic, x + 26, y + 26)
+        text(s, x + 70, y + 20, w - 86, 40, b, size=24, bold=True)
+        text(s, x + 70, y + 60, w - 86, 90, t, size=20, color=SEA_D if core else INK2, spacing=1.35)
+    y += 176
 
 # 10. Źródła
-s = slide(9)
-points(s, 128, 330, 800, [("Typ 1: źródła urzędowe i pierwotne", "lista organizatora (serwisy gov.pl, policja, RCB, GIS, PAA, GIOŚ, CERT) oraz ISAP, EUR-Lex, dane.gov.pl i BIP"),
-                          ("Typ 2: fact-checkerzy", "ustalenia w formacie ClaimReview przez Google Fact Check Tools API"),
-                          ("Kontekst, nie werdykt", "dopasowanie do znanych przypadków dezinformacji pokazujemy jako informację o serwisie")], gap=150)
-points(s, 992, 330, 800, [("Katalog do audytu", "przy każdym źródle licencja i powód kwalifikacji"),
-                          ("Niezależność według wydawcy", "dwie strony jednego ministerstwa to jedno źródło"),
-                          ("Aktualność", "cykliczne RSS i wyszukiwanie na żywo w domenach z katalogu; data publikacji i pobrania przy każdym źródle")], gap=150)
+s = new_slide(10, TOTAL, NOTES[9])
+photo(s, "card-catalogue.jpg", 0, 0, 1920, 300, fy=0.58)
+title(s, TITLES[9], y=356, size=64)
+points(s, 128, 540, 800, [("file-check-2", "Typ 1: źródła urzędowe i pierwotne", "lista organizatora (gov.pl, policja, RCB, GIS, PAA, GIOŚ, CERT) oraz ISAP, EUR-Lex, dane.gov.pl i BIP"),
+                          ("badge-check", "Typ 2: fact-checkerzy", "ustalenia w formacie ClaimReview przez Google Fact Check Tools API"),
+                          ("eye-off", "Kontekst, nie werdykt", "dopasowanie do znanych przypadków dezinformacji to informacja o serwisie")], gap=140)
+points(s, 992, 540, 800, [("book-open-check", "Katalog do audytu", "przy każdym źródle licencja i powód kwalifikacji"),
+                          ("library", "Niezależność według wydawcy", "dwie strony jednego ministerstwa to jedno źródło"),
+                          ("calendar-clock", "Aktualność", "RSS i wyszukiwanie na żywo w domenach z katalogu; data publikacji i pobrania przy każdym źródle")], gap=140)
 
 # 11. Wyniki testów
 s = slide(10)
@@ -314,34 +366,43 @@ metrics = [("Trafność werdyktu, macro-F1", "≥ 0,75"), ("Pokrycie cytowań", 
            ("Wstrzymanie się przy braku dowodów", "≥ 80%"), ("Odporność na prompt injection", "≥ 90%"),
            ("Czas: mediana od wejścia do odpowiedzi", "≤ 30 s"), ("Koszt 100 testów", "raportowany")]
 for x, t in ((128, "Miernik z treści zadania"), (900, "Cel MVP"), (1220, "Nasz wynik na zestawie jawnym")):
-    text(s, x, 300, 600, 30, t, size=22, bold=True, color=INK2)
+    text(s, 128 if x == 128 else x, 300, 600, 30, t, size=22, bold=True, color=INK2)
 y = 344
 for name, goal in metrics:
     hline(s, 128, y, 1664)
-    text(s, 128, y + 14, 760, 36, name, size=25)
-    text(s, 900, y + 14, 300, 36, goal, size=25, font=SANS if goal == "raportowany" else MONO)
-    text(s, 1220, y + 16, 560, 36, "wpisujemy po przebiegu skryptu", size=23, color=INK2)
-    y += 62
+    text(s, 128, y + 18, 760, 36, name, size=26)
+    text(s, 900, y + 18, 300, 36, goal, size=26, color=SEA_D, font=SANS if goal == "raportowany" else MONO)
+    text(s, 1220, y + 20, 560, 36, "wpisujemy po przebiegu skryptu", size=23, color=INK2)
+    y += 70
+hline(s, 128, y, 1664)
 cap(s, 128, y + 20, 1664, "Zestaw jawny: nasz, zbudowany z tych samych materiałów co baza wiedzy, scenariusze A–J. "
     "Progi stroimy tylko na nim; zestaw referencyjny MSZ jest dla nas ukryty.")
 
 # 12. Ryzyka i dalsze kroki
-s = slide(11)
-y = 300
-for a, b in [("Halucynacje", "dosłowna weryfikacja cytatów, werdykt tylko z cytatem, wstrzymanie się"),
-             ("Stronniczość źródeł", "jawny katalog, dwa typy źródeł, rozbieżności pokazane wprost"),
-             ("Prywatność", "maskowanie danych osobowych, retencja 30 dni, usuwanie sprawdzeń"),
-             ("Prompt injection", "warstwa kontroli, dane oddzielone od instrukcji, kwarantanna, zapis zdarzeń"),
-             ("Dostępność", "WCAG 2.2 AA, prosty język, telefon bez instalacji"),
-             ("Nadużycia i awarie", "limity zapytań, „Problem techniczny” zamiast pozornego werdyktu")]:
-    hline(s, 128, y, 880)
-    text(s, 128, y + 13, 230, 60, a, size=23, bold=True, spacing=1.3)
-    text(s, 368, y + 13, 640, 70, b, size=23, color=INK2, spacing=1.35)
-    y += 92
-text(s, 1080, 300, 700, 44, "Dalsze kroki", size=30, bold=True)
-points(s, 1080, 360, 712, [("Pilotaż z zatwierdzaniem przez człowieka", "moderator zatwierdza odpowiedź przed publikacją"),
-                           ("Więcej rodzajów treści", "wyszukiwanie odwrotne obrazu, transkrypcja nagrań"),
-                           ("Koszt 1 000 zapytań", "podamy z pomiaru, razem z kosztem utrzymania kanałów")])
+s = new_slide(12, TOTAL, NOTES[11])
+box(s, 1280, 0, 640, 1080, fill=SEA_T, line=None, radius=0)
+photo(s, "warsaw-street.jpg", 1280, 0, 640, 380)
+text(s, 1336, 420, 520, 44, "Dalsze kroki", size=30, bold=True)
+points(s, 1336, 476, 512, [("hand-helping", "Pilotaż z zatwierdzaniem przez człowieka", "moderator zatwierdza odpowiedź przed publikacją"),
+                           ("image", "Więcej rodzajów treści", "wyszukiwanie odwrotne obrazu, transkrypcja nagrań"),
+                           ("coins", "Koszt 1 000 zapytań", "podamy z pomiaru, razem z kosztem kanałów")], gap=176, size=25, sub=22, rule=TINT_RULE, subcolor=SEA_D, lines=2)
+title(s, TITLES[11], w=1040, size=64)
+y = 330
+for ic, a, b in [("quote", "Halucynacje", "dosłowna weryfikacja cytatów, werdykt tylko z cytatem, wstrzymanie się"),
+                 ("scale", "Stronniczość źródeł", "jawny katalog, dwa typy źródeł, rozbieżności pokazane wprost"),
+                 ("eye-off", "Prywatność", "maskowanie danych osobowych, retencja 30 dni, usuwanie sprawdzeń"),
+                 ("scissors", "Prompt injection", "warstwa kontroli, dane oddzielone od instrukcji, kwarantanna, zapis zdarzeń"),
+                 ("accessibility", "Dostępność", "WCAG 2.2 AA, prosty język, telefon bez instalacji"),
+                 ("triangle-alert", "Nadużycia i awarie", "limity zapytań, „Problem techniczny” zamiast pozornego werdyktu")]:
+    hline(s, 128, y, 1040)
+    icon(s, ic, 128, y + 16, 28)
+    text(s, 180, y + 13, 250, 60, a, size=23, bold=True, spacing=1.3)
+    text(s, 440, y + 13, 720, 70, b, size=23, color=INK2, spacing=1.35)
+    y += 76
+hline(s, 128, y, 1040)
+text(s, 128, y + 30, 1040, 50, "Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost.", size=32, bold=True)
+text(s, 128, y + 90, 1040, 30, "Zdjęcia: Unsplash, autorzy Ilya Semenov, camilo jimenez, Nagihan Gülmez, Maksym Kaharlytskyi, "
+     "Kate Bezzubets. Ikony: Lucide.", size=16, color=INK2)
 
 # Theme fonts: anything typed into new text boxes defaults to Archivo too.
 theme_part = next(p for p in prs.part.package.iter_parts() if p.partname.endswith("theme1.xml"))
