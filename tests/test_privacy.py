@@ -50,7 +50,7 @@ REQUIRED_PROCESSORS = (
 AI_NOTICE_KEYS = ("ai_notice.first_contact", "ai_notice.discord", "ai_notice.sms", "ai_notice.mcp", "result.ai_disclosure")
 SMS_UCS2_CHARS = 70
 # team answers on PR #20: candidates and the SMS gateway are planned, not active
-PLANNED_PROCESSORS = ("sms_gateway", "cloudflare_workers_ai", "vertex_ai_ranking")
+PLANNED_PROCESSORS = ("cloudflare_workers_ai", "vertex_ai_ranking")
 
 
 def policy_text(channel: str) -> str:
@@ -97,7 +97,7 @@ class Policies(unittest.TestCase):
         self.assertIn("bezpłatna", text)
         self.assertIn("standardowe opłaty operatora", text)
         self.assertIn("USUN", POLICIES["sms"]["deletion"])
-        self.assertIn("sms_gateway", POLICIES["sms"]["planned_processors"])
+        self.assertIn("sms_gateway", POLICIES["sms"]["processors"])
 
     def test_controller_and_contact(self) -> None:
         controller = PRIVACY["controller"]
@@ -181,8 +181,9 @@ class Processors(unittest.TestCase):
                     self.assertIsInstance(item.get(field), str)
                     self.assertTrue(item[field].strip())
 
-    def test_candidates_and_sms_gateway_are_planned(self) -> None:
+    def test_evaluation_candidates_are_planned(self) -> None:
         self.assertEqual(set(PLANNED), set(PLANNED_PROCESSORS))
+        self.assertIn("sms_gateway", ACTIVE)
         self.assertTrue(PRIVACY["processors"]["planned_lead"].strip())
         for channel in CHANNELS:
             with self.subTest(channel=channel):
@@ -244,7 +245,6 @@ class Tone(unittest.TestCase):
                 self.assertIsNone(EMOJI.search(text))
                 for sentence in re.split(r"(?<=[.?])\s+", text):
                     self.assertLessEqual(len(sentence.split()), MAX_SENTENCE_WORDS, sentence)
-
 
 if __name__ == "__main__":
     unittest.main()

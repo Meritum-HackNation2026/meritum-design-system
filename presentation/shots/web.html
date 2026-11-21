@@ -121,7 +121,7 @@ label{display:block;margin-top:18px;font:600 14px var(--brand)}
   host2.shadowRoot.innerHTML = MeritumCard.card(r);
   host2.shadowRoot.querySelector('.m-card').style.marginTop = '0';
   document.getElementById('m-card').append(host2);
-  document.getElementById('sms-reply').textContent = T.sms.reply.replace('{verdict}', T.verdict.false).replace('{link}', 'meritum.gburek.app/w/c_8f2k');
+  document.getElementById('sms-reply').textContent = T.sms.reply.replace('{verdict}', T.verdict.false);
   document.body.dataset.ready = '1';
 })();
 </script>

@@ -43,9 +43,9 @@
     "session_expired": "Minął czas logowania. Zaloguj się ponownie, żeby zobaczyć historię."
   },
   "sms": {
-    "$comment": "Polish characters force UCS-2: one SMS holds 70 characters. reply carries only the main claim's verdict and a link; transliteration to GSM-7 (160 characters) is an option. reply and failure must fit; fees is shown on the website and in README too.",
+    "$comment": "Polish characters force UCS-2: one SMS holds 70 characters. reply carries only the main claim's verdict (operators often filter links in SMS). Transliteration to GSM-7 (160 characters) is an option. reply and failure must fit; fees is shown on the website and in README too.",
     "fees": "Usługa jest bezpłatna. Operator może pobrać standardową opłatę za SMS według twojej taryfy.",
-    "reply": "{verdict}. Wynik: {link}",
+    "reply": "{verdict}",
     "too_long": "Za długi tekst. Wyślij krótszy albo sam link.",
     "failure": "Nie udało się sprawdzić. To nie jest ocena. Spróbuj później.",
     "delete_hint": "Wyślij USUN, a usuniemy zapisy sprawdzeń z tego numeru."

@@ -66,9 +66,9 @@
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
       "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane tego kanału przetwarzają te podmioty:",
-      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "openrouter", "anthropic", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
+      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "openrouter", "anthropic", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "sms_gateway", "moderator_notifications"],
       "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
-      "planned_processors": ["sms_gateway", "cloudflare_workers_ai", "vertex_ai_ranking"]
+      "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"]
     }
   },
   "external_mcp_clients": {
@@ -77,7 +77,7 @@
     "text": "ChatGPT, claude.ai i inne aplikacje czatu, które łączą się z naszym serwerem MCP, nie są naszymi podmiotami przetwarzającymi. Korzystasz z nich na własnym koncie i to ty kierujesz zapytanie do Meritum. Nie powierzamy im danych. Przetwarzanie i region po stronie aplikacji czatu zależą od regulaminu i planu u jej dostawcy, często poza EOG. Nie mamy na to wpływu."
   },
   "processors": {
-    "$comment": "ADR-14 register, also printed in README. items: active processors; planned_items: the SMS gateway and ADR-35 candidates not chosen yet. 'opcja' entries run only when that adapter is switched on. Order follows ADR-14.",
+    "$comment": "ADR-14 register, also printed in README. items: active processors; planned_items: ADR-35 candidates not chosen yet. 'opcja' entries run only when that adapter is switched on. Order follows ADR-14.",
     "title": "Rejestr podmiotów przetwarzających",
     "lead": "Lista firm i usług, przez które przechodzą dane. Mówi, co przetwarzamy w UE, a co poza nią.",
     "columns": {
@@ -91,7 +91,7 @@
         "id": "team_server",
         "name": "Serwer zespołu",
         "region": "Serwer zespołu w Polsce",
-        "data": "API, worker, PostgreSQL z zapisami przebiegu, sprawami i korpusem",
+        "data": "API, worker, PostgreSQL z zapisami przebiegu, sprawami i korpusem. Telefon zespołu z kartą prepaid i SMS Gateway for Android jako bramka SMS",
         "purpose": "Demo na czas hackathonu (meritum.gburek.app)"
       },
       {
@@ -200,6 +200,13 @@
         "purpose": "Kanał Discord"
       },
       {
+        "id": "sms_gateway",
+        "name": "SMS Gateway for Android, sms-gate.app (tryb Cloud, przekaźnik wiadomości)",
+        "region": "api.sms-gate.app; dostawca nie podaje regionu przetwarzania, poza gwarancją EOG",
+        "data": "Numer telefonu, treść SMS-a i odpowiedź",
+        "purpose": "Kanał SMS"
+      },
+      {
         "id": "sign_in",
         "name": "Google i Microsoft (logowanie)",
         "region": "USA",
@@ -264,13 +271,6 @@
         "region": "GCP, region do sprawdzenia",
         "data": "Zamaskowane twierdzenia i fragmenty źródeł",
         "purpose": "Kolejność fragmentów przed modelem (reranking)"
-      },
-      {
-        "id": "sms_gateway",
-        "name": "Bramka SMS",
-        "region": "Do wyboru",
-        "data": "Numer telefonu, treść SMS-a i odpowiedź",
-        "purpose": "Kanał SMS, jeśli starczy czasu"
       }
     ]
   }

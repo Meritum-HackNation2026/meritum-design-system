@@ -27,7 +27,7 @@ Na slajd: *Sprawdź, zanim podasz dalej. Każde ustalenie ma źródło.*
 | Działanie end-to-end bez ręcznej ingerencji | Jedna ścieżka: przyjęcie, twierdzenia, wyszukiwanie, werdykt, odpowiedź, zapis przebiegu. Workflow DBOS, uruchamiany przez `docker compose` albo na publicznym demo. |
 | Brak sfabrykowanych źródeł | Cytat przechodzi tylko wtedy, gdy fragment występuje dosłownie w tekście źródła z korpusu. Inaczej odpada przed pokazaniem. |
 | Wstrzymanie się przy braku dowodów | Werdykt „brak wystarczających dowodów” z opisem, czego nie ustaliliśmy. Kontrakt odrzuca taki werdykt bez tego opisu. |
-| Dwa kanały | Formularz WWW (podstawowy) i bot na Discordzie na tym samym rdzeniu: ten sam wynik. Bot odpowiada na kanałach serwera i w wiadomościach prywatnych, przyjmuje też wiadomości głosowe, a przy pierwszym kontakcie mówi, że jest systemem AI. Odpowiedź dzieli: najpierw podsumowanie z linkiem do pełnej karty, potem po jednej wiadomości na twierdzenie, każda do 2000 znaków i bez przecinania cytatu. Jury dodaje go linkiem zaproszenia do własnego serwera albo testuje na makiecie Discorda, która woła to samo API, bez dołączania do serwera. Warunek dwóch kanałów nie zależy więc od decyzji mentorów w sprawie wtyczki. Przycisk „Sprawdź” we wtyczce Chrome i okienko do wklejenia w popupie to kanał dodatkowy, dla jury opcjonalny. Jeśli starczy czasu, dodamy SMS: adapter demonstracyjny przez webhook bramki SMS, z jawnymi opłatami operatora; w 70 znakach (UCS-2) wysyłamy werdykt głównego twierdzenia i link do pełnego wyniku. |
+| Dwa kanały | Formularz WWW (podstawowy) i bot na Discordzie na tym samym rdzeniu: ten sam wynik. Bot odpowiada na kanałach serwera i w wiadomościach prywatnych, przyjmuje też wiadomości głosowe, a przy pierwszym kontakcie mówi, że jest systemem AI. Odpowiedź dzieli: najpierw podsumowanie z linkiem do pełnej karty, potem po jednej wiadomości na twierdzenie, każda do 2000 znaków i bez przecinania cytatu. Jury dodaje go linkiem zaproszenia do własnego serwera albo testuje na makiecie Discorda, która woła to samo API, bez dołączania do serwera. Warunek dwóch kanałów nie zależy więc od decyzji mentorów w sprawie wtyczki. Przycisk „Sprawdź” we wtyczce Chrome i okienko do wklejenia w popupie to kanał dodatkowy, dla jury opcjonalny. Jeśli starczy czasu, dodamy SMS: adapter demonstracyjny przez webhook bramki SMS Gateway for Android (sms-gate.app, tryb Cloud), z jawnymi opłatami operatora; w 70 znakach (UCS-2) wysyłamy sam werdykt głównego twierdzenia, bez linku, bo operatorzy często je filtrują. |
 
 ### Minimalny zakres (MVP)
 
@@ -125,7 +125,7 @@ Co jest przetwarzane w UE, a co poza nią. Ten sam rejestr jest w ADR-14 dokumen
 | GitHub | USA | kod, zgłoszenia, logi CI, bez danych użytkowników | repozytoria i CI |
 | Jasnopis (jeśli przez API) | do sprawdzenia | próbka odpowiedzi z ewaluacji | ocena zrozumiałości |
 | Discord | USA | nazwa i identyfikator użytkownika, treść wiadomości, wiadomości głosowe i odpowiedź | kanał Discord |
-| Bramka SMS | do wyboru | numer telefonu, treść SMS-a i odpowiedź | kanał SMS, jeśli starczy czasu |
+| SMS Gateway for Android, sms-gate.app (tryb Cloud) | api.sms-gate.app; dostawca nie podaje regionu, poza gwarancją EOG | numer telefonu, treść SMS-a i odpowiedź | kanał SMS (US-WTY-07) |
 | Google i Microsoft (logowanie) | USA | identyfikator konta | opcjonalne logowanie, jeśli starczy czasu |
 
 ### Funkcje premiowane
