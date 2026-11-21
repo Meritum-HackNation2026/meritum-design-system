@@ -322,9 +322,20 @@
   },
   "discord": {
     "$comment": "Message content max 2000 characters (API limit for bots). First message: summary with a link; then one message per claim. Never split inside a citation.",
-    "summary": "Wynik sprawdzenia ({count} twierdzeń). Pełna karta: {link}",
+    "summary": "Wynik sprawdzenia: {claims}. Pełna karta: {link}",
+    "claims": {
+      "$comment": "{claims} in summary: pick the form with Intl.PluralRules('pl').select(count).",
+      "one": "{count} twierdzenie",
+      "few": "{count} twierdzenia",
+      "many": "{count} twierdzeń",
+      "other": "{count} twierdzenia"
+    },
+    "user_author": "Ty",
     "summary_line": "{verdict}: {claim}",
     "claim": "{verdict}: {claim}\n„{fragment}” ({publisher}, {date})\nSiła podstawy: {strength}",
+    "claim_undated": "{verdict}: {claim}\n„{fragment}” ({publisher}, data publikacji nieznana)\nSiła podstawy: {strength}",
+    "claim_no_strength": "{verdict}: {claim}\n„{fragment}” ({publisher}, {date})",
+    "claim_undated_no_strength": "{verdict}: {claim}\n„{fragment}” ({publisher}, data publikacji nieznana)",
     "claim_unsettled": "{verdict}: {claim}\n{unresolved}"
   },
   "notifications": {
