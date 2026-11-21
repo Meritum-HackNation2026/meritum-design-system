@@ -33,7 +33,7 @@
   "history": {
     "title": "Twoje sprawdzenia",
     "empty": "Tu pojawią się sprawdzenia z tej rozmowy.",
-    "session_note": "Historia jest zapisana tylko w tej karcie przeglądarki. Zniknie, gdy ją zamkniesz.",
+    "session_note": "Historia jest zapisana tylko w tej przeglądarce: w tej karcie i w kartach z niej otwartych.",
     "account_note": "Jesteś zalogowany, więc historię przechowujemy na naszym serwerze. Możesz ją usunąć w każdej chwili.",
     "delete": "Usuń moją historię"
   },
