@@ -1,11 +1,12 @@
 name: Copy
 
-# Checks copy/pl.json: the keys screens need and the tone of DESIGN_SYSTEM.md
-# section 8 (tests/test_copy.py, standard library only). Runs on the GCP runners.
+# Checks copy/pl.json: the keys screens need, a text for every contract code
+# (tests/test_contract_copy.py) and the tone of DESIGN_SYSTEM.md section 8
+# (tests/test_copy.py), standard library only. Runs on the GCP runners.
 on:
   push:
     branches: ["**"]
-    paths: ["copy/**", "docs/**", "tests/**", ".github/workflows/copy.yml"]
+    paths: ["copy/**", "contracts/**", "docs/**", "tests/**", ".github/workflows/copy.yml"]
 
 permissions:
   contents: read
