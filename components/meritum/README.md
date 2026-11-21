@@ -14,7 +14,7 @@ Components for the MSZ "Prawdowid" flow: a citizen pastes text or a link in the 
 | Component | Spec | Props |
 |---|---|---|
 | `CheckForm` | 6.1 | `onSubmit(CheckRequest)`, `pending`, `serverError` (an `errors` key), `retentionDays`, `onDeleteChecks`. Validates text (3 to 4000 characters) or a full http(s) link with `toRequest()`; keeps the text on an error. |
-| `CheckHistory` | 6.1 | `items: HistoryItem[]` (newest first), `account` (anonymous with `onSignIn`, or signed in with sign-out and delete actions), `onOpen(checkId)` |
+| `CheckHistory` | 6.1 | `items: HistoryItem[]` (newest first), `account` (anonymous with `onSignIn`, signed in with sign-out and delete actions, or `false`/left out for no sign-in block), `onOpen(checkId)` |
 | `CheckButton` | 6.2 | `state: "idle" \| "pending" \| "done"`, `onClick`. Takes the host's icon colour through `--host-icon`. |
 | `AnalysisSteps` | 6.3 | `steps: AnalysisStep[]` from `AnalysisStatus`, `draft` while citations are not verified yet |
 | `ResultCard` | 6.4 | `result: CheckResult`. One block per claim; non-verdict statuses get an icon and a sentence, never a badge. Conflicting sources are shown side by side with what differs. |
