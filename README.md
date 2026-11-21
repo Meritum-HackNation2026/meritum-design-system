@@ -19,6 +19,7 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 | `components/meritum/` | komponenty React (shadcn/ui) typowane kontraktami: formularz, historia, przycisk „Sprawdź”, pasek analizy, karta wyniku, kolejka moderatorów. Komponenty z poprzedniego zakresu (NASK, notatki) są w `components/legacy/` i nie należą do produktu dla MSZ |
 | `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia, powiadomienie. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
 | `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie obywatela i personelu, administracja kontami i tematami, link jury, przesyłanie nagrania, SMS, Discord, informacja o AI, prywatność kanałów, panel moderatora, powiadomienia, strona ewaluacji, błędy. Test `tests/test_copy.py` pilnuje wymaganych kluczy i tonu |
+| `copy/privacy.json` | polityki prywatności strony, Discorda, wtyczki i SMS oraz rejestr podmiotów przetwarzających (ADR-14), wspólne dla frontendu, bota i README. Test `tests/test_privacy.py` pilnuje sekcji polityk, rejestru i tonu |
 | `extension/` | zestaw wtyczki Chrome (kanał dodatkowy; drugim kanałem jest bot na Discordzie): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
 | `brand/` | logo (SVG, PNG, logotyp) |
 | `presentation/` | szablon PPTX, slajdy HTML, zrzuty demo, grafiki social |
@@ -42,7 +43,7 @@ Z tych kluczy w `copy/pl.json` korzystają zgłoszenia frontendu:
 | `jury.*` (wejście z jednorazowego linku jury) | [meritum-frontend#27](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/27), frontend/011 |
 | `form.audio_*`, `errors.audio_*` (przesyłanie nagrania; nieobsługiwany format to istniejący `status_hint.out_of_scope_audio_format`) | [meritum-frontend#22](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/22), frontend/007 |
 
-Test kluczy i tonu (sekcja 8 w DESIGN_SYSTEM.md) uruchamia CI (`.github/workflows/copy.yml`), a lokalnie:
+Testy kluczy, polityk prywatności i tonu (sekcja 8 w DESIGN_SYSTEM.md) uruchamia CI (`.github/workflows/copy.yml`), a lokalnie:
 
 ```bash
 python3 -m unittest discover -s tests
