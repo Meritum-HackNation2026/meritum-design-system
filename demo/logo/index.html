@@ -1,0 +1,85 @@
+<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meritum: znak</title>
+<link rel="stylesheet" href="../meritum.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:15px/1.5 var(--m-brand);color:var(--m-ink);background:var(--m-sunk);padding:40px 32px 80px}
+::selection{background:var(--m-sea-t)}
+:focus-visible{outline:2px solid var(--m-sea);outline-offset:2px}
+.wrap{max-width:1240px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between;margin-bottom:26px}
+h1{font-size:30px;line-height:1.15;font-weight:750;font-stretch:112%;letter-spacing:-.015em}
+header p{color:var(--m-ink2);max-width:64ch;margin-top:6px}
+nav.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+nav.top a{font-size:13.5px;color:var(--m-sea);text-underline-offset:3px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(370px,1fr));gap:20px}
+.card{background:var(--m-card);border:1px solid var(--m-line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .2s,box-shadow .2s}
+.card:has(.pick input:checked){border-color:var(--m-ink);box-shadow:0 0 0 1px var(--m-ink)}
+.stage{display:grid;grid-template-columns:1fr 1fr}
+.stage div{height:168px;display:grid;place-items:center}
+/* the two stage halves stay fixed light/dark whatever the page theme */
+.stage .lt{background:#fff;color:#14191E;--m-sea:#1D6A86}
+.stage .dk{background:#0B0F12;color:#E7ECEE;--m-sea:#5DB3CF}
+.stage svg{width:96px;height:96px;transition:transform .5s var(--m-e)}
+.card:hover .stage svg{transform:scale(1.05)}
+.body{padding:16px 18px 18px;display:grid;gap:12px;flex:1}
+.name{display:flex;flex-wrap:wrap;align-items:baseline;column-gap:10px}
+.name b{font-size:19px;font-weight:700;font-stretch:110%}
+.name span{font-size:13px;color:var(--m-ink2)}
+.rec{font:650 12px/1 var(--m-brand);color:var(--m-ok);background:var(--m-sea-t);padding:5px 9px;border-radius:999px;align-self:center}
+.idea{font-size:14.5px;line-height:21px}
+.risk{font-size:13px;color:var(--m-ink2)}
+.sizes{display:flex;align-items:center;gap:18px;padding:10px 12px;background:var(--m-sunk);border-radius:10px}
+.sizes .m-t{display:grid;place-items:center;cursor:help}
+.sizes small{font-size:12px;color:var(--m-ink2);margin-left:auto}
+.lock{display:flex;align-items:center;gap:12px}
+.lock svg{width:40px;height:40px;flex:none}
+.wm{font-size:28px;line-height:1;font-weight:650;font-stretch:112%;letter-spacing:-.02em}
+.sub{display:block;font-size:12.5px;color:var(--m-ink2);margin-top:6px}
+.inw .m-card{margin-top:0}
+.inw .m-top svg{width:16px;height:16px}
+.inw p{font-size:14px;padding-bottom:12px}
+.pick{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;cursor:pointer;border-top:1px solid var(--m-line2);padding-top:12px}
+.pick input{accent-color:var(--m-ink);width:16px;height:16px}
+.res{margin-top:26px;font-size:15px}
+.note{margin-top:10px;font-size:13px;color:var(--m-ink2);max-width:110ch}
+</style></head><body>
+<script src="../marks.js"></script>
+<div class="wrap">
+ <header>
+  <div><h1>Meritum: wybierz znak</h1>
+   <p>Osiem znaków po wygładzeniu: jedna grubość kreski, zaokrąglone końce, krzywe rysowane jak w kroju pisma. Każdy jasno i ciemno, w rzeczywistych rozmiarach 48, 32 i 16 px, w logotypie i w nagłówku widżetu.</p></div>
+  <nav class="top" aria-label="Strony demo"><a href="../widgets/">Widżety i stany</a><a href="../x/">Demo na X</a><button class="m-btn" id="theme" aria-pressed="false">Tryb ciemny</button></nav>
+ </header>
+ <main class="grid" id="grid"></main>
+ <p class="res" id="res" aria-live="polite">Kliknij „Wybieram”, a potem napisz w czacie literę znaku.</p>
+ <p class="note">Wyszukiwanie z 21.11.2026: nie znaleźliśmy aplikacji do walki z dezinformacją ani scamem o nazwie Meritum. To częsta nazwa polskich firm (księgowość, handel, galwanizacja), a marka Meritum Bank zniknęła w 2015 r. po połączeniu z Alior Bankiem. Znaku towarowego w UPRP i EUIPO jeszcze nie sprawdzaliśmy.</p>
+</div>
+<script>
+const INFO={
+ A:['radarowy pierścień przerwany przez punkt','Pierścień radaru, z którego wybija się jeden punkt: znaleziona rzecz, sedno sprawy.','Kółko z kropką bywa ikoną lokalizacji; pomaga to, że punkt leży na pierścieniu, a nie w środku.'],
+ B:['małe „m” z dwóch perspektyw','Dwa łuki „m” to dwie strony sporu ze wspólnym trzonem w kolorze akcentu. Kropka nad trzonem to punkt zgody.','Wymaga jednego zdania wyjaśnienia na slajdzie.'],
+ C:['sygnał nad literą „i”','„Postawić kropkę nad i”: kropka nadaje sygnał radaru. Znak wycięty z własnego logotypu.','Łuki sygnału kojarzą się z Wi-Fi i RSS.'],
+ D:['„M” jak zapis sygnału','Dwa szczyty sygnału spotykają się w jednym punkcie: dwa źródła, jeden wniosek.','Zygzak w kształcie M jest częsty w logo firm finansowych.'],
+ E:['jedno zgłoszenie łączy kampanię','Rozproszone punkty prowadzą do jednego: pojedynczy fejk jest częścią kampanii.','W 16 px zostaje głównie kropka; bywa czytany jak cząsteczka.'],
+ F:['polski „ jako znak kontekstu','Dolny polski cudzysłów: dokładamy cytat i źródło. Drugi znak to głos drugiej strony.','Bez podpisu może kojarzyć się z marką medialną.'],
+ G:['punkt w nawiasie','Dwa łuki nawiasu obejmują sedno: kontekst i dwie perspektywy w symetrii.','Układ (•) przypomina ikonę „na żywo” i podcastów.'],
+ H:['punkt ujęty w ramę','Cztery narożniki ujmują punkt: kontekst, nie wyrok.','Przypomina wizjer aparatu i ikony skanowania; najmniej unikalny.'],
+};
+const use=(id,z)=>`<svg ${z?`width="${z}" height="${z}"`:''} aria-hidden="true"><use href="#${id}"/></svg>`;
+document.getElementById('grid').innerHTML=MERITUM_MARKS.map(([k,n,id])=>{const [s,w,r]=INFO[k];return `<article class="card">
+ <div class="stage"><div class="lt">${use(id)}</div><div class="dk">${use(id)}</div></div>
+ <div class="body"><div class="name"><b>${k}. ${n}</b><span>${s}</span>${k==='B'?'<span class="rec">rekomendowany</span>':''}</div>
+ <p class="idea">${w}</p><p class="risk">Ryzyko: ${r}</p>
+ <div class="sizes">${[48,32,16].map(z=>`<span class="m-t" tabindex="0">${use(id,z)}<span class="m-tip">${z} px: ${z===16?'karta przeglądarki i nagłówek widżetu':z===32?'pasek narzędzi':'strona rozszerzeń'}</span></span>`).join('')}<small>rzeczywiste rozmiary</small></div>
+ <div class="lock">${use(id)}<div><div class="wm">meritum</div><span class="sub">obywatelski radar dezinformacji oraz scamu</span></div></div>
+ <div class="inw"><div class="m-card"><div class="m-top">${use(id)}Meritum<span class="why">Dlaczego to widzę?</span></div><div class="m-ttl"><b>Kontekst od społeczności</b><span class="m-badge ok">Zweryfikowany</span></div><p>Tak wygląda znak w nagłówku widżetu pod postem.</p></div></div>
+ <label class="pick"><input type="radio" name="logo" value="${k}">Wybieram ${k}. ${n}</label></div></article>`}).join('');
+const res=document.getElementById('res');
+const sel=k=>{const m=MERITUM_MARKS.find(x=>x[0]===k);if(m)res.innerHTML=`Wybrany: <b>${m[0]}. ${m[1]}</b>. Napisz w czacie „znak ${m[0]}”.`};
+document.getElementById('grid').addEventListener('change',e=>{if(e.target.name==='logo'){sel(e.target.value);try{localStorage.setItem('meritum-logo',e.target.value)}catch(_){}}});
+try{const v=localStorage.getItem('meritum-logo');const i=v&&document.querySelector(`input[value="${v}"]`);if(i){i.checked=true;sel(v)}}catch(_){}
+const t=document.getElementById('theme');
+t.addEventListener('click',()=>{const d=document.documentElement.dataset.theme!=='dark';document.documentElement.dataset.theme=d?'dark':'light';t.setAttribute('aria-pressed',d);t.textContent=d?'Tryb jasny':'Tryb ciemny'});
+</script>
+</body></html>

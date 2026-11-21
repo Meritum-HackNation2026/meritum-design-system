@@ -1,0 +1,238 @@
+{
+ "title": "Meritum: wybierz świat wizualny",
+ "question": "Meritum — obywatelski radar dezinformacji oraz scamu. Los przydzielił „Biuletyn synoptyczny”. Każdy szkic pokazuje oba konkursy na jednym ekranie: ostrzeżenie o fałszywej reklamie z celebrytą (NASK), zwiniętą notatkę kontekstu (MSZ), zgłoszenie z przełącznikiem Manipulacja/Oszustwo i panel kampanii z rotacją domen oraz odpartym atakiem botów. Rozwiń szkic, aby zobaczyć tooltipy i animacje.",
+ "options": [
+  {
+   "id": "assigned",
+   "kind": "assigned",
+   "label": "Biuletyn synoptyczny",
+   "kicker": "THE ROLL",
+   "lineage": "mapy synoptyczne i ostrzeżenia meteo, taśma barografu",
+   "thesis": "Klimat informacyjny jak pogoda: kampanie oszustów i ataki botów nadciągają jak fronty, a my pokazujemy je na mapie.",
+   "palette": [
+    "#F6F7F5",
+    "#14191E",
+    "#1D6A86",
+    "#B7791F",
+    "#D0263B",
+    "#5C6873"
+   ],
+   "materials": [
+    "papier mapy synoptycznej",
+    "ślad pióra barografu"
+   ],
+   "viewport": "Reklama z celebrytą z ostrzeżeniem i dowodem; panel kampanii z rotacją domen i przewidzianą domeną, która zapala się na żywo.",
+   "risk": "Metafora pogody spłaszcza się, jeśli symbol frontu wyjdzie poza panel. Plus: „radar” z podtytułu pasuje tu najdosłowniej.",
+   "raised": [
+    {
+     "from": "challenger-labanotation",
+     "raise": "Symetria jako prawo: dwie perspektywy zawsze lustrzanie wokół osi konsensusu."
+    },
+    {
+     "from": "challenger-ticket",
+     "raise": "Nic nie znika, tylko jest unieważniane: odrzucone głosy botów zostają widoczne jako przekreślone."
+    },
+    {
+     "from": "challenger-feed",
+     "raise": "Karta nigdy nie zasłania posta; wszystkie akcje w jednym rzędzie na dole."
+    }
+   ],
+   "html": ".impeccable/mocks/decision/assigned.html"
+  },
+  {
+   "id": "model-pick",
+   "kind": "pick",
+   "label": "Korekta",
+   "kicker": "IMPECCABLE’S PICK",
+   "lineage": "szczotka korektorska w redakcji, znaki na marginesie",
+   "thesis": "Notatka jest znakiem korektorskim: wstawiona w cudzy tekst, nigdy go nie przepisuje.",
+   "palette": [
+    "#FCFCFB",
+    "#121417",
+    "#234B9A",
+    "#8A6A1F",
+    "#C42B1C"
+   ],
+   "materials": [
+    "znak wstawienia ‸",
+    "przypisy źródłowe"
+   ],
+   "viewport": "Karta wpięta pod post znakiem wstawienia; źródła jak przypisy; telemetria jako kolumna korekty z przekreśleniami.",
+   "risk": "Najbliżej miejsca, gdzie ląduje większość projektów „editorial” – ryzyko znajomości.",
+   "html": ".impeccable/mocks/decision/model-pick.html"
+  },
+  {
+   "id": "challenger-rail",
+   "kind": "challenger",
+   "catalogId": "rw-centre-rail-reference-setting",
+   "label": "Oś środkowa",
+   "verdict": "competitive",
+   "lineage": "wydania z kolumnami bliźniaczymi wokół osi kluczy",
+   "thesis": "Dwie perspektywy w dwóch kolumnach, konsensus na wspólnej osi pośrodku.",
+   "palette": [
+    "#F3F3F0",
+    "#17160F",
+    "#B8321E",
+    "#6B6A63"
+   ],
+   "materials": [
+    "linie 1 px",
+    "klucze na osi"
+   ],
+   "viewport": "Karta z dwiema wąskimi kolumnami ocen i osią konsensusu; dashboard to ta sama oś w czasie.",
+   "case": "Najczytelniej pokazuje mechanizm bridging; przegrywa w feedzie, gdzie dwie kolumny są za ciasne.",
+   "risk": "Hairline'y i cynober to estetyka, którą AI daje każdemu „editorial”.",
+   "html": ".impeccable/mocks/decision/challenger-rail.html",
+   "hero": "https://impeccable.style/worlds/cards/rw-centre-rail-reference-setting-hero.webp",
+   "board": "https://impeccable.style/worlds/cards/rw-centre-rail-reference-setting.webp"
+  },
+  {
+   "id": "challenger-console",
+   "kind": "challenger",
+   "catalogId": "digital-design-canon-dark-first-developer-console",
+   "label": "Konsola grafitowa",
+   "verdict": "competitive",
+   "lineage": "konsole deweloperskie w stylu Linear/Vercel",
+   "thesis": "Narzędzie analityka: grafit, panele rozdzielone szwem, kolor wyłącznie dla stanu.",
+   "palette": [
+    "#0F1113",
+    "#17191C",
+    "#ECEDEE",
+    "#4FB6C9",
+    "#E3B341",
+    "#FF5C5C"
+   ],
+   "materials": [
+    "szwy 1 px",
+    "cyfry tabelaryczne"
+   ],
+   "viewport": "Grafitowy dashboard z panelami; karta we wtyczce jako ciemny panel niezależnie od motywu.",
+   "case": "Jury rozpozna język Linear/Vercel; w jasnym feedzie FB karta wygląda obco.",
+   "risk": "Blisko zakazanego klimatu „cyber”; jasny tryb jest dopisany, nie natywny.",
+   "html": ".impeccable/mocks/decision/challenger-console.html",
+   "hero": "https://impeccable.style/worlds/cards/digital-design-canon-dark-first-developer-console-hero.webp",
+   "board": "https://impeccable.style/worlds/cards/digital-design-canon-dark-first-developer-console.webp"
+  },
+  {
+   "id": "challenger-labanotation",
+   "kind": "challenger",
+   "catalogId": "notation-diagram-systems-labanotation",
+   "label": "Partytura Labana",
+   "verdict": "declined",
+   "lineage": "zapis tańca na pionowej osi",
+   "thesis": "Czas płynie w górę, lewa i prawa strona lustrzane wokół osi.",
+   "palette": [
+    "#FFFFFF",
+    "#111111",
+    "#D9D9D9"
+   ],
+   "materials": [
+    "kreskowanie",
+    "bloki symboli"
+   ],
+   "viewport": "Telemetria jako pionowa partytura głosów.",
+   "case": "Nikt z odbiorców nie czyta zapisu tańca; mechanizm staje się zagadką.",
+   "risk": "Nieczytelne bez legendy.",
+   "kept": "Symetria wokół osi jako prawo układu perspektyw.",
+   "hero": "https://impeccable.style/worlds/cards/notation-diagram-systems-labanotation-hero.webp"
+  },
+  {
+   "id": "challenger-feed",
+   "kind": "challenger",
+   "catalogId": "pop-culture-shelf-vertical-video-feed-surface",
+   "label": "Pionowy feed wideo",
+   "verdict": "declined",
+   "lineage": "TikTok/Reels",
+   "thesis": "Jeden element zajmuje cały ekran, akcje w prawej szynie.",
+   "palette": [
+    "#000000",
+    "#FFFFFF"
+   ],
+   "materials": [
+    "scrim",
+    "glify"
+   ],
+   "viewport": "Karta jako nakładka na wideo.",
+   "case": "To język samej platformy, nie niezależnej warstwy weryfikacji.",
+   "risk": "Zlewa się z hostem.",
+   "kept": "Nigdy nie zasłaniaj treści; akcje zebrane w jednym miejscu.",
+   "hero": "https://impeccable.style/worlds/cards/pop-culture-shelf-vertical-video-feed-surface-hero.webp"
+  },
+  {
+   "id": "challenger-ticket",
+   "kind": "challenger",
+   "catalogId": "vernacular-ephemera-jet-age-ticket-wallet",
+   "label": "Bilet lotniczy",
+   "verdict": "declined",
+   "lineage": "kupony z kalką, stempel VOID",
+   "thesis": "Stany stemplują się na kuponie; nic nie znika.",
+   "palette": [
+    "#FFFFFF",
+    "#1B2A52",
+    "#C8102E",
+    "#5B3A8C"
+   ],
+   "materials": [
+    "kalka",
+    "stempel"
+   ],
+   "viewport": "Notatka jako kupon z etapami.",
+   "case": "Granat z czerwienią czyta się urzędowo – wprost zakazane w briefie.",
+   "risk": "Styl „urzędowy”.",
+   "kept": "Unieważniaj zamiast usuwać: odrzucony głos zostaje widoczny.",
+   "hero": "https://impeccable.style/worlds/cards/vernacular-ephemera-jet-age-ticket-wallet-hero.webp"
+  },
+  {
+   "id": "challenger-specimen",
+   "kind": "challenger",
+   "catalogId": "variable-font-specimen",
+   "label": "Specimen fontu",
+   "verdict": "declined",
+   "lineage": "interaktywne specimeny odlewni",
+   "thesis": "Hierarchia wyłącznie skalą litery.",
+   "palette": [
+    "#FAFAF8",
+    "#111111",
+    "#FF4F00"
+   ],
+   "materials": [
+    "oś wagi",
+    "siatka glifów"
+   ],
+   "viewport": "Ogromna litera i suwak osi.",
+   "case": "Nie ma związku z dezinformacją ani konsensusem.",
+   "risk": "Ozdobnik bez funkcji.",
+   "kept": "Skala zamiast ozdobników jako narzędzie hierarchii.",
+   "hero": "https://impeccable.style/worlds/cards/variable-font-specimen-hero.webp"
+  }
+ ],
+ "reroll": {
+  "registers": [
+   "safer",
+   "bolder"
+  ]
+ },
+ "buildPath": {
+  "value": "code"
+ },
+ "canon": true,
+ "canonCard": {
+  "kind": "canon",
+  "label": "Standard kategorii",
+  "thesis": "To, co wysyła ta kategoria, wykonane bez zarzutu: shadcn, Inter, niebieski akcent.",
+  "palette": [
+   "#FFFFFF",
+   "#0A0A0A",
+   "#2563EB",
+   "#F4F4F5"
+  ],
+  "materials": [
+   "domyślny shadcn/ui",
+   "karty KPI"
+  ],
+  "viewport": "Karta shadcn z niebieskim akcentem pod postem; dashboard z kartami KPI i wykresem liniowym.",
+  "risk": "Celowo nieodróżnialny od konkurencji.",
+  "html": ".impeccable/mocks/decision/canon.html"
+ },
+ "steer": true
+}

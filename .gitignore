@@ -1,0 +1,7 @@
+.DS_Store
+# Impeccable runtime: screenshots and caches (regenerable)
+.impeccable/review/
+.impeccable/questions/
+.impeccable/live/
+.taste-skill/
+node_modules/

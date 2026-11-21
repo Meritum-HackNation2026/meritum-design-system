@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "demo/x/index.html"
+        ],
+        "createdAt": "2026-11-21T08:05:50.168Z",
+        "reason": "Claude: flagged element is the host X tab bar mock, copied from measured x.com layout (53px tabs, flush underline)"
+      }
+    ]
+  }
+}

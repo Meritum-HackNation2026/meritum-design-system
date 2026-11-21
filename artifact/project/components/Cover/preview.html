@@ -1,0 +1,25 @@
+<!-- @dsCard height=288 -->
+<div class="cv"><style>
+.cv{position:relative;width:960px;height:288px;background:var(--background);overflow:hidden;font-family:var(--font-sans)}
+.cv svg{position:absolute;inset:0}
+.cv .sea{fill:var(--verified)}.cv .ink{fill:var(--foreground)}.cv .tint{fill:var(--verified-surface)}.cv .red{fill:var(--scam)}
+.cv .arch{fill:none;stroke:var(--card);stroke-width:14;stroke-linecap:round;stroke-linejoin:round}.cv .dot{fill:var(--card)}
+.cv .txt{position:absolute;left:40px;bottom:36px;max-width:440px}
+.cv h1{margin:0;font-size:100px;line-height:.92;font-weight:700;letter-spacing:-.03em;color:var(--foreground)}
+.cv p{margin:14px 0 0;font-size:14px;color:var(--muted-foreground)}
+</style>
+<svg viewBox="0 0 960 288" width="960" height="288" aria-hidden="true">
+<!-- blocks: verified 232x288 slab, foreground 128x176, verified-surface 96x192, scam 64x48 (state colour, kept small)
+     arrangement: one tall slab bleeding top and bottom with satellites stepped on the 4px/12px grid
+     pattern: literal motif, the logo's two arches (two sides sharing one stem) cut out of the slab in the card colour,
+     because the mark's mechanism, agreement across a divide, is the most specific shape this system has
+     steps and radii: 12px radius-lg on satellites, stroke 14 = round caps of the 4px mark scaled 3.5x -->
+<rect class="tint" x="500" y="96" width="96" height="192" rx="12"/>
+<rect class="sea" x="608" y="-12" width="232" height="312"/>
+<rect class="ink" x="852" y="-12" width="120" height="188" rx="12"/>
+<rect class="red" x="852" y="188" width="64" height="48" rx="12"/>
+<path class="arch" d="M652 300V196c0-29 15-46 34-46s34 17 34 46v104M720 196c0-29 15-46 34-46s34 17 34 46v104"/>
+<circle class="dot" cx="720" cy="104" r="15"/>
+</svg>
+<div class="txt"><h1>Meritum</h1><p>obywatelski radar dezinformacji oraz scamu</p></div>
+</div>
