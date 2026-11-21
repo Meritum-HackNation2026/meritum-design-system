@@ -16,8 +16,8 @@ export function StrengthMeter({
   className,
 }: {
   strength: EvidenceStrength
-  claimDate?: ClaimDate
-  claimDateSource?: ClaimDateSource
+  claimDate?: ClaimDate | undefined
+  claimDateSource?: ClaimDateSource | undefined
   className?: string
 }) {
   const { level, premises: p } = strength
