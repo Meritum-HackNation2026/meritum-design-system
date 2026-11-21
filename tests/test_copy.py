@@ -85,6 +85,8 @@ REQUIRED_KEYS = (
     "discord.claims.few",
     "discord.claims.many",
     "discord.claims.other",
+    # daily recording upload limit, apart from the per-minute one (design-system#43)
+    "errors.rate_limited_daily",
 )
 
 
@@ -141,6 +143,11 @@ class Tone(unittest.TestCase):
                 self.assertIn("{contact}", text)
                 for term in TECHNICAL_TERMS:
                     self.assertNotIn(term, text.lower())
+
+    def test_daily_limit_text_does_not_promise_a_minute(self) -> None:
+        # Gherkin "komunikat pasuje do przekroczonego limitu" from design-system#43
+        self.assertIn("minut", str(lookup("errors.rate_limited")))
+        self.assertNotIn("minut", str(lookup("errors.rate_limited_daily")))
 
     def test_popup_api_state_has_server_placeholder_and_no_jargon(self) -> None:
         # Gherkin from design-system#16; {api} is the API address or version
