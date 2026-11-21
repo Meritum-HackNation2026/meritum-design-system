@@ -16,7 +16,7 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 | Ścieżka | Co |
 |---|---|
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
-| `components/meritum/` | komponenty React (shadcn/ui): karta wyniku (`ContextCard`), pasek postępu sprawdzenia (`AnalysisSteps`), znak. Z poprzedniego zakresu (NASK, konsensus) zostały `QuickReportPopover`, `BotDefenseTelemetry` i `CampaignRotation`: nie są częścią produktu dla MSZ |
+| `components/meritum/` | komponenty React (shadcn/ui) typowane kontraktami: formularz, historia, przycisk „Sprawdź”, pasek analizy, karta wyniku, kolejka moderatorów. Komponenty z poprzedniego zakresu (NASK, notatki) są w `components/legacy/` i nie należą do produktu dla MSZ |
 | `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
 | `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie, SMS, prywatność kanałów, panel moderatora, błędy |
 | `extension/` | zestaw wtyczki Chrome (kanał dodatkowy; drugim kanałem jest bot na Discordzie): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
@@ -24,11 +24,11 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 | `presentation/` | szablon PPTX, slajdy HTML, zrzuty demo, grafiki social |
 | `demo/live/` | makiety platform z przepływem Meritum na pokaz |
 | `demo/platforms/` | czyste makiety platform + `SELECTORS.md` dla wtyczki |
-| `demo/x/`, `demo/widgets/`, `demo/logo/` | demo na X, widżety i ich stany, warianty logo |
+| `demo/widgets/`, `demo/logo/` | karta wyniku w skórkach platform, warianty logo |
 | `docs/` | dokument produktowy: historie użytkowników, funkcje, ADR |
 | `artifact/` | pliki opublikowanego Design System artifactu |
 
-Makiety, wtyczka i część komponentów pokazują jeszcze poprzedni przepływ („Zgłoś”, notatka społeczności, ostrzeżenie o fałszywej reklamie). Docelowy kształt danych opisują `contracts/` i `copy/pl.json`.
+Komponenty, wtyczka i makiety pokazują przepływ „Sprawdź” z kontraktów (`contracts/`) i tekstami z `copy/pl.json`. Wtyczka i makiety wołają jeszcze atrapę API (`extension/reference/api.js`). Slajdy i grafiki w `presentation/` pokazują jeszcze produkt sprzed zmiany zakresu.
 
 ## Podgląd online
 
@@ -40,7 +40,7 @@ https://meritum-demo.pages.dev, za Cloudflare Access: logowanie jednorazowym kod
 python3 -m http.server 52990 --bind 127.0.0.1
 ```
 
-Potem otwórz http://localhost:52990/demo/live/ (makiety na pokaz) albo http://localhost:52990/demo/x/. Skróty: R reset, T motyw, Esc zamyka okno.
+Potem otwórz http://localhost:52990/demo/live/ (makiety na pokaz) albo http://localhost:52990/demo/widgets/. Skróty na makietach: R reset, T motyw.
 
 Wdrożone makiety platform (te same strony co `demo/platforms/`, z repo [meritum-mocks](https://github.com/Meritum-HackNation2026/meritum-mocks)) są pod https://meritum-x.gburek.app, https://meritum-facebook.gburek.app, https://meritum-instagram.gburek.app, https://meritum-reddit.gburek.app i https://meritum-tiktok.gburek.app; wersje dev mają sufiks `-dev`.
 

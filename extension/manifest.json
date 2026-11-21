@@ -26,13 +26,13 @@
         "https://*.gburek.app/*",
         "http://localhost:52990/*"
       ],
-      "js": ["reference/api.js", "reference/content.js"],
+      "js": ["reference/api.js", "reference/card.js", "reference/content.js"],
       "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["widget.css"],
+      "resources": ["widget.css", "pl.json"],
       "matches": [
         "https://x.com/*", "https://*.x.com/*", "https://twitter.com/*", "https://*.twitter.com/*",
         "https://*.facebook.com/*", "https://*.instagram.com/*", "https://*.reddit.com/*", "https://*.tiktok.com/*",

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Meritum contracts",
-  "x-contract-version": 1,
+  "x-contract-version": 2,
   "$defs": {
     "CheckRequest": {
       "additionalProperties": false,
@@ -91,6 +91,18 @@
           "title": "Stance",
           "type": "string"
         },
+        "validity": {
+          "default": "expires",
+          "description": "Age rule for this piece of evidence: the catalogue entry's validity, or past_event set per evidence.",
+          "enum": [
+            "expires",
+            "in_force",
+            "updated_in_place",
+            "past_event"
+          ],
+          "title": "Validity",
+          "type": "string"
+        },
         "fragment_found_verbatim": {
           "const": true,
           "default": true,
@@ -115,6 +127,37 @@
           "minLength": 5,
           "title": "Claim",
           "type": "string"
+        },
+        "claim_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The date the claim refers to; evidence age is measured against it.",
+          "title": "Claim Date"
+        },
+        "claim_date_source": {
+          "anyOf": [
+            {
+              "enum": [
+                "text",
+                "input_published_at",
+                "today"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Claim Date Source"
         },
         "verdict": {
           "enum": [
@@ -216,7 +259,7 @@
     },
     "Escalation": {
       "additionalProperties": false,
-      "description": "Hand-off to the moderator queue. 'recommended' means nobody was notified yet.",
+      "description": "Hand-off to the moderator queue. 'recommended' means nobody was notified yet.\n\nComputed on every request, cache hits included: the result cache never stores it.",
       "properties": {
         "state": {
           "enum": [
@@ -273,12 +316,21 @@
     },
     "IncidentMatch": {
       "additionalProperties": false,
-      "description": "Similarity to a known incident. Context only: never a basis for the verdict by itself.",
+      "description": "Similarity to a known incident. Context only: never a basis for the verdict by itself, and never changes it.\n\n`domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists,\nand the incident's topic matches the claim.",
       "properties": {
         "incident_id": {
           "maxLength": 80,
           "minLength": 1,
           "title": "Incident Id",
+          "type": "string"
+        },
+        "matched_on": {
+          "default": "content",
+          "enum": [
+            "content",
+            "domain"
+          ],
+          "title": "Matched On",
           "type": "string"
         },
         "title": {
@@ -320,16 +372,30 @@
       "description": "Explicit premises behind a verdict (MSZ: strength must follow from quality, recency, agreement, independence).",
       "properties": {
         "independent_sources": {
-          "description": "Distinct publishers (institutions) among the citations.",
+          "description": "Distinct publishers (publisher_id) among the citations whose stance agrees with the verdict.",
           "minimum": 0,
           "title": "Independent Sources",
           "type": "integer"
         },
         "primary_sources": {
-          "description": "Distinct primary-tier publishers among the citations.",
+          "description": "Distinct primary-tier publishers among the agreeing citations.",
           "minimum": 0,
           "title": "Primary Sources",
           "type": "integer"
+        },
+        "newest_source_published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Publication date of the newest agreeing source, shown as a date.",
+          "title": "Newest Source Published At"
         },
         "newest_source_age_hours": {
           "anyOf": [
@@ -342,7 +408,7 @@
             }
           ],
           "default": null,
-          "description": "Hours between the newest source and the date the claim refers to, not now.",
+          "description": "Hours from the newest agreeing source to the claim date (ClaimResult.claim_date), not to now; 0 when the source is newer.",
           "title": "Newest Source Age Hours"
         },
         "max_age_hours": {
@@ -402,6 +468,12 @@
           "title": "Publisher",
           "type": "string"
         },
+        "publisher_id": {
+          "description": "Publisher id from the catalogue; independence is counted on it.",
+          "pattern": "^[a-z0-9][a-z0-9-]{1,79}$",
+          "title": "Publisher Id",
+          "type": "string"
+        },
         "url": {
           "format": "uri",
           "maxLength": 2083,
@@ -421,8 +493,7 @@
             "dane_publiczne",
             "instytucja",
             "fact_check",
-            "media",
-            "encyklopedia"
+            "media"
           ],
           "title": "Kind",
           "type": "string"
@@ -474,6 +545,7 @@
         "id",
         "title",
         "publisher",
+        "publisher_id",
         "url",
         "domain",
         "kind",
@@ -485,13 +557,10 @@
     },
     "SourceStatusWarning": {
       "additionalProperties": false,
-      "description": "Neutral note about who published the checked content (e.g. an EU-sanctioned entity). Never a verdict.",
+      "description": "Neutral note that the checked content comes from an entity on the official EU sanctions list. Never a verdict.",
       "properties": {
         "code": {
-          "enum": [
-            "eu_sanctioned_entity",
-            "state_controlled_media"
-          ],
+          "const": "eu_sanctioned_entity",
           "title": "Code",
           "type": "string"
         },
@@ -518,7 +587,7 @@
     },
     "CheckResult": {
       "additionalProperties": false,
-      "description": "The answer every channel renders. Same request, same corpus version: same result on every channel.",
+      "description": "The answer every channel renders. The same normalised input within the result cache's lifetime gets the same substantive result on every channel.",
       "properties": {
         "check_id": {
           "maxLength": 40,
@@ -611,6 +680,95 @@
       "title": "CheckResult",
       "type": "object"
     },
+    "CachedResult": {
+      "additionalProperties": false,
+      "description": "What the result cache keeps: only the substantive part of a CheckResult.\n\nThe key is the normalised input. The entry lives a fixed time, whatever snapshots appear meanwhile.\nEscalation and the repeat counter are not here: they are computed on every request.\nA technical failure is never cached.",
+      "properties": {
+        "status": {
+          "enum": [
+            "done",
+            "needs_clarification",
+            "out_of_scope"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "claims": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClaimResult"
+          },
+          "title": "Claims",
+          "type": "array"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "maxLength": 400,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Message"
+        },
+        "limitations": {
+          "default": [],
+          "items": {
+            "maxLength": 300,
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "source_warning": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceStatusWarning"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "corpus_version": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Corpus Version",
+          "type": "string"
+        },
+        "source_ids": {
+          "default": [],
+          "description": "Ids of the sources cited in the claims.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "cached_at": {
+          "format": "date-time",
+          "title": "Cached At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "corpus_version",
+        "cached_at",
+        "expires_at"
+      ],
+      "title": "CachedResult",
+      "type": "object"
+    },
     "AnalysisStep": {
       "additionalProperties": false,
       "description": "One step of the processing strip shown between „Sprawdź” and the result.",
@@ -618,9 +776,12 @@
         "code": {
           "enum": [
             "receive",
+            "fetch_url",
+            "screen_injection",
             "extract_claims",
             "search_corpus",
             "search_web",
+            "search_fact_checks",
             "assess_evidence",
             "verify_citations",
             "write_answer",
@@ -685,7 +846,7 @@
     },
     "InjectionEvent": {
       "additionalProperties": false,
-      "description": "Instructions found in the input or a source. Logged and ignored.",
+      "description": "Instructions found in the input or a source. Logged and never executed.\n\nIn user content the instruction is cut out and the rest is analysed as data; a catalogue source\nwith an instruction drops out of the evidence.",
       "properties": {
         "location": {
           "enum": [
@@ -693,6 +854,14 @@
             "source"
           ],
           "title": "Location",
+          "type": "string"
+        },
+        "action": {
+          "enum": [
+            "instruction_removed",
+            "source_dropped"
+          ],
+          "title": "Action",
           "type": "string"
         },
         "source_url": {
@@ -718,6 +887,7 @@
       },
       "required": [
         "location",
+        "action",
         "excerpt"
       ],
       "title": "InjectionEvent",
@@ -811,6 +981,20 @@
           "title": "Channel",
           "type": "string"
         },
+        "channel_user_hash": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Discord and SMS only: salted SHA-256 of the user id or phone number, used to reply and count repeats; never shown to moderators.",
+          "title": "Channel User Hash"
+        },
         "received_at": {
           "format": "date-time",
           "title": "Received At",
@@ -903,6 +1087,12 @@
           ],
           "default": null
         },
+        "cache_hit": {
+          "default": false,
+          "description": "Substantive part served from the result cache; escalation was still computed.",
+          "title": "Cache Hit",
+          "type": "boolean"
+        },
         "retention_until": {
           "format": "date-time",
           "title": "Retention Until",
@@ -926,9 +1116,35 @@
       "title": "CheckRecord",
       "type": "object"
     },
+    "CaseClaim": {
+      "additionalProperties": false,
+      "description": "One unanswered claim in a case (its verdict was \"insufficient_evidence\") and the checks that asked it.",
+      "properties": {
+        "claim": {
+          "maxLength": 500,
+          "minLength": 5,
+          "title": "Claim",
+          "type": "string"
+        },
+        "check_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Check Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "claim",
+        "check_ids"
+      ],
+      "title": "CaseClaim",
+      "type": "object"
+    },
     "ModeratorCase": {
       "additionalProperties": false,
-      "description": "One case per group of similar unresolved checks. Repeated questions update it instead of opening new ones.",
+      "description": "One case per group of similar unanswered claims. Similarity is measured per claim; a repeated claim joins the case.",
       "properties": {
         "id": {
           "pattern": "^#S-\\d+$",
@@ -944,14 +1160,49 @@
           "title": "State",
           "type": "string"
         },
-        "reason": {
-          "enum": [
-            "insufficient_evidence",
-            "high_risk",
-            "repeated_unanswered"
+        "reasons": {
+          "items": {
+            "enum": [
+              "insufficient_evidence",
+              "high_risk",
+              "repeated_unanswered"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Reasons",
+          "type": "array"
+        },
+        "high_risk_topic": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
           ],
-          "title": "Reason",
-          "type": "string"
+          "default": null,
+          "description": "Topic from the admin's high-risk list that matched.",
+          "title": "High Risk Topic"
+        },
+        "high_risk_classified_by": {
+          "anyOf": [
+            {
+              "enum": [
+                "model",
+                "keywords"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Model classification against the admin list, or the keyword list as a fallback.",
+          "title": "High Risk Classified By"
         },
         "summary": {
           "maxLength": 300,
@@ -959,12 +1210,12 @@
           "title": "Summary",
           "type": "string"
         },
-        "check_ids": {
+        "claims": {
           "items": {
-            "type": "string"
+            "$ref": "#/$defs/CaseClaim"
           },
           "minItems": 1,
-          "title": "Check Ids",
+          "title": "Claims",
           "type": "array"
         },
         "first_seen": {
@@ -990,9 +1241,9 @@
       "required": [
         "id",
         "state",
-        "reason",
+        "reasons",
         "summary",
-        "check_ids",
+        "claims",
         "first_seen",
         "last_seen"
       ],
@@ -1015,14 +1266,18 @@
           "title": "Publisher",
           "type": "string"
         },
+        "publisher_id": {
+          "pattern": "^[a-z0-9][a-z0-9-]{1,79}$",
+          "title": "Publisher Id",
+          "type": "string"
+        },
         "kind": {
           "enum": [
             "akt_prawny",
             "dane_publiczne",
             "instytucja",
             "fact_check",
-            "media",
-            "encyklopedia"
+            "media"
           ],
           "title": "Kind",
           "type": "string"
@@ -1118,6 +1373,7 @@
       "required": [
         "domain",
         "publisher",
+        "publisher_id",
         "kind",
         "tier",
         "license",

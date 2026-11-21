@@ -1,4 +1,4 @@
-# Copy of meritum-core src/meritum_core/checks/contracts.py at 45e74f77696fbf69fcb84d121b73a8223405775b.
+# Copy of meritum-core src/meritum_core/checks/contracts.py at d790abc66171d3774b2cef5fcdbae659a57a3035.
 # Do not edit: change it in meritum-core and run contracts/sync.sh.
 """Meritum contracts: the data every Meritum surface renders (MSZ "Prawdowid").
 
@@ -8,19 +8,22 @@ User-facing strings live in `copy/pl.json`; this file carries codes, not copy.
 
 Rules from the MSZ brief that the models enforce:
 - a verdict that settles a claim (confirmed, false, misleading) needs at least one citation and explicit premises;
+  only such a verdict has a strength;
 - the strength of a verdict follows from the premises by a fixed rule, never from the model's say-so;
 - agreement follows from the citation stances; conflicting credible sources give "insufficient_evidence" with both sides cited and no strength;
-- independence is counted per publisher, not per page or domain;
-- evidence age is measured against the date the claim refers to, with a per-catalogue-entry threshold; evidence that does not
-  expire (a legal act in force, an official page updated in place, evidence about a past event) is never archival;
+- independence is counted per catalogue publisher (publisher_id), not per page or domain, and only among citations whose
+  stance agrees with the verdict;
+- evidence age is measured against the date the claim refers to (claim_date), with a per-catalogue-entry threshold; evidence
+  that does not expire (a legal act in force, an official page updated in place, evidence about a past event) is never archival;
 - insufficient evidence says what could not be established;
 - technical failure, a request for clarification and out-of-scope input are not verdicts and carry no claims;
-- recommending a hand-off to a moderator is distinct from creating a case.
+- recommending a hand-off to a moderator is distinct from creating a case;
+- the result cache keeps only the substantive part of a result and never a technical failure; escalation is computed per request.
 """
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
@@ -30,7 +33,7 @@ Channel = Literal["web", "extension", "discord", "sms", "mcp"]
 # Version of these contracts (CheckRequest, CheckResult, ...); independent of the
 # job contract version in meritum_core.jobs.contracts. Raise it on any change that
 # breaks a consumer, and regenerate (scripts/generate-contracts.sh).
-CONTRACT_VERSION = 1
+CONTRACT_VERSION = 2
 
 MIN_TEXT_CHARS = 3
 STRONG_MIN_SOURCES = 2
@@ -46,21 +49,30 @@ CheckStatus = Literal[
 ]
 
 SourceKind = Literal[
-    "akt_prawny", "dane_publiczne", "instytucja", "fact_check", "media", "encyklopedia"
+    "akt_prawny", "dane_publiczne", "instytucja", "fact_check", "media"
 ]
 SourceTier = Literal[
     "primary", "secondary"
-]  # primary: official documents and public data; secondary: fact-checkers, media
+]  # primary: official documents and public data; secondary: fact-checkers (media only if the catalogue admits them)
 SourceVia = Literal[
     "corpus", "rss", "web_search"
 ]  # how the document reached the corpus
 Stance = Literal["supports", "refutes", "context"]
+# The stance that agrees with each settling verdict; only those citations count towards strength.
+AGREEING_STANCE: dict[Verdict, Stance] = {
+    "confirmed": "supports",
+    "false": "refutes",
+    "misleading": "context",
+}
 Agreement = Literal["consistent", "conflicting"]
 # Overrides of the age rule. expires: age counts; in_force: e.g. a legal act in force; updated_in_place: standing official
 # guidance edited in place (passenger rights, contact pages); past_event: evidence explicitly about a past event.
 Validity = Literal["expires", "in_force", "updated_in_place", "past_event"]
 DEFAULT_MAX_AGE_HOURS = 365 * 24
 Strength = Literal["strong", "moderate", "weak"]
+# Where the claim date comes from: a date in the checked text, the publication date of the input (e.g. the post), or today.
+ClaimDateSource = Literal["text", "input_published_at", "today"]
+PublisherId = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]{1,79}$")]
 
 TechniqueCode = Literal[
     "false_authority",
@@ -110,6 +122,12 @@ class Source(_Model):
     id: Annotated[str, Field(min_length=1, max_length=80)]
     title: Annotated[str, Field(min_length=3, max_length=200)]
     publisher: Annotated[str, Field(min_length=2, max_length=120)]
+    publisher_id: Annotated[
+        PublisherId,
+        Field(
+            description="Publisher id from the catalogue; independence is counted on it."
+        ),
+    ]
     url: HttpUrl
     domain: Annotated[str, Field(min_length=3, max_length=100)]
     kind: SourceKind
@@ -126,6 +144,12 @@ class Citation(_Model):
     source: Source
     fragment: Annotated[str, Field(min_length=10, max_length=600)]
     stance: Stance
+    validity: Annotated[
+        Validity,
+        Field(
+            description="Age rule for this piece of evidence: the catalogue entry's validity, or past_event set per evidence."
+        ),
+    ] = "expires"
     fragment_found_verbatim: Literal[True] = True
 
 
@@ -134,6 +158,7 @@ class CatalogEntry(_Model):
 
     domain: Annotated[str, Field(min_length=3, max_length=100)]
     publisher: Annotated[str, Field(min_length=2, max_length=120)]
+    publisher_id: PublisherId
     kind: SourceKind
     tier: SourceTier
     license: Annotated[str, Field(min_length=2, max_length=120)]
@@ -180,20 +205,28 @@ class Premises(_Model):
     independent_sources: Annotated[
         int,
         Field(
-            ge=0, description="Distinct publishers (institutions) among the citations."
+            ge=0,
+            description="Distinct publishers (publisher_id) among the citations whose stance agrees with the verdict.",
         ),
     ]
     primary_sources: Annotated[
         int,
         Field(
-            ge=0, description="Distinct primary-tier publishers among the citations."
+            ge=0,
+            description="Distinct primary-tier publishers among the agreeing citations.",
         ),
     ]
+    newest_source_published_at: Annotated[
+        datetime | None,
+        Field(
+            description="Publication date of the newest agreeing source, shown as a date."
+        ),
+    ] = None
     newest_source_age_hours: Annotated[
         int | None,
         Field(
             ge=0,
-            description="Hours between the newest source and the date the claim refers to, not now.",
+            description="Hours from the newest agreeing source to the claim date (ClaimResult.claim_date), not to now; 0 when the source is newer.",
         ),
     ] = None
     max_age_hours: Annotated[
@@ -222,17 +255,18 @@ def is_stale(p: Premises) -> bool:
 def strength_for(p: Premises) -> Strength:
     """The one rule that turns premises into strength. Shown to the user next to the premises.
 
+    Counts cover only publishers whose citations agree with the verdict. Strong: 2+ agreeing
+    independent publishers, 1+ of them primary, fresh evidence. Moderate: 2+ agreeing publishers
+    or 1 primary, fresh evidence. Weak: one non-primary publisher, or archival evidence.
+
     Returns:
         "strong", "moderate" or "weak".
     """
-    if (
-        p.agreement == "consistent"
-        and p.independent_sources >= STRONG_MIN_SOURCES
-        and p.primary_sources >= 1
-        and not is_stale(p)
-    ):
+    if p.agreement != "consistent" or is_stale(p):
+        return "weak"
+    if p.independent_sources >= STRONG_MIN_SOURCES and p.primary_sources >= 1:
         return "strong"
-    if p.agreement == "consistent" and p.independent_sources >= 1:
+    if p.independent_sources >= STRONG_MIN_SOURCES or p.primary_sources >= 1:
         return "moderate"
     return "weak"
 
@@ -253,9 +287,14 @@ class EvidenceStrength(_Model):
 
 
 class IncidentMatch(_Model):
-    """Similarity to a known incident. Context only: never a basis for the verdict by itself."""
+    """Similarity to a known incident. Context only: never a basis for the verdict by itself, and never changes it.
+
+    `domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists,
+    and the incident's topic matches the claim.
+    """
 
     incident_id: Annotated[str, Field(min_length=1, max_length=80)]
+    matched_on: Literal["content", "domain"] = "content"
     title: Annotated[str, Field(max_length=200)]
     date: datetime
     url: HttpUrl
@@ -263,9 +302,9 @@ class IncidentMatch(_Model):
 
 
 class SourceStatusWarning(_Model):
-    """Neutral note about who published the checked content (e.g. an EU-sanctioned entity). Never a verdict."""
+    """Neutral note that the checked content comes from an entity on the official EU sanctions list. Never a verdict."""
 
-    code: Literal["eu_sanctioned_entity", "state_controlled_media"]
+    code: Literal["eu_sanctioned_entity"]
     entity: Annotated[str, Field(max_length=120)]
     basis_url: HttpUrl
 
@@ -274,6 +313,13 @@ class ClaimResult(_Model):
     """One checked claim. Citations (source material) are kept apart from `explanation` (model interpretation)."""
 
     claim: Annotated[str, Field(min_length=5, max_length=500)]
+    claim_date: Annotated[
+        date | None,
+        Field(
+            description="The date the claim refers to; evidence age is measured against it."
+        ),
+    ] = None
+    claim_date_source: ClaimDateSource | None = None
     verdict: Verdict
     strength: EvidenceStrength | None = None
     citations: list[Citation] = []
@@ -306,21 +352,12 @@ class ClaimResult(_Model):
             raise ValueError(
                 "'insufficient_evidence' carries citations only when credible sources conflict"
             )
-        if self.strength:
-            p = self.strength.premises
-            publishers = {c.source.publisher for c in self.citations}
-            primary = {
-                c.source.publisher for c in self.citations if c.source.tier == "primary"
-            }
-            if p.agreement != ("conflicting" if conflicting else "consistent"):
-                raise ValueError("agreement must follow from the citation stances")
-            if (p.independent_sources, p.primary_sources) != (
-                len(publishers),
-                len(primary),
-            ):
-                raise ValueError(
-                    "independent and primary sources are counted per publisher among the citations"
-                )
+        if (self.claim_date is None) != (self.claim_date_source is None):
+            raise ValueError("a claim date comes with where it was taken from")
+        if self.strength is not None and self.verdict not in SETTLING:
+            raise ValueError(
+                "only a settling verdict (confirmed, false, misleading) has a strength"
+            )
         if self.verdict in SETTLING:
             if not self.citations or self.strength is None:
                 raise ValueError(
@@ -335,6 +372,30 @@ class ClaimResult(_Model):
             ):
                 raise ValueError(
                     "'misleading' needs a context citation and the technique it uses"
+                )
+        if self.strength is not None and self.verdict in SETTLING:
+            p = self.strength.premises
+            agreeing = [
+                c for c in self.citations if c.stance == AGREEING_STANCE[self.verdict]
+            ]
+            publishers = {c.source.publisher_id for c in agreeing}
+            primary = {
+                c.source.publisher_id for c in agreeing if c.source.tier == "primary"
+            }
+            if p.agreement != ("conflicting" if conflicting else "consistent"):
+                raise ValueError("agreement must follow from the citation stances")
+            if (p.independent_sources, p.primary_sources) != (
+                len(publishers),
+                len(primary),
+            ):
+                raise ValueError(
+                    "independent and primary sources are counted per publisher among the citations that agree with the verdict"
+                )
+            if p.validity != "expires" and p.validity not in {
+                c.validity for c in agreeing
+            }:
+                raise ValueError(
+                    "the premises' validity must come from an agreeing citation"
                 )
         if self.verdict == "insufficient_evidence" and (
             self.unresolved is None or not self.unresolved
@@ -358,7 +419,10 @@ class ClaimResult(_Model):
 
 
 class Escalation(_Model):
-    """Hand-off to the moderator queue. 'recommended' means nobody was notified yet."""
+    """Hand-off to the moderator queue. 'recommended' means nobody was notified yet.
+
+    Computed on every request, cache hits included: the result cache never stores it.
+    """
 
     state: Literal["recommended", "created", "updated"]
     case_id: Annotated[str | None, Field(pattern=r"^#S-\d+$")] = None
@@ -373,7 +437,7 @@ class Escalation(_Model):
 
 
 class CheckResult(_Model):
-    """The answer every channel renders. Same request, same corpus version: same result on every channel."""
+    """The answer every channel renders. The same normalised input within the result cache's lifetime gets the same substantive result on every channel."""
 
     check_id: Annotated[str, Field(min_length=1, max_length=40)]
     status: CheckStatus
@@ -409,6 +473,39 @@ class CheckResult(_Model):
         return self
 
 
+CacheableStatus = Literal["done", "needs_clarification", "out_of_scope"]
+
+
+class CachedResult(_Model):
+    """What the result cache keeps: only the substantive part of a CheckResult.
+
+    The key is the normalised input. The entry lives a fixed time, whatever snapshots appear meanwhile.
+    Escalation and the repeat counter are not here: they are computed on every request.
+    A technical failure is never cached.
+    """
+
+    status: CacheableStatus
+    claims: list[ClaimResult] = []
+    message: Annotated[str | None, Field(max_length=400)] = None
+    limitations: list[Annotated[str, Field(max_length=300)]] = []
+    source_warning: SourceStatusWarning | None = None
+    corpus_version: Annotated[str, Field(min_length=1, max_length=40)]
+    source_ids: Annotated[
+        list[str], Field(description="Ids of the sources cited in the claims.")
+    ] = []
+    cached_at: datetime
+    expires_at: datetime
+
+    @model_validator(mode="after")
+    def _cache_rules(self) -> CachedResult:
+        if self.expires_at <= self.cached_at:
+            raise ValueError("a cache entry expires after it was stored")
+        cited = {c.source.id for claim in self.claims for c in claim.citations}
+        if cited != set(self.source_ids):
+            raise ValueError("source_ids are the ids of the cited sources")
+        return self
+
+
 # ---------------------------------------------------------------- progress
 
 
@@ -417,9 +514,12 @@ class AnalysisStep(_Model):
 
     code: Literal[
         "receive",
+        "fetch_url",
+        "screen_injection",
         "extract_claims",
         "search_corpus",
         "search_web",
+        "search_fact_checks",
         "assess_evidence",
         "verify_citations",
         "write_answer",
@@ -453,11 +553,31 @@ class ModelUsage(_Model):
 
 
 class InjectionEvent(_Model):
-    """Instructions found in the input or a source. Logged and ignored."""
+    """Instructions found in the input or a source. Logged and never executed.
+
+    In user content the instruction is cut out and the rest is analysed as data; a catalogue source
+    with an instruction drops out of the evidence.
+    """
 
     location: Literal["input", "source"]
+    action: Literal["instruction_removed", "source_dropped"]
     source_url: HttpUrl | None = None
     excerpt: Annotated[str, Field(max_length=300)]
+
+    @model_validator(mode="after")
+    def _action_follows_location(self) -> InjectionEvent:
+        expected = (
+            "instruction_removed" if self.location == "input" else "source_dropped"
+        )
+        if self.action != expected:
+            raise ValueError(
+                "an instruction in user input is cut out; a source with one is dropped"
+            )
+        if (self.location == "source") != (self.source_url is not None):
+            raise ValueError(
+                "a source event names the source URL, an input event does not"
+            )
+        return self
 
 
 class CheckRecord(_Model):
@@ -481,6 +601,13 @@ class CheckRecord(_Model):
         ),
     ] = None
     channel: Channel
+    channel_user_hash: Annotated[
+        str | None,
+        Field(
+            pattern=r"^[0-9a-f]{64}$",
+            description="Discord and SMS only: salted SHA-256 of the user id or phone number, used to reply and count repeats; never shown to moderators.",
+        ),
+    ] = None
     received_at: datetime
     answered_at: datetime
     question_masked: Annotated[
@@ -496,7 +623,21 @@ class CheckRecord(_Model):
     retrieval_errors: list[Annotated[str, Field(max_length=200)]] = []
     injection_events: list[InjectionEvent] = []
     escalation: Escalation | None = None
+    cache_hit: Annotated[
+        bool,
+        Field(
+            description="Substantive part served from the result cache; escalation was still computed."
+        ),
+    ] = False
     retention_until: datetime
+
+    @model_validator(mode="after")
+    def _channel_identity(self) -> CheckRecord:
+        if (self.channel in {"discord", "sms"}) != (self.channel_user_hash is not None):
+            raise ValueError(
+                "only Discord and SMS checks carry a hashed channel user id, and they always do"
+            )
+        return self
 
     @property
     def latency_ms(self) -> int:
@@ -516,17 +657,61 @@ class CheckRecord(_Model):
         )
 
 
+CaseReason = Literal["insufficient_evidence", "high_risk", "repeated_unanswered"]
+StaffRole = Literal[
+    "moderator", "analyst", "admin"
+]  # admin manages staff accounts and the high-risk topic list
+
+
+class CaseClaim(_Model):
+    """One unanswered claim in a case (its verdict was "insufficient_evidence") and the checks that asked it."""
+
+    claim: Annotated[str, Field(min_length=5, max_length=500)]
+    check_ids: Annotated[list[str], Field(min_length=1)]
+
+
 class ModeratorCase(_Model):
-    """One case per group of similar unresolved checks. Repeated questions update it instead of opening new ones."""
+    """One case per group of similar unanswered claims. Similarity is measured per claim; a repeated claim joins the case."""
 
     id: Annotated[str, Field(pattern=r"^#S-\d+$")]
     state: Literal["open", "answered", "closed"]
-    reason: Literal["insufficient_evidence", "high_risk", "repeated_unanswered"]
+    reasons: Annotated[list[CaseReason], Field(min_length=1)]
+    high_risk_topic: Annotated[
+        str | None,
+        Field(
+            max_length=80,
+            description="Topic from the admin's high-risk list that matched.",
+        ),
+    ] = None
+    high_risk_classified_by: Annotated[
+        Literal["model", "keywords"] | None,
+        Field(
+            description="Model classification against the admin list, or the keyword list as a fallback."
+        ),
+    ] = None
     summary: Annotated[str, Field(min_length=5, max_length=300)]
-    check_ids: Annotated[list[str], Field(min_length=1)]
+    claims: Annotated[list[CaseClaim], Field(min_length=1)]
     first_seen: datetime
     last_seen: datetime
     assignee_role: Literal["moderator", "analyst"] = "moderator"
+
+    @model_validator(mode="after")
+    def _case_rules(self) -> ModeratorCase:
+        if len(set(self.reasons)) != len(self.reasons):
+            raise ValueError("each reason is listed once")
+        high_risk = "high_risk" in self.reasons
+        if high_risk != (self.high_risk_topic is not None) or high_risk != (
+            self.high_risk_classified_by is not None
+        ):
+            raise ValueError(
+                "a high-risk case names the matched topic and how it was classified"
+            )
+        return self
+
+    @property
+    def check_ids(self) -> list[str]:
+        """Distinct checks grouped by the case, in order of appearance."""
+        return list(dict.fromkeys(i for c in self.claims for i in c.check_ids))
 
     @property
     def similar_count(self) -> int:
