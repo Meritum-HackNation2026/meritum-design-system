@@ -1,17 +1,19 @@
-"""Builds presentation/meritum-template.pptx: the same 10 layouts as slides/index.html.
+"""Builds presentation/meritum-template.pptx: the same 12 slides as slides/index.html (MSZ „Prawdowid” deck).
 
   uv run --with python-pptx python presentation/build_pptx.py
 
 Coordinates are written in the HTML deck's 1920x1080 px grid and converted to EMU.
+Slide titles and presenter notes are read from slides/index.html, so the two decks cannot drift apart.
 Fonts: Archivo (text) and Azeret Mono (data). Without them installed PowerPoint
 substitutes a default sans; Google Slides has both in its font list.
 """
+import html
+import re
+import struct
 from pathlib import Path
 
 from pptx import Presentation
-from pptx.chart.data import CategoryChartData
 from pptx.dml.color import RGBColor
-from pptx.enum.chart import XL_CHART_TYPE, XL_MARKER_STYLE
 from pptx.enum.shapes import MSO_CONNECTOR, MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.oxml.ns import qn
@@ -20,6 +22,8 @@ from pptx.util import Emu, Pt
 HERE = Path(__file__).resolve().parent
 EXP = HERE.parent / "brand" / "exports"
 SHOTS = HERE / "screenshots"
+PHOTOS = HERE / "photos"
+ICONS = HERE / "icons" / "png"  # made by `render.py icons`
 
 BG, CARD, INK, INK2, LINE, RAISED = "F6F7F5", "FFFFFF", "14191E", "4C5862", "D9DEDD", "E8ECEB"
 SEA, SEA_T, SEA_D = "1D6A86", "E1EDF2", "13506A"
@@ -116,14 +120,14 @@ def image(slide, path, x, y, w=None, h=None):
     return slide.shapes.add_picture(str(path), px(x), px(y), px(w) if w else None, px(h) if h else None)
 
 
-def new_slide(n, total, notes, footer=True):
+def new_slide(n, total, notes, footer=True, num_x=1592):
     s = prs.slides.add_slide(BLANK)
     s.background.fill.solid()
     s.background.fill.fore_color.rgb = rgb(BG)
     if footer:
         image(s, EXP / "meritum-mark-light-512.png", 124, 1000, 36, 36)
         text(s, 166, 1004, 300, 32, "meritum", size=24, bold=True)
-        text(s, 1592, 1006, 200, 30, f"{n} / {total}", size=20, color=INK2, align=PP_ALIGN.RIGHT)
+        text(s, num_x, 1006, 200, 30, f"{n} / {total}", size=20, color=INK2, align=PP_ALIGN.RIGHT, font=MONO)
     s.notes_slide.notes_text_frame.text = notes
     return s
 
@@ -132,249 +136,303 @@ def title(s, t, y=112, w=1500, size=72):
     return text(s, 128, y, w, 180, t, size=size, bold=True, spacing=1.05)
 
 
-TOTAL = 10
+
+
+def _plain(fragment):
+    return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", fragment))).strip()
+
+
+SECTIONS = re.findall(r'<section class="slide.*?</section>', (HERE / "slides" / "index.html").read_text(), re.S)
+TITLES = [_plain(re.search(r"<h[12][^>]*>(.*?)</h[12]>", sec, re.S).group(1)) for sec in SECTIONS]
+NOTES = [_plain(re.search(r"<aside>(.*?)</aside>", sec, re.S).group(1)) for sec in SECTIONS]
+TOTAL = len(SECTIONS)
+assert TOTAL <= 12, f"MSZ brief allows at most 12 slides, the HTML deck has {TOTAL}"
+
+
+def _size(path):
+    return struct.unpack(">II", path.read_bytes()[16:24]) if path.suffix == ".png" else _jpeg_size(path)
+
+
+def _jpeg_size(path):
+    b = path.read_bytes()
+    i = 2
+    while i < len(b):
+        marker, length = b[i + 1], int.from_bytes(b[i + 2:i + 4], "big")
+        if marker in (0xC0, 0xC1, 0xC2):
+            return int.from_bytes(b[i + 7:i + 9], "big"), int.from_bytes(b[i + 5:i + 7], "big")
+        i += 2 + length
+    raise ValueError(f"no JPEG size in {path}")
+
+
+def shot(s, name, x, y, w, h=None):
+    """Screenshot at width w; with h, cut off at the bottom like the HTML .crop boxes."""
+    path = SHOTS / name
+    pw, ph = _size(path)
+    full = w * ph / pw
+    pic = image(s, path, x, y, w=w, h=min(h, full) if h else None)
+    if h and h < full:
+        pic.crop_bottom = 1 - h / full
+    pic.line.color.rgb = rgb(LINE)
+    pic.line.width = pt(1)
+    return pic
+
+
+def photo(s, name, x, y, w, h, fy=0.5):
+    """A photograph filling the box like CSS object-fit: cover; fy is the vertical focus (object-position)."""
+    path = PHOTOS / name
+    pw, ph = _size(path)
+    pic = image(s, path, x, y, w=w, h=h)
+    if pw / ph > w / h:  # wider than the box: trim the sides
+        cut = 1 - (w / h) / (pw / ph)
+        pic.crop_left = pic.crop_right = cut / 2
+    else:
+        cut = 1 - (pw / ph) / (w / h)
+        pic.crop_top, pic.crop_bottom = cut * fy, cut * (1 - fy)
+    return pic
+
+
+def icon(s, name, x, y, size=32, white=False):
+    return image(s, ICONS / f"{name}{'-white' if white else ''}.png", x, y, size, size)
+
+
+def cap(s, x, y, w, t):
+    return text(s, x, y, w, 60, t, size=20, color=INK2, spacing=1.35)
+
+
+def points(s, x, y, w, items, gap=110, size=28, sub=24, rule=LINE, subcolor=INK2, lines=1):
+    """Icon + bold line + grey line, separated by hairlines (the HTML .pts list)."""
+    for ic, b, t in items:
+        hline(s, x, y, w, color=rule)
+        icon(s, ic, x, y + 24)
+        text(s, x + 52, y + 18, w - 52, 40 * lines, b, size=size, bold=True, spacing=1.2)
+        text(s, x + 52, y + 18 + size * 1.3 * lines + 6, w - 52, 70, t, size=sub, color=subcolor, spacing=1.35)
+        y += gap
+    hline(s, x, y, w, color=rule)
+
+
+def slide(i, footer=True, title_w=1500, **kw):
+    s = new_slide(i + 1, TOTAL, NOTES[i], footer=footer, **kw)
+    if footer:
+        title(s, TITLES[i], size=64, w=title_w)
+    return s
+
+
+EXAMPLE = "Przykład do pokazu, cytaty ilustracyjne."
+TINT_RULE = "C4D9E2"
 
 # 1. Tytuł
-s = new_slide(1, TOTAL, "Otwieramy jednym zdaniem: Meritum to niezależna warstwa zaufania nad mediami społecznościowymi. "
-              "Z jednego zgłoszenia odsłania całą kampanię, a kontekst publikuje dopiero wtedy, gdy zgodzą się ludzie, "
-              "którzy zwykle się nie zgadzają.", footer=False)
-image(s, EXP / "meritum-lockup-subtitle-light@2x.png", 128, 220, w=420)
-text(s, 128, 400, 1000, 460, "Jeden fejk, cała kampania. Jeden kontekst, ponad podziałami.", size=96, bold=True, spacing=1.05)
-image(s, SHOTS / "x-04-context-note.png", 1152, 200, w=640)
-text(s, 128, 1000, 1200, 32, "HackNation 2026 · MSZ „Prawdowid” · NASK „Kolekcjoner fejków”", size=22, color=INK2)
+s = slide(0, footer=False)
+photo(s, "bus-night.jpg", 1120, 0, 800, 1080)
+image(s, EXP / "meritum-lockup-subtitle-light@2x.png", 128, 168, w=420)
+text(s, 128, 380, 780, 220, TITLES[0], size=88, bold=True, spacing=1.05)
+text(s, 128, 600, 700, 180, "Wklejasz tekst albo link, a Meritum sprawdza każde twierdzenie w opisanych źródłach, "
+     "cytuje dosłowny fragment i mówi wprost, gdy dowodów brakuje.", size=30, color=INK2, spacing=1.4)
+shot(s, "x-02-card.png", 930, 200, 500, 660)
+text(s, 128, 1000, 760, 32, "HackNation 2026, konkurs MSZ „Prawdowid”. Karta to przykład do pokazu, cytaty ilustracyjne.", size=20, color=INK2)
 
 # 2. Problem
-s = new_slide(2, TOTAL, "Problem w 20 sekund. Post o rzekomym zakazie płacenia gotówką ma setki tysięcy wyświetleń, a sprostowanie "
-              "leży na stronie, której nikt nie odwiedzi. Reklama z deepfake'iem prezentera po zgłoszeniu znika i jutro wraca "
-              "pod nową domeną. Obie sytuacje to ten sam problem.")
-title(s, "Fakt-check jest gdzieś w sieci, ale nie tam, gdzie ludzie czytają")
-cols = (128, 428, 1040)
-rows = [("", "Dezinformacja (MSZ „Prawdowid”)", "Fałszywe reklamy (NASK „Kolekcjoner fejków”)"),
-        ("Zagrożenie", "manipulacja, fałszywe narracje", "reklamy z wizerunkiem znanych osób użytym bez zgody"),
-        ("Co utrudnia", "nadmiar informacji, brak wiarygodnych źródeł", "szybko znikają, wracają pod nowymi adresami"),
-        ("Czego brakuje", "narzędzia do świadomej oceny treści", "szerszego obrazu: jeden materiał to fragment kampanii")]
-y = 400
-for i, row in enumerate(rows):
-    if i:
-        hline(s, 128, y - 22, 1664)
-    for j, cell in enumerate(row):
-        text(s, cols[j], y, 600 if j else 280, 80, cell, size=26 if i == 0 else 28, bold=i == 0,
-             color=INK2 if (j == 0 and i) else INK)
-    y += 84
+s = slide(1, num_x=992, title_w=1100)
+photo(s, "commuters-phones.jpg", 1320, 0, 600, 1080)
+y = 320
+for ic, a, b in [("smartphone", "Pogłoska dociera kanałem, którego używa obywatel", "post, wiadomość, link od znajomego; sprawdzenie wymaga wyjścia z tego kanału"),
+                 ("clock-3", "Sprawdzenie wymaga wiedzy i czasu", "trzeba wiedzieć, które źródło jest wiarygodne, i znaleźć w nim właściwy fragment"),
+                 ("triangle-alert", "Czat AI odpowiada płynnie, ale bez źródła", "płynny język nie gwarantuje poprawności, a wymyślony cytat wygląda jak prawdziwy")]:
+    hline(s, 128, y, 1100)
+    icon(s, ic, 128, y + 30)
+    text(s, 200, y + 26, 450, 90, a, size=28, bold=True)
+    text(s, 690, y + 26, 530, 90, b, size=26, color=INK2)
+    y += 132
+hline(s, 128, y, 1100)
+icon(s, "message-circle", 128, y + 62, 40)
+text(s, 200, y + 52, 1020, 60, "„Od stycznia nie zapłacisz w sklepie gotówką”", size=36, bold=True)
+text(s, 200, y + 110, 1020, 40, "Pogłoska z naszego pokazu: krąży w wiadomościach, a obowiązujące przepisy mówią co innego.", size=22, color=INK2)
 
-# 3. Teza
-s = new_slide(3, TOTAL, "To jest argument dla jury: widzą platformę, a nie jednorazowy prototyp. Ten sam produkt odpowiada na oba "
-              "wyzwania, zmienia się tylko scena główna demo.")
-title(s, "Jeden fejk, cała kampania")
-text(s, 128, 220, 1200, 160, "Farma botów forsująca fałszywą narrację i sieć domen rotująca reklamy z deepfake'iem działają tak samo: "
-     "wiele kopii, krótkie życie, skoordynowane konta. Dlatego budujemy jeden silnik.", size=32, color=INK2, spacing=1.4)
-hline(s, 128, 523, 1664, color=INK, weight=2)
-steps = [("Zbiera", "zgłoszenia i ślady: zrzut, adres, przekierowania, czas"),
-         ("Łączy", "okazy w kampanie po obrazie, tekście, szablonie strony i domenach"),
-         ("Wyjaśnia", "co widzisz, ze źródłami i nazwą techniki manipulacji"),
-         ("Chroni", "przed kliknięciem i przed manipulacją głosowaniem")]
-for i, (h, d) in enumerate(steps):
-    x = 128 + i * 416
-    c = s.shapes.add_shape(MSO_SHAPE.OVAL, px(x), px(496), px(56), px(56))
-    c.fill.solid()
-    c.fill.fore_color.rgb = rgb(SEA if i == 2 else BG)
-    c.line.color.rgb = rgb(SEA if i == 2 else INK)
-    c.line.width = pt(2)
-    c.shadow.inherit = False
-    tf = c.text_frame
-    tf.margin_left = tf.margin_right = 0
-    r = tf.paragraphs[0].add_run()
-    r.text = str(i + 1)
-    tf.paragraphs[0].alignment = PP_ALIGN.CENTER
-    r.font.name, r.font.size, r.font.bold, r.font.color.rgb = SANS, pt(24), True, rgb("FFFFFF" if i == 2 else INK)
-    text(s, x, 584, 370, 56, h, size=40, bold=True)
-    text(s, x, 644, 360, 120, d, size=26, color=INK2, spacing=1.4)
+# 3. Użytkownicy
+s = slide(2)
+photo(s, "reader-phone.jpg", 128, 300, 480, 680)
+for x, ic, head, items in (
+    (672, "user-round", "Obywatel", [("smartphone", "Bez instalacji i bez konta", "formularz działa na telefonie, przycisk „Sprawdź” pod postem to opcja"),
+                                      ("accessibility", "Prosty język", "także dla osób o niskich kompetencjach cyfrowych, WCAG 2.2 AA"),
+                                      ("scan-search", "Uczy rozpoznawania", "odpowiedź nazywa technikę manipulacji i mówi, jak ją rozpoznać")]),
+    (1256, "users", "Moderator lub analityk", [("list-filter", "Sprawy bez odpowiedzi", "twierdzenia z werdyktem „brak wystarczających dowodów” w tematach wysokiego ryzyka"),
+                                                ("git-compare-arrows", "Podobne twierdzenia w jednej sprawie", "powtórzenia łączą się, zamiast zalewać kolejkę"),
+                                                ("gauge", "Jakość pod kontrolą", "wstrzymania, próby wstrzyknięcia poleceń, czas odpowiedzi, koszt")])):
+    icon(s, ic, x, 304, 40)
+    text(s, x + 54, 302, 480, 44, head, size=32, bold=True)
+    points(s, x, 370, 536, items, gap=190, size=26, sub=23)
 
-# 4. Demo
-s = new_slide(4, TOTAL, "Pokaz na żywo: demo/x/. Kliknij „Zgłoś” pod postem o płaskiej Ziemi, zaznacz „Teoria spiskowa”, wyślij. "
-              "Po około 5 sekundach pod postem pojawia się notatka. Zrzuty to ten sam przepływ, na wypadek braku internetu.")
-title(s, "Trzy kliknięcia od zgłoszenia do notatki")
-image(s, SHOTS / "x-02-report-popover.png", 128, 260, h=600)
-image(s, SHOTS / "x-04-context-note.png", 680, 260, h=600)
-image(s, SHOTS / "x-05-scam-warning.png", 1340, 260, h=600)
-for x, w, b, t in [(128, 520, "1. Zgłoszenie. ", "Powód do wyboru albo własne słowa."),
-                   (680, 620, "2. Notatka. ", "Źródła obowiązkowe, technika nazwana."),
-                   (1340, 450, "3. Oszustwo. ", "Najpierw ochrona, potem wyjaśnienie.")]:
-    text(s, x, 880, w, 70, [[(b, {"bold": True}), (t, {"color": INK2})]], size=22)
+# 4. Jak to działa
+s = slide(3)
+hline(s, 128, 370, 1664, color=INK, weight=2)
+for k, (ic, b, t) in enumerate([("clipboard-paste", "Wklejasz tekst albo link", "na stronie albo przyciskiem „Sprawdź” pod postem"),
+                                ("list-checks", "Wyodrębniamy twierdzenia", "fakty oddzielamy od opinii, dane osobowe maskujemy"),
+                                ("search", "Szukamy w katalogu", "baza źródeł, świeże publikacje z zatwierdzonych serwisów, fact-checkerzy"),
+                                ("quote", "Werdykt z cytatem", "cytat przechodzi, tylko gdy fragment występuje w źródle dosłownie")]):
+    x = 128 + k * 416
+    last = k == 3
+    box(s, x, 330, 80, 80, fill=SEA if last else BG, line=SEA if last else INK, radius=40, weight=2)
+    icon(s, ic, x + 22, 352, 36, white=last)
+    text(s, x, 440, 370, 100, b, size=34, bold=True, spacing=1.1)
+    text(s, x, 546, 370, 120, t, size=24, color=INK2, spacing=1.35)
+text(s, 128, 724, 240, 40, "Pięć werdyktów:", size=24, color=INK2)
+x = 330
+for label, fill, color in (("Potwierdzone", SEA_T, SEA_D), ("Fałszywe", RED_T, RED_D), ("Wprowadzające w błąd", AMBER_T, AMBER_D),
+                           ("Brak wystarczających dowodów", RAISED, INK2), ("Nie podlega weryfikacji", RAISED, INK2)):
+    w = 32 + len(label) * 12
+    pill(s, x, 720, label, fill, color, w=w)
+    x += w + 12
+box(s, 128, 800, 1664, 120, fill=SEA_T, line=None)
+icon(s, "scale", 160, 826)
+text(s, 212, 822, 1540, 90, [[("Siła podstawy liczona regułą, nie przez model. ", {"bold": True, "color": INK}),
+     ("Mocna: co najmniej 2 niezależnych wydawców zgodnych z werdyktem, w tym urzędowy, i świeże dowody. "
+      "Umiarkowana: 2 wydawców albo 1 urzędowy. Słaba: jeden nieurzędowy albo dowód archiwalny.", {})]], size=24, color=SEA_D, spacing=1.4)
 
-# 5. Konsensus
-s = new_slide(5, TOTAL, "Algorytm typu „bridging”, ten sam rodzaj co otwarty algorytm Community Notes, ale niezależny od platformy. "
-              "Kto decyduje, co jest prawdą? Nikt sam: AI pisze szkic, ludzie z różnych stron muszą się zgodzić, źródła są publiczne.")
-title(s, "Notatka wychodzi, gdy zgodzą się obie strony", w=1000)
-for i, t in enumerate(["AI pisze szkic z uwag użytkowników i źródeł.",
-                       "Oceniają go dwie grupy, które zwykle oceniają inaczej.",
-                       "Publikacja dopiero, gdy obie przekroczą próg 70% ocen „pomocne”.",
-                       "Większość nie wystarcza, więc farma botów nie przepchnie notatki."]):
-    y = 344 + i * 110
-    hline(s, 128, y - 22, 600)
-    text(s, 128, y, 40, 40, str(i + 1), size=28, bold=True, color=INK2)
-    text(s, 184, y, 540, 90, t, size=28)
-hline(s, 128, 344 + 4 * 110 - 22, 600)
+# 5. Formularz WWW
+s = slide(4)
+shot(s, "web-01-form.png", 128, 300, 1040)
+points(s, 128, 840, 1040, [("globe", "Kanał podstawowy, bez konta", "teksty z copy/pl.json; dane osobowe maskujemy przed analizą")])
+shot(s, "widgets-01-steps.png", 1232, 300, 560)
+cap(s, 1232, 870, 560, "Pasek analizy. Agenty szukają równolegle, więc kilka kroków trwa naraz. Przykład do pokazu.")
 
+# 6. Kanały: one input, the same verdict everywhere
+s = slide(5, title_w=1000)
+chans = [("icon", "globe", "Strona WWW", "kanał podstawowy, bez instalacji", "channel-mobile.png",
+          "Wklejasz tekst albo link, karta wyniku pojawia się pod formularzem."),
+         ("brand", "discord", "Discord", "drugi kanał: serwer i wiadomość prywatna", "channel-discord.png",
+          "/sprawdz albo „Sprawdź w Meritum” przy cudzej wiadomości. Odpowiedź widzi tylko pytający."),
+         ("brand", "googlechrome", "Wtyczka", "kanał dodatkowy, dla jury opcja", "x-02-false.png",
+          "„Sprawdź” pod postem na X, Facebooku, Instagramie, Reddicie i TikToku."),
+         ("icon", "smartphone", "SMS", "jeśli starczy czasu", "channel-sms.png",
+          "W 70 znakach werdykt głównego twierdzenia i link do pełnego wyniku. „USUN” kasuje zapisy z numeru.")]
+for k, (kind, ic, name, status, img, note) in enumerate(chans):
+    x = 128 + k * 424
+    if kind == "icon":
+        icon(s, ic, x, 292, 32)
+    else:
+        image(s, ICONS / f"brand-{ic}.png", x, 292, 32, 32)
+    text(s, x + 44, 284, 340, 44, name, size=30, bold=True)
+    text(s, x, 332, 392, 30, status, size=19, color=INK2)
+    pic = shot(s, img, x, 378, 392, 470)
+    cap(s, x, 378 + pic.height / 6350 + 18, 392, note)
+cap(s, 128, 930, 1664, "Wszystkie kanały wołają to samo API. Spójność kanałów mierzy skrypt ewaluacji; cel z zadania to 100% próby. "
+    "Makiety, przykład do pokazu; format odpowiedzi bota i link są przykładowe.")
 
-def consensus(s, y, head, badge, ok, a, b, la, lb):
-    box(s, 824, y, 968, 220)
-    text(s, 864, y + 36, 600, 40, head, size=30, bold=True)
-    pill(s, 1752 - (160 if ok else 130), y + 32, badge, SEA_T if ok else AMBER_T, SEA_D if ok else AMBER_D, w=160 if ok else 130)
-    half, cx, by = 430, 1308, y + 100
-    for side, val in ((-1, a), (1, b)):
-        x0 = cx + 10 if side > 0 else cx - 10 - half
-        box(s, x0, by, half, 16, fill=RAISED, line=None, radius=8)
-        fw = half * val / 100
-        box(s, (cx + 10) if side > 0 else (cx - 10 - fw), by, fw, 16, fill=SEA if ok else AMBER, line=None, radius=8)
-        tx = (cx + 10 + half * 0.7) if side > 0 else (cx - 10 - half * 0.7)
-        box(s, tx - 1.5, by - 6, 3, 28, fill=INK, line=None, radius=0)
-    box(s, cx - 2, by - 10, 4, 36, fill=INK, line=None, radius=0)
-    text(s, 864, y + 150, 440, 40, la, size=24, color=INK2)
-    text(s, 1312, y + 150, 440, 40, lb, size=24, color=INK2, align=PP_ALIGN.RIGHT)
+# 7. Uczciwa niepewność
+s = slide(6)
+shot(s, "x-03-card.png", 128, 300, 520, 640)
+shot(s, "widgets-02-conflict.png", 704, 300, 400, 640)
+points(s, 1160, 300, 632, [("scale", "Brak dowodów to werdykt", "z opisem, czego nie ustaliliśmy; kontrakt odrzuca go bez tego opisu"),
+                           ("git-compare-arrows", "Sprzeczne źródła obok siebie", "bez siły i bez rozstrzygania za czytelnika"),
+                           ("users", "Sprawa dla moderatora", "„przekazano” i „zalecamy przekazanie” to różne komunikaty")], gap=140)
+cap(s, 1160, 740, 632, "Po lewej demo/live/x/, w środku demo/widgets/. " + EXAMPLE)
 
+# 8. Prompt injection
+s = slide(7)
+shot(s, "web-02-injection-input.png", 128, 330, 780)
+icon(s, "scissors", 128, 518)
+text(s, 176, 510, 480, 44, "Polecenie wycięte, werdykt bez zmian:", size=26, anchor=MSO_ANCHOR.MIDDLE)
+pill(s, 640, 512, "Fałszywe", RED_T, RED_D, w=140)
+shot(s, "web-03-injection-log.png", 128, 580, 780)
+cap(s, 128, 734, 780, "Pole injection_events z kontraktu CheckRecord. Przykład do pokazu.")
+box(s, 980, 330, 812, 470, fill=SEA_T, line=None)
+points(s, 1016, 342, 740, [("scan-search", "Warstwa kontroli przed każdym wywołaniem modelu", "proxy LLM albo Google Cloud Model Armor, w każdym kroku"),
+                           ("scissors", "Polecenie wycinamy, resztę sprawdzamy", "źródło z poleceniem wypada z dowodów"),
+                           ("file-check-2", "Strony skanujemy przed użyciem", "katalog przy wczytywaniu, wyniki wyszukiwania w kwarantannie"),
+                           ("ban", "Model nie ma narzędzi, które coś zmieniają", "każdą próbę zapisujemy w przebiegu")], size=25, sub=23, rule=TINT_RULE, subcolor=SEA_D)
 
-consensus(s, 320, "Obie grupy powyżej progu", "Zweryfikowany", True, 88, 84, "Grupa A: 88% pomocne, 231 ocen", "Grupa B: 84%, 198 ocen")
-consensus(s, 564, "Jedna grupa poniżej progu", "W ocenie", False, 95, 41, "Grupa A: 95% pomocne, 310 ocen", "Grupa B: 41%, 122 ocen")
-text(s, 824, 808, 968, 32, "Dane symulowane. Kreska na każdym pasku to próg 70%.", size=20, color=INK2)
+# 9. Architektura: each cell names its real dependencies with their logos (Simple Icons, in ink)
+s = slide(8)
+layers = [("Kanały", [(["react", "typescript", "tailwindcss"], "Formularz WWW", "kanał podstawowy, bez konta"),
+                      (["discord"], "Bot na Discordzie", "drugi kanał, ten sam wynik"),
+                      (["googlechrome"], "Wtyczka", "„Sprawdź” pod postem na 5 platformach, opcja"),
+                      (["react", "shadcnui"], "Panel moderatora", "sprawy, role, jakość"),
+                      ([("smartphone", None)], "SMS", "bramka SMS, jeśli starczy czasu")]),
+          ("Rdzeń weryfikacji", [([("python", "Python"), ("fastapi", "FastAPI"), ("pydantic", "Pydantic AI"), (None, "DBOS")], "Workflow DBOS z kontraktami",
+                                  "kontrola poleceń, twierdzenia, wyszukiwanie, ocena dowodów, weryfikacja cytatów, odpowiedź. Kontrakty z meritum-core; "
+                                  "awaria modelu albo wyszukiwania daje „Problem techniczny”, nigdy werdykt.")]),
+          ("Porty i adaptery", [([("googlecloud", "Vertex AI")], "Model", "wymiana konfiguracją, region w UE"),
+                                ([("postgresql", "pgvector")], "Korpus", "wyszukiwanie hybrydowe w migawkach katalogu"),
+                                ([("search", "Firecrawl")], "Wyszukiwarka", "na żywo, tylko domeny z katalogu"),
+                                (["google"], "Fact-checkerzy", "Google Fact Check Tools API")]),
+          ("Zapis i uruchomienie", [([("postgresql", "PostgreSQL")], "Zapis przebiegu", "każde sprawdzenie: źródła, modele, region, koszt, czas, próby wstrzyknięcia poleceń; dane osobowe zamaskowane"),
+                                    ([("docker", "Docker")], "Jedno polecenie", "docker compose up uruchamia całość, także dla jury")])]
+y = 280
+for name, cells in layers:
+    text(s, 128, y + 20, 220, 60, name, size=22, color=INK2)
+    w = (1400 - 16 * (len(cells) - 1)) / len(cells)
+    for k, (tech, b, t) in enumerate(cells):
+        x = 392 + k * (w + 16)
+        core = name == "Rdzeń weryfikacji"
+        box(s, x, y, w, 158, fill=SEA_T if core else CARD, line=SEA if core else LINE, weight=2 if core else 1)
+        tx = x + 22
+        for item in tech:
+            slug, label = item if isinstance(item, tuple) else (item, None)
+            if slug in ("search", "smartphone"):  # Lucide stand-in where no brand logo applies
+                icon(s, slug, tx, y + 16, 28)
+            elif slug:
+                image(s, ICONS / f"brand-{slug}.png", tx, y + 16, 28, 28)
+            tx += 40 if slug else 0
+            if label:
+                text(s, tx, y + 18, 200, 28, label, size=18, bold=True, color=INK2)
+                tx += 22 + len(label) * 10
+        text(s, x + 22, y + 56, w - 44, 36, b, size=25, bold=True)
+        text(s, x + 22, y + 92, w - 44, 64, t, size=20, color=SEA_D if core else INK2, spacing=1.35)
+    y += 172
 
-# 6. Kampania
-s = new_slide(6, TOTAL, "Scena główna pitchu NASK. Jedno zgłoszenie rozwija kampanię #K-118: 47 wariantów, 23 domeny, 9 dni. "
-              "Przerywana linia to domena wyłapana w logach Certificate Transparency, zanim trafiła do reklamy. To sygnał do weryfikacji, a nie wyrok.")
-text(s, 128, 112, 1600, 100, [[("Jedno zgłoszenie, cała kampania ", {}), ("#K-118", {"font": MONO})]], size=72, bold=True, spacing=1.05)
-image(s, SHOTS / "x-05-scam-warning.png", 128, 248, h=720)
-box(s, 744, 248, 1048, 470)
-for k, d in enumerate(["dzień 1", "3", "5", "7", "9"]):
-    text(s, 1090 + k * 160, 272, 120, 28, d, size=20, color=INK2)
-doms = [("inwest-polska24.online", 0, .24, "dead"), ("zysk-dzis-pl.site", .16, .22, "dead"),
-        ("prezenter-wywiad.info", .30, .20, "dead"), ("bank-ukrywa.online", .44, .18, "dead"),
-        ("sekret-zarobku.site", .58, .42, "live"), ("inwest-polska25.online", .72, .28, "live"),
-        ("inwest-polska26.online", .90, .10, "pred")]
-for i, (d, start, width, kind) in enumerate(doms):
-    y = 312 + i * 52
-    hline(s, 780, y, 976)
-    text(s, 780, y + 13, 320, 30, d, size=21, font=MONO, color={"dead": INK2, "live": INK, "pred": RED_D}[kind])
-    tw = 1756 - 1090
-    box(s, 1090 + tw * start, y + 17, tw * width, 18, radius=9,
-        fill={"dead": GREY, "live": RED, "pred": None}[kind], line=RED if kind == "pred" else None, weight=2, dash=kind == "pred")
-text(s, 780, 680, 976, 30, "6 z 23 domen kampanii + 1 przewidziana · szare: wyłączone · czerwone: aktywne · przerywane: z logów certyfikatów",
-     size=18, color=INK2)
-hline(s, 744, 748, 1048)
-text(s, 744, 770, 1048, 50, [[("Reklamy ", {}), ("47", {"font": MONO, "bold": True, "color": INK, "size": 34}), (" = Facebook ", {}),
-                             ("31", {"font": MONO, "bold": True, "color": INK, "size": 34}), (" + Instagram ", {}),
-                             ("12", {"font": MONO, "bold": True, "color": INK, "size": 34}), (" + X ", {}),
-                             ("4", {"font": MONO, "bold": True, "color": INK, "size": 34})]], size=28, color=INK2)
-hline(s, 744, 836, 1048)
-text(s, 744, 856, 1048, 30, "Dane symulowane. Prezenter „Tomasz Rewiński” i wszystkie domeny są fikcyjne.", size=20, color=INK2)
+# 10. Źródła
+s = new_slide(10, TOTAL, NOTES[9])
+photo(s, "card-catalogue.jpg", 0, 0, 1920, 300, fy=0.58)
+title(s, TITLES[9], y=356, size=64)
+points(s, 128, 540, 800, [("file-check-2", "Typ 1: źródła urzędowe i pierwotne", "lista organizatora (gov.pl, policja, RCB, GIS, PAA, GIOŚ, CERT) oraz ISAP, EUR-Lex, dane.gov.pl i BIP"),
+                          ("badge-check", "Typ 2: fact-checkerzy", "ustalenia w formacie ClaimReview przez Google Fact Check Tools API"),
+                          ("eye-off", "Kontekst, nie werdykt", "dopasowanie do znanych przypadków dezinformacji to informacja o serwisie")], gap=140)
+points(s, 992, 540, 800, [("book-open-check", "Katalog do audytu", "przy każdym źródle licencja i powód kwalifikacji"),
+                          ("library", "Niezależność według wydawcy", "dwie strony jednego ministerstwa to jedno źródło"),
+                          ("calendar-clock", "Aktualność", "RSS i wyszukiwanie na żywo w domenach z katalogu; data publikacji i pobrania przy każdym źródle")], gap=140)
 
-# 7. Telemetria
-s = new_slide(7, TOTAL, "Zwrot w pitchu MSZ. Farma 312 kont próbuje zakopać notatkę. Czerwona linia to odrzucone głosy, czarna to "
-              "realne osoby. Suma się domyka: oddane = liczone + odrzucone. Status notatki się nie zmienia.")
-# weather-front glyph: line with three triangles
-hline(s, 128, 166, 90, color=RED, weight=3)
-for k in range(3):
-    tri = s.shapes.add_shape(MSO_SHAPE.ISOSCELES_TRIANGLE, px(131 + k * 30), px(142), px(26), px(24))
-    tri.fill.solid()
-    tri.fill.fore_color.rgb = rgb(RED)
-    tri.line.fill.background()
-    tri.shadow.inherit = False
-text(s, 244, 112, 1400, 100, "Atak odparty, notatka bez zmian", size=72, bold=True, spacing=1.05)
-counted = [37, 41, 40, 39, 42, 40, 41, 38, 40, 43, 39, 41, 40, 42, 39, 41, 40, 38, 42, 40, 41, 39, 40, 42, 40, 41, 39, 40, 38, 41]
-rejected = [0] * 12 + [180, 300, 310, 320, 330, 300, 320, 310, 290, 300, 320, 310, 300, 320, 290, 312, 0, 0]
-assert sum(counted) == 1204 and sum(rejected) == 4812, "telemetry totals must close: 6 016 = 1 204 + 4 812"
-box(s, 128, 232, 1000, 420)
-cd = CategoryChartData()
-cd.categories = [f"14:{20 + i}" for i in range(30)]
-cd.add_series("liczone", counted)
-cd.add_series("odrzucone", rejected)
-ch = s.shapes.add_chart(XL_CHART_TYPE.LINE, px(148), px(248), px(960), px(390), cd).chart
-ch.has_legend = True  # PowerPoint cannot label lines directly without manual labels; legend at the right edge
-ch.legend.include_in_layout = False
-ch.legend.font.size, ch.legend.font.name = pt(18), SANS
-for ser, col in zip(ch.series, (INK, RED)):
-    ser.format.line.color.rgb = rgb(col)
-    ser.format.line.width = pt(3)
-    ser.smooth = False
-    ser.marker.style = XL_MARKER_STYLE.NONE
-for ax in (ch.category_axis, ch.value_axis):
-    ax.tick_labels.font.size, ax.tick_labels.font.name = pt(16), MONO
-    ax.tick_labels.font.color.rgb = rgb(INK2)
-    ax.format.line.fill.background()
-ch.value_axis.major_gridlines.format.line.color.rgb = rgb(LINE)
-skip = ch.category_axis._element.makeelement(qn("c:tickLblSkip"), {"val": "6"})  # one label per 6 minutes
-nml = ch.category_axis._element.find(qn("c:noMultiLvlLbl"))
-nml.addprevious(skip) if nml is not None else ch.category_axis._element.append(skip)
-hline(s, 128, 676, 1000)
-text(s, 128, 696, 1000, 50, [[("Oddane ", {}), ("6 016", {"font": MONO, "bold": True, "color": INK, "size": 34}), (" = liczone ", {}),
-                             ("1 204", {"font": MONO, "bold": True, "color": INK, "size": 34}), (" + odrzucone ", {}),
-                             ("4 812", {"font": MONO, "bold": True, "color": RED, "size": 34})]], size=28, color=INK2)
-text(s, 900, 708, 228, 30, "dane symulowane", size=20, color=INK2, align=PP_ALIGN.RIGHT)
-hline(s, 128, 762, 1000)
-text(s, 1192, 232, 600, 130, [[("Klaster ", {}), ("312", {"font": MONO}), (" kont głosuje na notatkę ", {}), ("#N-2291", {"font": MONO}),
-                              (" od ", {}), ("14:32", {"font": MONO}), (". Żaden z jego głosów nie trafił do konsensusu.", {})]],
-     size=28, color=INK2, spacing=1.4)
-text(s, 1192, 392, 120, 28, "Czas", size=20, bold=True, color=INK2)
-text(s, 1310, 392, 300, 28, "Odrzucone konto", size=20, bold=True, color=INK2)
-text(s, 1592, 392, 200, 28, "Powód", size=20, bold=True, color=INK2, align=PP_ALIGN.RIGHT)
-for i, (t, h, why) in enumerate([("14:41", "@pl_patriot_88231", "ten sam klaster"), ("14:41", "@glos_ludu_4410", "rytm 1 głos/s"),
-                                 ("14:40", "@marek_k_20931", "konto ma 2 dni"), ("14:39", "@prawda_tv_7781", "ten sam klaster"),
-                                 ("14:38", "@ania_m_55102", "konto ma 2 dni")]):
-    y = 436 + i * 50
-    hline(s, 1192, y, 600)
-    text(s, 1192, y + 12, 110, 30, t, size=22, font=MONO, color=INK2)
-    text(s, 1310, y + 12, 300, 30, [[(h, {"strike": True})]], size=22, font=MONO, color=RED)
-    text(s, 1560, y + 12, 232, 30, why, size=22, color=INK2, align=PP_ALIGN.RIGHT)
-text(s, 1192, 700, 600, 30, "Dane symulowane. Wszystkie nazwy kont są wymyślone.", size=20, color=INK2)
+# 11. Wyniki testów
+s = slide(10)
+metrics = [("Trafność werdyktu, macro-F1", "≥ 0,75"), ("Pokrycie cytowań", "≥ 95%"), ("Poprawność cytowania", "≥ 85%"),
+           ("Wstrzymanie się przy braku dowodów", "≥ 80%"), ("Odporność na prompt injection", "≥ 90%"),
+           ("Czas: mediana od wejścia do odpowiedzi", "≤ 30 s"), ("Koszt 100 testów", "raportowany")]
+for x, t in ((128, "Miernik z treści zadania"), (900, "Cel MVP"), (1220, "Nasz wynik na zestawie jawnym")):
+    text(s, 128 if x == 128 else x, 300, 600, 30, t, size=22, bold=True, color=INK2)
+y = 344
+for name, goal in metrics:
+    hline(s, 128, y, 1664)
+    text(s, 128, y + 18, 760, 36, name, size=26)
+    text(s, 900, y + 18, 300, 36, goal, size=26, color=SEA_D, font=SANS if goal == "raportowany" else MONO)
+    text(s, 1220, y + 20, 560, 36, "wpisujemy po przebiegu skryptu", size=23, color=INK2)
+    y += 70
+hline(s, 128, y, 1664)
+cap(s, 128, y + 20, 1664, "Zestaw jawny: nasz, zbudowany z tych samych materiałów co baza wiedzy, scenariusze A–J. "
+    "Progi stroimy tylko na nim; zestaw referencyjny MSZ jest dla nas ukryty.")
 
-# 8. Architektura
-s = new_slide(8, TOTAL, "Najważniejsze: ten sam silnik jest dostępny jako API i jako serwer MCP, więc redakcje, uczelnie i CERT mogą "
-              "się podpiąć bez instalowania wtyczki.")
-title(s, "Działa dziś, skaluje się jutro")
-layers = [("Dla ludzi", [("Wtyczka do przeglądarki", "zgłoszenie, notatka, ostrzeżenie, sejf dowodów"),
-                         ("Panel analityka", "React, TanStack: kampanie i ataki na żywo"),
-                         ("Asystenci AI redakcji", "serwer MCP (FastMCP): „czy ta domena należy do kampanii?”")], False),
-          ("Rdzeń", [("FastAPI", "otwarte API: notatki, konsensus, kampanie"),
-                     ("Pydantic AI", "szkic notatki ze źródłami; nie decyduje o publikacji"),
-                     ("DBOS", "trwałe przepływy; demo odtwarzane bez internetu")], True),
-          ("Dane", [("PostgreSQL + pgvector", "graf kampanii: podobieństwo obrazu, tekstu, szablonu strony, domen")], False)]
-y = 264
-for name, cells, core in layers:
-    text(s, 128, y + 24, 240, 30, name, size=24, color=INK2)
-    w = (1792 - 412 - 20 * (len(cells) - 1)) / len(cells)
-    for k, (h, d) in enumerate(cells):
-        x = 412 + k * (w + 20)
-        box(s, x, y, w, 140, line=SEA if core else LINE, weight=2 if core else 1)
-        text(s, x + 28, y + 22, w - 56, 40, h, size=30, bold=True)
-        text(s, x + 28, y + 66, w - 56, 64, d, size=22, color=INK2, spacing=1.3)
-    y += 160
-hline(s, 128, y + 4, 1664)
-text(s, 128, y + 28, 240, 30, "Infrastruktura", size=24, color=INK2)
-text(s, 412, y + 26, 1300, 40, "GCP (aplikacja i baza) + Cloudflare (ruch, ochrona API)", size=28)
-
-# 9. Zespół i prośba
-s = new_slide(9, TOTAL, "Uzupełnij imiona przed pitchem. Nie mówimy o współpracy z NASK, CERT Polska, MSZ ani mediami, dopóki jej nie ma; "
-              "mówimy „gotowe do integracji z…”.")
-title(s, "Zespół i czego potrzebujemy")
-text(s, 128, 256, 600, 50, "Zespół", size=36, bold=True)
-for i, role in enumerate(["backend, API, DBOS", "AI i graf kampanii", "wtyczka i panel", "projekt i pitch"]):
-    y = 330 + i * 80
-    hline(s, 128, y - 18, 784)
-    text(s, 128, y, 400, 40, "[Imię Nazwisko]", size=28, bold=True)
-    text(s, 512, y, 400, 40, role, size=28, color=INK2, align=PP_ALIGN.RIGHT)
-text(s, 1008, 256, 600, 50, "Prośba", size=36, bold=True)
-for i, (b, t) in enumerate([("Pilotaż z redakcją lub uczelnią: ", "pierwsi użytkownicy API i serwera MCP."),
-                            ("Dostęp do listy ostrzeżeń: ", "gotowe do integracji z CERT Polska."),
-                            ("Konsultacja prawna: ", "RODO, wizerunek i status zaufanego podmiotu sygnalizującego z DSA.")]):
-    y = 330 + i * 120
-    hline(s, 1008, y - 18, 784)
-    text(s, 1008, y, 784, 100, [[(b, {"bold": True}), (t, {})]], size=28, spacing=1.4)
-
-# 10. Zamknięcie
-s = new_slide(10, TOTAL, "Hasło pod konkretny konkurs. MSZ: „AI pisze. Ludzie decydują. Źródła są obowiązkowe.” "
-              "NASK: „Pojedynczy fejk znika. Kolekcja zostaje.”")
-text(s, 128, 150, 1600, 360, "Jeden fejk, cała kampania. Jeden kontekst, ponad podziałami.", size=112, bold=True, spacing=1.05)
-text(s, 128, 560, 1600, 200, "AI pisze. Ludzie decydują. Źródła są obowiązkowe.", size=80, bold=True, color=SEA, spacing=1.05)
-image(s, EXP / "meritum-lockup-subtitle-light@2x.png", 128, 820, w=360)
+# 12. Ryzyka i dalsze kroki
+s = new_slide(12, TOTAL, NOTES[11])
+box(s, 1280, 0, 640, 1080, fill=SEA_T, line=None, radius=0)
+photo(s, "warsaw-street.jpg", 1280, 0, 640, 380)
+text(s, 1336, 420, 520, 44, "Dalsze kroki", size=30, bold=True)
+points(s, 1336, 476, 512, [("hand-helping", "Pilotaż z zatwierdzaniem przez człowieka", "moderator zatwierdza odpowiedź przed publikacją"),
+                           ("image", "Więcej rodzajów treści", "wyszukiwanie odwrotne obrazu, transkrypcja nagrań"),
+                           ("coins", "Koszt 1 000 zapytań", "podamy z pomiaru, razem z kosztem kanałów")], gap=176, size=25, sub=22, rule=TINT_RULE, subcolor=SEA_D, lines=2)
+title(s, TITLES[11], w=1040, size=64)
+y = 330
+for ic, a, b in [("quote", "Halucynacje", "dosłowna weryfikacja cytatów, werdykt tylko z cytatem, wstrzymanie się"),
+                 ("scale", "Stronniczość źródeł", "jawny katalog, dwa typy źródeł, rozbieżności pokazane wprost"),
+                 ("eye-off", "Prywatność", "maskowanie danych osobowych, retencja 30 dni, usuwanie sprawdzeń"),
+                 ("scissors", "Prompt injection", "warstwa kontroli, dane oddzielone od instrukcji, kwarantanna, zapis zdarzeń"),
+                 ("accessibility", "Dostępność", "WCAG 2.2 AA, prosty język, telefon bez instalacji"),
+                 ("triangle-alert", "Nadużycia i awarie", "limity zapytań, „Problem techniczny” zamiast pozornego werdyktu")]:
+    hline(s, 128, y, 1040)
+    icon(s, ic, 128, y + 16, 28)
+    text(s, 180, y + 13, 250, 60, a, size=23, bold=True, spacing=1.3)
+    text(s, 440, y + 13, 720, 70, b, size=23, color=INK2, spacing=1.35)
+    y += 76
+hline(s, 128, y, 1040)
+text(s, 128, y + 30, 1040, 50, "Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost.", size=32, bold=True)
+text(s, 128, y + 90, 1040, 30, "Zdjęcia: Unsplash, autorzy Ilya Semenov, camilo jimenez, Nagihan Gülmez, Maksym Kaharlytskyi, "
+     "Kate Bezzubets. Ikony: Lucide. Logotypy technologii: Simple Icons, znaki należą do ich właścicieli.", size=16, color=INK2)
 
 # Theme fonts: anything typed into new text boxes defaults to Archivo too.
 theme_part = next(p for p in prs.part.package.iter_parts() if p.partname.endswith("theme1.xml"))

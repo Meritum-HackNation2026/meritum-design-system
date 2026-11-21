@@ -220,6 +220,8 @@ WCAG 2.2 AA w obu trybach, także na tle cudzych feedów. Werdykty oznaczone sł
 - Tło slajdu `#F6F7F5` albo `#0B0F12` (jeden tryb na całą prezentację).
 - Jedna myśl na slajd, tytuł do 2 linii, Display 40 px lub większy.
 - Zamiast zdjęć stockowych: prawdziwe zrzuty interfejsu Meritum (strona, wtyczka, panel) w dużej skali.
+- Zdjęcia tylko jako tło świata, w którym krąży pogłoska (pasażerowie z telefonami, ulica, katalog, prasa): z Unsplash albo innej licencji pozwalającej na użycie komercyjne, z autorem w podpisie, najwyżej jedno na slajd i nigdy jako produkt, nasi użytkownicy czy zespół. Bez klisz: laptopy, kłódki, tarcze, kaptury hakerów.
+- Ikony z Lucide (ta sama biblioteka co frontend), obrys 2 px, w kolorze akcentu, przy punktach listy i w kafelkach architektury. Nigdy jako duży element nad tekstem karty ani w siatce identycznych kafelków.
 - Wykresy według zasad z sekcji 3: etykiety przy liniach, czerwień tylko dla błędów.
 - Logo w lewym górnym albo dolnym rogu, 24–32 px.
 - W przykładach używamy prawdziwych, sprawdzalnych źródeł z korpusu. Nie wymyślamy źródeł, cytatów ani wyników testów.

@@ -1,16 +1,18 @@
 """Renders Meritum PNG assets with system Chrome.
 
-  uv run --with playwright python presentation/render.py brand|shots|social|deck [out_dir]
+  uv run --with playwright python presentation/render.py brand|shots|social|icons|deck [out_dir]
 
-shots needs the local demo server: design-system/ served on http://localhost:52990.
+shots needs design-system/ served over HTTP, by default on http://localhost:52990 (MERITUM_BASE overrides it).
 """
+import os
 import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 DS = Path(__file__).resolve().parent.parent
 EXP = DS / "brand" / "exports"
-DEMO = "http://localhost:52990/demo"
+BASE = os.environ.get("MERITUM_BASE", "http://localhost:52990")  # design-system/ served here
+DEMO = f"{BASE}/demo"
 FONTS = '<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Azeret+Mono:wght@400;500;600&display=swap" rel="stylesheet">'
 
 
@@ -44,39 +46,39 @@ def brand(b):
 
 
 def shots(b, out):
+    for old in out.glob("*.png"):
+        old.unlink()  # the set changes with the product; stale shots must not linger
     ctx = b.new_context(viewport={"width": 1440, "height": 900}, device_scale_factor=2, color_scheme="light")
     pg = ctx.new_page()
-    pg.goto(f"{DEMO}/x/")
-    pg.evaluate("localStorage.removeItem('meritum-demo-theme')")
-    pg.reload(); pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(800)
-    pg.screenshot(path=out / "x-01-feed.png")
-    pg.add_style_tag(content=".tabs{position:static!important}")  # sticky tab bar would cover element shots
-    flat = pg.locator('article[data-kind="flat"]')
-    flat.locator(".m-report").click(); pg.wait_for_timeout(500)
-    flat.locator(".m-chip").filter(has_text="Teoria spiskowa").click(); pg.wait_for_timeout(300)
-    box = pg.evaluate("""() => { const a = document.querySelector('article[data-kind=flat]').getBoundingClientRect(),
-      b = document.querySelector('.m-pop').getBoundingClientRect();
-      return {x: a.left, y: a.top + scrollY, width: a.width, height: Math.max(a.bottom, b.bottom) - a.top + 16}; }""")
-    pg.screenshot(path=out / "x-02-report-popover.png", clip=box, full_page=True)
-    flat.locator(".m-send").click(); pg.wait_for_timeout(2700)
-    flat.screenshot(path=out / "x-03-analysis.png")
-    pg.wait_for_timeout(3500)
-    flat.scroll_into_view_if_needed(); pg.mouse.move(0, 0); pg.wait_for_timeout(400)
-    flat.screenshot(path=out / "x-04-context-note.png")
-    pg.screenshot(path=out / "x-04-context-note-full.png")
-    flat.locator(".m-card").screenshot(path=out / "x-04-card.png")
-    ad = pg.locator('article[data-kind="ad"]')
+    pg.goto(f"{DEMO}/live/x/")
+    pg.evaluate("localStorage.removeItem('meritum-demo-theme'); sessionStorage.removeItem('meritum-live-fast')")
+    pg.reload(); pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(1200)
+    pg.add_style_tag(content=".tabs{position:static!important}meritum-root[data-part=demo]{display:none!important}")  # sticky tabs cover element shots; the stage control is not product UI
+    flat, ad = pg.locator("article:has(#t3-text)"), pg.locator("article:has(#t2-text)")
+    flat.scroll_into_view_if_needed(); pg.mouse.move(0, 0); pg.wait_for_timeout(300)
+    flat.locator("button.m-check").click(); pg.wait_for_timeout(6400); pg.mouse.move(0, 0)
+    flat.scroll_into_view_if_needed(); pg.wait_for_timeout(600)
+    flat.screenshot(path=out / "x-02-false.png")
+    flat.locator(".m-card").screenshot(path=out / "x-02-card.png")
     ad.scroll_into_view_if_needed()
-    ad.locator(".m-report").click(); pg.wait_for_timeout(500)
-    ad.locator(".m-chip").filter(has_text="Fałszywy wizerunek").click()
-    ad.locator(".m-send").click(); pg.wait_for_timeout(6200)
-    ad.scroll_into_view_if_needed(); pg.mouse.move(0, 0); pg.wait_for_timeout(400)
-    ad.screenshot(path=out / "x-05-scam-warning.png")
-    ad.locator(".m-card").screenshot(path=out / "x-05-card.png")
-    pg.goto(f"{DEMO}/widgets/"); pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(1000)
-    pg.screenshot(path=out / "widgets-01-top.png")
-    pg.locator("#platforms").screenshot(path=out / "widgets-02-platforms.png")
-    pg.locator("#states").screenshot(path=out / "widgets-03-states.png")
+    ad.locator("button.m-check").click(); pg.wait_for_timeout(6500); pg.mouse.move(0, 0)
+    ad.scroll_into_view_if_needed(); pg.wait_for_timeout(600)
+    ad.screenshot(path=out / "x-03-abstain.png")
+    ad.locator(".m-card").screenshot(path=out / "x-03-card.png")
+    pg.goto(f"{DEMO}/widgets/"); pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(1500)
+    pg.add_style_tag(content=".ctl{position:static!important}")
+    frame = pg.locator("[data-grid] .frame").first  # X, light
+    pg.locator("label:has(input[value=steps])").click(); pg.wait_for_timeout(400)
+    frame.screenshot(path=out / "widgets-01-steps.png")
+    pg.locator("label:has(input[value=conflict])").click(); pg.wait_for_timeout(400)
+    frame.screenshot(path=out / "widgets-02-conflict.png")
+    pg.goto(f"{BASE}/presentation/shots/web.html"); pg.wait_for_selector("body[data-ready]")
+    pg.evaluate("document.fonts.ready"); pg.wait_for_timeout(600)
+    pg.locator("#form").screenshot(path=out / "web-01-form.png")
+    pg.locator("#inj-in").screenshot(path=out / "web-02-injection-input.png")
+    pg.locator("#inj-log").screenshot(path=out / "web-03-injection-log.png")
+    for part in ("mobile", "discord", "sms"):  # slide 6: one input, the same verdict in every channel
+        pg.locator(f"#{part}").screenshot(path=out / f"channel-{part}.png")
     ctx.close()
 
 
@@ -92,6 +94,38 @@ def social(b):
     d = DS / "presentation" / "social"
     html_dir(b, d, d, {"og-1200x630.html": (1200, 630), "post-1080x1080.html": (1080, 1080),
                        "story-1080x1920.html": (1080, 1920), "linkedin-banner-1584x396.html": (1584, 396)})
+
+
+def icons(b):
+    """Lucide SVGs in presentation/icons/ -> an inline <symbol> sprite in slides/index.html (CSS masks and external
+    <use> do not load from file://) and accent-coloured PNGs for build_pptx.py."""
+    import re
+    src = DS / "presentation" / "icons"
+    deck = DS / "presentation" / "slides" / "index.html"
+    syms = []
+    for f in sorted(src.glob("*.svg")):
+        inner = re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(), re.S).group(1).strip()
+        syms.append(f'<symbol id="i-{f.stem}" viewBox="0 0 24 24">{re.sub(chr(10) + " *", "", inner)}</symbol>')
+    # Simple Icons (CC0) brand logos of the stack: filled single-colour paths, ids b-<slug>
+    for f in sorted((src / "brands").glob("*.svg")):
+        inner = re.sub(r"<title>.*?</title>", "", re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(), re.S).group(1))
+        syms.append(f'<symbol id="b-{f.stem}" viewBox="0 0 24 24">{inner.strip()}</symbol>')
+    html = deck.read_text()
+    a, z = "<!-- icons:start -->", "<!-- icons:end -->"
+    assert a in html and z in html, "icon sprite markers missing in slides/index.html"
+    deck.write_text(html[:html.index(a) + len(a)] + "\n" + "\n".join(syms) + "\n" + html[html.index(z):])
+    out = src / "png"
+    out.mkdir(exist_ok=True)
+    pg = b.new_page(viewport={"width": 128, "height": 128})
+    for f in sorted(src.glob("*.svg")):
+        for suffix, colour in (("", "#1D6A86"), ("-white", "#FFFFFF")):
+            svg = f.read_text().replace('width="24"', 'width="128"').replace('height="24"', 'height="128"').replace("currentColor", colour)
+            pg.set_content(f"<html><body style='margin:0;background:transparent'>{svg}</body></html>")
+            pg.screenshot(path=out / f"{f.stem}{suffix}.png", omit_background=True, clip={"x": 0, "y": 0, "width": 128, "height": 128})
+    for f in sorted((src / "brands").glob("*.svg")):
+        svg = f.read_text().replace("<svg ", '<svg width="128" height="128" fill="#14191E" ', 1)
+        pg.set_content(f"<html><body style='margin:0;background:transparent'>{svg}</body></html>")
+        pg.screenshot(path=out / f"brand-{f.stem}.png", omit_background=True, clip={"x": 0, "y": 0, "width": 128, "height": 128})
 
 
 def deck(b, out):
@@ -110,5 +144,5 @@ if __name__ == "__main__":
     out.mkdir(parents=True, exist_ok=True); EXP.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         b = p.chromium.launch(channel="chrome")
-        {"brand": lambda: brand(b), "shots": lambda: shots(b, out), "social": lambda: social(b), "deck": lambda: deck(b, out)}[what]()
+        {"brand": lambda: brand(b), "shots": lambda: shots(b, out), "social": lambda: social(b), "icons": lambda: icons(b), "deck": lambda: deck(b, out)}[what]()
         b.close()
