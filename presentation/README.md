@@ -2,15 +2,15 @@
 
 Ten folder jest dla osób, które robią slajdy, posty i grafiki o Meritum, a nie piszą kodu. Wszystko tutaj wygląda tak samo jak produkt: te same kolory, kroje pisma i logo. Zasady, z których to wynika, są w `../DESIGN_SYSTEM.md`, a treść pitchu w `../KEY_SELLING_POINTS.md`.
 
-Uwaga: Meritum startuje teraz tylko w konkursie MSZ „Prawdowid”. Grafiki w `social/` i logotypy z podtytułem w `../brand/exports/` są już aktualne: hasło i opis z `KEY_SELLING_POINTS.md`, trzy kroki z `PRODUCT.md`, podtytuł „obywatelski radar dezinformacji”. Nie mają jeszcze zrzutu karty wyniku, bo ta karta dopiero powstaje. Szablon `meritum-template.pptx`, `slides/index.html` i zrzuty w `screenshots/` pokazują jeszcze stary produkt na dwa konkursy (zgłoszenia, kampanie, atak botów). Trzeba je wygenerować od nowa według sekcji „Deck na konkurs MSZ” poniżej i do tego czasu nie wysyłać ich jury.
+Meritum startuje tylko w konkursie MSZ „Prawdowid”. Cały zestaw jest już pod ten konkurs: 12 slajdów (`slides/index.html` i `meritum-template.pptx`), zrzuty z makiet w `screenshots/` i grafiki w `social/`. Zrzuty pokazują makiety z atrapą API, więc cytaty w nich są ilustracyjne i każdy slajd z zrzutem ma dopisek „przykład do pokazu”. Slajd 11 z wynikami testów czeka na pierwszy przebieg skryptu ewaluacji.
 
 ## Co jest w zestawie
 
 | Plik | Do czego |
 |---|---|
-| `meritum-template.pptx` | szablon PowerPoint / Google Slides / Keynote (do przerobienia na deck MSZ) |
-| `slides/index.html` | ta sama prezentacja w przeglądarce, z notatkami prowadzącego (do przerobienia) |
-| `screenshots/` | zrzuty demo (stare: zgłoszenie, notatka, ostrzeżenie o oszustwie; do podmiany na formularz, kartę wyniku, wtyczkę i panel) |
+| `meritum-template.pptx` | szablon PowerPoint / Google Slides / Keynote: 12 slajdów decku MSZ z notatkami prowadzącego |
+| `slides/index.html` | ta sama prezentacja w przeglądarce, z notatkami prowadzącego |
+| `screenshots/` | zrzuty z makiet: formularz, pasek analizy, przycisk „Sprawdź” i karta wyniku pod postem, brak dowodów ze sprawą dla moderatora, sprzeczne źródła, próba wstrzyknięcia polecenia |
 | `social/` | obraz do linków (1200×630), post kwadratowy (1080×1080), story (1080×1920), baner LinkedIn (1584×396): pliki PNG gotowe do wrzucenia |
 | `../brand/exports/` | logo w PNG (znak, ikona aplikacji, logo ze słowem „meritum”) |
 
@@ -32,26 +32,26 @@ Pliki `.svg` obok to te same logotypy w wersji wektorowej (dla grafików).
 
 Wymagania z treści zadania: PDF, najwyżej 12 slajdów, a w nich problem, użytkownicy, architektura, demonstracja, wyniki testów, ryzyka i dalsze kroki. Osobno film demonstracyjny pod linkiem, najwyżej 3 minuty.
 
-Proponowana kolejność (12 slajdów):
+Kolejność slajdów (12, tyle pozwala treść zadania):
 
-1. Tytuł: Meritum, podtytuł „obywatelski radar dezinformacji”, nazwa zespołu.
-2. Problem: pogłoska dociera kanałem, którego używa obywatel, a sprawdzenie wymaga wiedzy i czasu.
+1. Tytuł: „Sprawdź, zanim podasz dalej.”, podtytuł „obywatelski radar dezinformacji”, karta wyniku.
+2. Problem: sprostowanie istnieje, ale nie tam, gdzie ludzie czytają.
 3. Użytkownicy: obywatel (także o niskich kompetencjach cyfrowych) i moderator lub analityk.
-4. Jak to działa: wklejasz tekst albo link, dostajesz werdykt dla każdego twierdzenia z cytatem i źródłem.
-5. Demo, kanał WWW: zrzut formularza i karty wyniku.
-6. Demo, drugi kanał: „Sprawdź” pod postem we wtyczce, ten sam wynik co na stronie.
-7. Uczciwa niepewność: „Brak wystarczających dowodów”, czego nie ustaliliśmy, przekazanie sprawy moderatorom.
-8. Architektura: kanały oddzielone od rdzenia weryfikacji, wymienny model, korpus i wyszukiwanie w zatwierdzonych serwisach, zapis przebiegu.
-9. Źródła: katalog, typy źródeł, licencje, sposób kwalifikacji i aktualizacji.
-10. Wyniki testów: mierniki z sekcji 6 zadania, zmierzone na naszym zestawie, z linkiem do danych.
-11. Ryzyka: halucynacje, stronniczość źródeł, prywatność, prompt injection, dostępność, nadużycia.
-12. Dalsze kroki i koszt: koszt 1 000 zapytań, droga do pilotażu.
+4. Jak to działa: cztery kroki, pięć werdyktów, reguła siły podstawy z przesłanek.
+5. Demo, formularz WWW: formularz „Sprawdź informację” i pasek analizy.
+6. Demo, pod postem: „Sprawdź” na makiecie X i karta wyniku z cytatami i siłą podstawy.
+7. Uczciwa niepewność: „Brak wystarczających dowodów”, sprawa dla moderatora, sprzeczne źródła obok siebie.
+8. Prompt injection: polecenie ukryte w tekście nie zmienia werdyktu i trafia do zapisu przebiegu.
+9. Architektura: kanały (formularz, Discord, wtyczka, panel) oddzielone od rdzenia, wymienne porty.
+10. Źródła: dwa typy, katalog do audytu, niezależność według wydawcy, aktualność.
+11. Wyniki testów: mierniki i cele z treści zadania; kolumna wyników czeka na skrypt ewaluacji.
+12. Ryzyka i dalsze kroki, w tym koszt 1 000 zapytań z pomiaru.
 
-Każda liczba na slajdzie 10 musi pochodzić z uruchomionych testów i dać się odtworzyć. Liczby z makiet podpisujemy „dane symulowane”.
+Każda liczba w kolumnie wyników na slajdzie 11 musi pochodzić ze skryptu ewaluacji i dać się odtworzyć. Dopóki skryptu nie ma, kolumna zostaje bez liczb. Wszystko, co pochodzi z makiet, podpisujemy „przykład do pokazu”.
 
 ## Szablon PPTX
 
-Obecny szablon ma jeszcze 10 slajdów starej wersji. Po przerobieniu będzie miał układ z sekcji wyżej. Każdy slajd ma notatki prowadzącego.
+Szablon ma 12 slajdów w kolejności z sekcji wyżej. Tytuły slajdów i notatki prowadzącego `build_pptx.py` bierze z `slides/index.html`, więc obie wersje mówią to samo.
 
 **Najpierw kroje pisma.** Szablon używa Archivo (cały tekst) i Azeret Mono (tylko liczby, godziny, nazwy kont, domeny). Jeśli ich nie ma, program podstawi inny krój i tekst się rozjedzie.
 
@@ -62,8 +62,8 @@ Obecny szablon ma jeszcze 10 slajdów starej wersji. Po przerobieniu będzie mia
 **Jak pracować z szablonem**
 - Zrób kopię pliku i pracuj na kopii.
 - Nowy slajd = duplikat podobnego slajdu (prawy przycisk → „Duplikuj slajd”), potem podmień tekst. Nie zaczynaj od pustego slajdu.
-- Wykresy wyników testów wypełniaj tylko liczbami z raportu testów (prawy przycisk → „Edytuj dane”).
-- Na slajdzie tytułowym wpisz imiona w miejsce „[Imię Nazwisko]”.
+- Kolumnę wyników na slajdzie 11 wypełniaj tylko liczbami z raportu skryptu ewaluacji.
+- Na slajdzie tytułowym dopisz nazwę zespołu.
 - Zrzuty możesz podmienić na nowe (prawy przycisk na obrazku → „Zmień obraz”), zachowując rozmiar.
 
 ## Prezentacja HTML i eksport do PDF
@@ -74,27 +74,30 @@ Obecny szablon ma jeszcze 10 slajdów starej wersji. Po przerobieniu będzie mia
 
 ## Spójne zrzuty ekranu z demo
 
-Obecne zrzuty w `screenshots/` pokazują starą wersję. Nowe rób na działającym prototypie, nie na makietach z wpisanymi odpowiedziami. Trzymaj się tych ustawień, żeby wyglądały tak samo:
+Zrzuty w `screenshots/` są z makiet (`demo/live/x/`, `demo/widgets/` i `presentation/shots/web.html`) z atrapą API. Gdy działa prawdziwy prototyp, podmień je na zrzuty z niego. Trzymaj się tych ustawień, żeby wyglądały tak samo:
 
 - **Okno przeglądarki 1440 × 900**, powiększenie strony 100%, Chrome. Dla wersji na telefon: 390 × 844.
 - **Tryb jasny.** Jedna prezentacja = jeden tryb.
 - Kursor odsuń od kart, żeby nie było podświetleń ani dymków.
 
-Które stany uchwycić:
+Które stany są w `screenshots/` i gdzie ich używamy:
 
-| Co | Po co |
-|---|---|
-| formularz „Sprawdź informację” przed wysłaniem i pasek analizy w trakcie | slajd 5 |
-| karta wyniku z co najmniej dwoma twierdzeniami i cytatami | slajdy 4 i 5 |
-| przycisk „Sprawdź” pod postem we wtyczce i karta wyniku pod postem | slajd 6 |
-| karta z werdyktem „Brak wystarczających dowodów” i informacją o przekazaniu sprawy | slajd 7 |
-| stan „Problem techniczny” | slajd 11 (awaria nie jest werdyktem) |
-| kolejka moderatorów i panel jakości | slajdy 7 i 10 |
+| Plik | Co | Slajd |
+|---|---|---|
+| `web-01-form.png` | formularz „Sprawdź informację” przed wysłaniem | 5 |
+| `widgets-01-steps.png` | pasek analizy w trakcie | 5 |
+| `x-02-false.png`, `x-02-card.png` | post i karta wyniku „Fałszywe” z cytatami i siłą podstawy | 1, 6 |
+| `x-03-abstain.png`, `x-03-card.png` | „Brak wystarczających dowodów” i sprawa #S-4 dla moderatorów | 7 |
+| `widgets-02-conflict.png` | sprzeczne źródła obok siebie | 7 |
+| `web-02-injection-input.png`, `web-03-injection-log.png` | tekst z ukrytym poleceniem i wpis w zapisie przebiegu | 8 |
+
+Jeszcze brakuje zrzutów stanu „Problem techniczny” oraz kolejki moderatorów i panelu jakości: te ekrany nie mają jeszcze makiety HTML.
 
 Dla zespołu technicznego: wszystkie PNG da się odtworzyć poleceniami z folderu `design-system/`:
 
 ```
-uv run --with playwright python presentation/render.py shots    # zrzuty demo (serwer na porcie 52990)
+uv run --with playwright python presentation/render.py shots    # zrzuty z makiet (design-system/ serwowany na porcie 52990)
+uv run --with playwright python presentation/render.py deck out/ # slajdy HTML jako PNG i PDF do folderu out/
 uv run --with playwright python presentation/render.py brand    # logo w PNG
 uv run --with playwright python presentation/render.py social   # grafiki do social mediów
 uv run --with python-pptx python presentation/build_pptx.py     # szablon PPTX
