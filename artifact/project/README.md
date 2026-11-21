@@ -10,7 +10,7 @@ Ten brand book opisuje, jak Meritum wygląda i jak mówi. Tokeny są w zakładka
 
 ## 1. Idea w jednym akapicie
 
-Meritum pozwala obywatelowi sprawdzić doniesienie tak łatwo, jak wysłać wiadomość. Wkleja tekst albo link w formularzu na stronie (kanał podstawowy) albo klika „Sprawdź” pod postem we wtyczce do przeglądarki (drugi kanał; w okienku wtyczki jest też pole do wklejenia tekstu). Jeden rdzeń weryfikacji wyodrębnia twierdzenia, szuka w opisanym i audytowalnym zbiorze źródeł oraz w świeżych publikacjach z zatwierdzonych serwisów, a potem dla każdego twierdzenia podaje werdykt z dosłownym cytatem, jawnymi przesłankami i siłą podstawy. Gdy dowodów brakuje, wstrzymuje się i mówi, czego nie ustalił; sprawy nierozstrzygnięte i powtarzające się trafiają do kolejki moderatorów. Wygląd łączy precyzję narzędzi dla analityków (Linear, Vercel) z powagą dziennikarstwa śledczego (The Economist, Bellingcat). Metafora przewodnia to **biuletyn synoptyczny**: spokojny komunikat, jasno podane źródła pomiaru i uczciwie zaznaczona niepewność.
+Meritum pozwala sprawdzić informację tak łatwo, jak wysłać wiadomość. Obywatel wkleja tekst albo link w formularzu na stronie (kanał podstawowy) albo klika „Sprawdź” pod postem we wtyczce do przeglądarki (drugi kanał; w okienku wtyczki jest też pole do wklejenia tekstu). Ten sam rdzeń obsługuje bota na Discordzie, a jeśli starczy czasu, także SMS. Jeden rdzeń weryfikacji wyodrębnia twierdzenia, szuka w opisanym i audytowalnym zbiorze źródeł oraz w świeżych publikacjach z zatwierdzonych serwisów, a potem dla każdego twierdzenia podaje werdykt z dosłownym cytatem, jawnymi przesłankami i siłą podstawy. Gdy dowodów brakuje, wstrzymuje się i mówi, czego nie ustalił; sprawy nierozstrzygnięte i powtarzające się trafiają do kolejki moderatorów. Wygląd łączy precyzję narzędzi dla analityków (Linear, Vercel) z powagą dziennikarstwa śledczego (The Economist, Bellingcat). Metafora przewodnia to **biuletyn synoptyczny**: spokojny komunikat, jasno podane źródła pomiaru i uczciwie zaznaczona niepewność.
 
 **Hasła:** „Sprawdź, zanim podasz dalej.” oraz „Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost.”
 
@@ -120,14 +120,16 @@ Nic poniżej 12 px. Nagłówki zdaniowe (wielka litera tylko na początku), bez 
 
 ## 6. Komponenty
 
-Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Shadow DOM wtyczki w `extension/widget.css`, dane opisują `contracts/`, teksty `copy/pl.json`. Interaktywne makiety: `demo/widgets/`, przepływ na makiecie X: `demo/x/`. Makiety i komponenty pokazują jeszcze stary przepływ zgłoszenia i trzeba je przerobić według tej sekcji.
+Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Shadow DOM wtyczki w `extension/widget.css`, dane opisują kontrakty (źródłem prawdy jest repozytorium meritum-core, tu leży robocza kopia w `contracts/`), teksty `copy/pl.json`. Bot na Discordzie i SMS nie mają własnego wyglądu: korzystają z tych samych tekstów, a odpowiedź SMS mieści się w 70 znakach (polskie znaki wymuszają kodowanie UCS-2) i kończy się linkiem do pełnej karty wyniku (`sms`). Interaktywne makiety: `demo/widgets/`, przepływ na makiecie X: `demo/x/`. Makiety i komponenty pokazują jeszcze stary przepływ zgłoszenia i trzeba je przerobić według tej sekcji.
 
 ### 6.1 Formularz „Sprawdź informację” (strona WWW, kanał podstawowy)
 Jedna kolumna, działa od 320 px szerokości.
 1. Tytuł „Sprawdź informację” i jedno zdanie, co się stanie.
 2. Pole „Tekst albo link” (do 4000 znaków), przyjmuje wklejony tekst albo pełny adres https://.
 3. Przycisk główny „Sprawdź”, aktywny od 3 znaków albo poprawnego linku. W trakcie: „Sprawdzamy…” i pasek analizy (6.3).
-4. Pod przyciskiem informacja o prywatności: bez konta, maskowanie oczywistych danych osobowych, termin usunięcia zapisu, link „Usuń moje sprawdzenia”.
+4. Pod przyciskiem informacja o prywatności: konto nie jest potrzebne, maskowanie oczywistych danych osobowych, termin usunięcia zapisu, link „Usuń moje sprawdzenia”.
+5. Pod formularzem lista „Twoje sprawdzenia” (`history`): sprawdzenia z tej rozmowy, od najnowszego; kliknięcie otwiera kartę wyniku. Bez logowania lista pochodzi z sessionStorage, a notatka mówi, że zniknie po zamknięciu karty. Pusta lista pokazuje `history.empty`.
+6. Przy liście opcjonalne logowanie (`account`): dwa przyciski drugorzędne „Zaloguj się kontem Google” i „Zaloguj się kontem Microsoft” oraz zdanie, że logowanie nie jest potrzebne. Po zalogowaniu historia jest na serwerze, a w miejscu przycisków są „Usuń moją historię”, „Usuń konto i historię” i „Wyloguj się”.
 
 Błędy pod polem, słowami z `copy/pl.json` (`errors`), bez czyszczenia wpisanej treści.
 
@@ -135,7 +137,7 @@ Błędy pod polem, słowami z `copy/pl.json` (`errors`), bez czyszczenia wpisane
 Znak Meritum 18 px + słowo „Sprawdź” w pasku akcji posta. Stany: spoczynek (kolor ikon platformy), najechanie (tło `#E1EDF2`, tekst `#13506A`), w toku, „Sprawdzono”. Treść posta wysyłamy dopiero po kliknięciu. Wynik pojawia się pod postem jako karta wyniku (6.4). Okienko wtyczki z paska przeglądarki ma to samo pole co formularz WWW, więc ten sam tekst można sprawdzić w obu kanałach i dostać ten sam wynik.
 
 ### 6.3 Pasek analizy
-Pokazuje kroki workflowu: kółko czeka, kręci się, gotowe, pominięte albo nieudane. Kody i teksty kroków: `receive`, `extract_claims`, `search_corpus`, `search_web`, `assess_evidence`, `verify_citations`, `write_answer`, `save_record` (`copy/pl.json`, `analysis.steps`). Krok „Szukamy świeżych publikacji w zatwierdzonych serwisach” pojawia się tylko wtedy, gdy baza źródeł nie wystarczyła.
+Pokazuje kroki workflowu: kółko czeka, kręci się, gotowe, pominięte albo nieudane. Kody i teksty kroków: `receive`, `extract_claims`, `search_corpus`, `search_web`, `assess_evidence`, `verify_citations`, `write_answer`, `save_record` (`copy/pl.json`, `analysis.steps`). Krok „Szukamy świeżych publikacji w zatwierdzonych serwisach” pojawia się tylko wtedy, gdy baza źródeł nie wystarczyła. Agenty badawcze działają równolegle, więc kilka kółek może się kręcić naraz. Odpowiedź przychodzi strumieniem: wersja wstępna ma dopisek `analysis.draft` i nie pokazuje werdyktu, dopóki cytaty nie przejdą weryfikacji.
 
 ### 6.4 Karta wyniku
 Jedna karta na sprawdzenie, a w niej jeden blok na każde twierdzenie. Białe tło, obramowanie 1 px, w widżecie promień platformy.
@@ -143,7 +145,7 @@ Jedna karta na sprawdzenie, a w niej jeden blok na każde twierdzenie. Białe t�
 - **Twierdzenie i plakietka werdyktu:** treść twierdzenia jako tytuł karty, obok plakietka („Potwierdzone”, „Fałszywe”, „Wprowadzające w błąd”, „Brak wystarczających dowodów”, „Nie podlega weryfikacji”) i jedno zdanie podpowiedzi z `verdict_hint`.
 - **Wyjaśnienie:** 1–3 zdania z podpisem „To nasze wyjaśnienie, przygotowane z pomocą AI. Podstawą są cytaty ze źródeł poniżej.” Wyjaśnienie jest wizualnie oddzielone od cytatów.
 - **Na czym się opieramy:** każde źródło jako wiersz: tytuł (link), wydawca, data publikacji, rodzaj i poziom (urzędowe lub pierwotne, wtórne), a pod spodem dosłowny fragment na podniesionym tle. Źródło z wyszukiwania w sieci ma dopisek „znalezione w wyszukiwaniu w zatwierdzonych serwisach”.
-- **Siła podstawy:** słowo i trzy kreski poziomu, pod nimi przesłanki słowami: liczba niezależnych źródeł, ile z nich urzędowych, wiek najnowszego, czy są zgodne. Przy sprzecznych źródłach oba cytaty stoją obok siebie.
+- **Siła podstawy:** słowo i trzy kreski poziomu, pod nimi przesłanki słowami: liczba niezależnych źródeł, ile z nich urzędowych, wiek najnowszego, czy są zgodne. Przy sprzecznych źródłach nie ma siły: werdykt to „Brak wystarczających dowodów”, cytaty obu stron stoją obok siebie, a nad nimi jest jedno zdanie, czym się różnią (`result.conflict`).
 - **Czego nie udało się ustalić:** obowiązkowe przy „Brak wystarczających dowodów”.
 - **Ostrzeżenia:** materiał archiwalny, podobieństwo do znanego incydentu (jako kontekst, nie podstawa oceny) i neutralna informacja o statusie źródła, np. podmiot objęty sankcjami UE. Każde w osobnym wierszu, bez czerwieni.
 - **Technika:** nazwa techniki manipulacji + podpowiedź „jak rozpoznać?”, gdy dotyczy.
@@ -262,16 +264,18 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 - `extension/popup/`, `extension/onboarding/`, `extension/icons/`. Opis techniczny po angielsku: `extension/README.md`.
 
 ### Backend (FastAPI)
-- `contracts/meritum_contracts.py`: modele Pydantic v2, jedyne źródło prawdy dla API, strony, wtyczki i panelu (zapytanie, wynik sprawdzenia, twierdzenie, cytat, źródło, przesłanki, status analizy, zapis przebiegu, sprawa moderatora, wpis katalogu źródeł). Reguły z treści zadania MSZ są w modelach:
+- `contracts/meritum_contracts.py`: robocza kopia kontraktów; jedynym źródłem prawdy jest repozytorium meritum-core, a design system korzysta z wygenerowanych JSON Schema i typów TS. Modele Pydantic v2 dla API, strony, wtyczki i panelu (zapytanie, wynik sprawdzenia, twierdzenie, cytat, źródło, przesłanki, status analizy, zapis przebiegu, sprawa moderatora, wpis katalogu źródeł). Reguły z treści zadania MSZ są w modelach:
   - werdykt rozstrzygający (potwierdzone, fałszywe, wprowadzające w błąd) wymaga cytatu i jawnych przesłanek;
   - siła podstawy wynika z przesłanek według jednej stałej reguły, nie z deklaracji modelu;
-  - sprzeczne źródła nigdy nie dają siły „mocna” ani werdyktu „potwierdzone”;
+  - zgodność wynika z wymowy cytatów; sprzeczne wiarygodne źródła dają „brak wystarczających dowodów” z cytatami obu stron i bez siły;
+  - niezależne źródła liczymy według wydawcy, nie według strony;
+  - wiek dowodu liczymy od daty, której dotyczy twierdzenie, z progiem z katalogu; obowiązujący akt prawny, strona urzędowa aktualizowana w miejscu i dowód o zdarzeniu z przeszłości nie są archiwalne;
   - „brak wystarczających dowodów” musi powiedzieć, czego nie ustalono;
   - awaria, prośba o doprecyzowanie i pytanie poza zakresem nie są werdyktami i nie mają twierdzeń;
   - zalecenie przekazania sprawy moderatorowi różni się od faktycznego przekazania;
   - cytat przechodzi tylko wtedy, gdy fragment znaleziono w źródle dosłownie.
-- `contracts/generate.sh` tworzy `meritum.schema.json` (JSON Schema) i `meritum.ts` (typy TypeScript) oraz sprawdza przykłady z `examples.json` i to, że złe dane są odrzucane.
-- `copy/pl.json`: wszystkie teksty interfejsu: formularz, werdykty z podpowiedziami, siła podstawy, stany techniczne, przekazanie moderatorom, ostrzeżenia o statusie źródła, kroki analizy, techniki manipulacji z „jak rozpoznać”, kolejka moderatorów, błędy. Klucze odpowiadają kodom z kontraktów.
+- `contracts/generate.sh` tworzy `meritum.schema.json` (JSON Schema) i `meritum.ts` (typy TypeScript) oraz sprawdza przykłady z `examples.json` i to, czy złe dane są odrzucane.
+- `copy/pl.json`: wszystkie teksty interfejsu: formularz, werdykty z podpowiedziami, siła podstawy, stany techniczne, przekazanie moderatorom, ostrzeżenia o statusie źródła, kroki analizy, techniki manipulacji z „jak rozpoznać”, kolejka moderatorów, historia sprawdzeń, logowanie, SMS, polityka prywatności kanałów, błędy. Klucze odpowiadają kodom z kontraktów.
 
 ### Prezentacje i film (cały zespół)
 - `presentation/`: szablon PPTX, slajdy HTML, zrzuty, grafiki social i instrukcja `presentation/README.md`. Obecne pliki pokazują jeszcze stary produkt na dwa konkursy i trzeba je wygenerować od nowa pod deck MSZ (do 12 slajdów, film do 3 minut).
@@ -288,7 +292,7 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 | `DESIGN_SYSTEM.md` | ta specyfikacja |
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
 | `components/meritum/` | komponenty React: `ContextCard`, `AnalysisSteps`, `MeritumMark` oraz nieużywane w MSZ `QuickReportPopover`, `BotDefenseTelemetry`, `CampaignRotation` |
-| `contracts/` | kontrakty Pydantic, JSON Schema, typy TS, przykłady |
+| `contracts/` | robocza kopia kontraktów (źródłem prawdy jest meritum-core): Pydantic, JSON Schema, typy TS, przykłady |
 | `copy/pl.json` | teksty interfejsu |
 | `extension/` | zestaw wtyczki Chrome: style Shadow DOM, skrypt referencyjny, popup, onboarding, ikony |
 | `brand/` | logo w SVG, `brand/exports/` w PNG i logotyp |

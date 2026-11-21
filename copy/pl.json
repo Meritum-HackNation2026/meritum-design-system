@@ -12,8 +12,34 @@
     "input_placeholder": "Np. „Od stycznia nie zapłacisz w sklepie gotówką”",
     "submit": "Sprawdź",
     "checking": "Sprawdzamy…",
-    "privacy": "Nie zakładasz konta. Oczywiste dane osobowe (telefon, e-mail, PESEL) ukrywamy przed analizą. Zapis sprawdzenia usuwamy po {days} dniach.",
+    "privacy": "Konto nie jest potrzebne. Oczywiste dane osobowe (telefon, e-mail, PESEL) ukrywamy przed analizą. Zapis sprawdzenia usuwamy po {days} dniach.",
     "delete_session": "Usuń moje sprawdzenia"
+  },
+  "history": {
+    "title": "Twoje sprawdzenia",
+    "empty": "Tu pojawią się sprawdzenia z tej rozmowy.",
+    "session_note": "Historia jest zapisana tylko w tej karcie przeglądarki. Zniknie, gdy ją zamkniesz.",
+    "account_note": "Jesteś zalogowany, więc historię przechowujemy na naszym serwerze. Możesz ją usunąć w każdej chwili.",
+    "delete": "Usuń moją historię"
+  },
+  "account": {
+    "optional": "Logowanie nie jest potrzebne. Zaloguj się, jeśli chcesz zachować historię po zamknięciu przeglądarki.",
+    "sign_in_google": "Zaloguj się kontem Google",
+    "sign_in_microsoft": "Zaloguj się kontem Microsoft",
+    "sign_out": "Wyloguj się",
+    "delete_account": "Usuń konto i historię",
+    "stored": "Zapisujemy tylko identyfikator konta od Google albo Microsoft i historię sprawdzeń z ukrytymi danymi osobowymi."
+  },
+  "sms": {
+    "$comment": "Polish characters force UCS-2: one SMS holds 70 characters. reply and failure must fit; fees is shown on the website and in README too.",
+    "fees": "Usługa jest bezpłatna. Operator może pobrać standardową opłatę za SMS według twojej taryfy.",
+    "reply": "{verdict}. Wynik: {link}",
+    "too_long": "Za długi tekst. Wyślij krótszy albo sam link.",
+    "failure": "Nie udało się sprawdzić. To nie jest ocena. Spróbuj później."
+  },
+  "channel_privacy": {
+    "title": "Polityka prywatności kanału",
+    "summary": "Liczymy tylko zbiorcze statystyki użycia. Nie przetwarzamy imion, nazwisk ani adresów e-mail. Adres IP i region mogą służyć do ochrony przed atakami."
   },
   "extension": {
     "check": "Sprawdź",
@@ -34,6 +60,7 @@
     "strength_title": "Siła podstawy",
     "premises": "Niezależne źródła: {independent}, w tym urzędowe lub pierwotne: {primary}. {agreement}",
     "agreement": { "consistent": "Źródła są zgodne.", "conflicting": "Źródła podają różne informacje." },
+    "conflict": "Wiarygodne źródła są tu sprzeczne, więc nie rozstrzygamy. Obie strony są poniżej. Różnica: {difference}",
     "newest": "Najnowsze źródło ma {days} dni.",
     "unresolved": "Czego nie udało się ustalić",
     "archival": "Uwaga: najnowsze źródło jest starsze, niż wymaga sprawa. Informacja mogła się zmienić.",
@@ -78,6 +105,7 @@
   },
   "analysis": {
     "title": "Meritum sprawdza",
+    "draft": "Wersja wstępna. Werdykt pokażemy po sprawdzeniu cytatów.",
     "steps": {
       "receive": "Przyjmujemy pytanie",
       "extract_claims": "Wyodrębniamy twierdzenia do sprawdzenia",
@@ -123,6 +151,7 @@
     "invalid_url": "To nie wygląda na adres strony. Wklej pełny link zaczynający się od https://.",
     "too_long": "Tekst jest za długi. Wklej najwyżej 4000 znaków albo sam link.",
     "rate_limited": "Za dużo sprawdzeń w krótkim czasie. Spróbuj za minutę.",
+    "busy": "Mamy teraz bardzo dużo pytań. Spróbuj za kilka minut. To nie jest ocena treści.",
     "offline": "Brak połączenia. Spróbuj, gdy wrócisz do sieci.",
     "unsupported_site": "Przycisk „Sprawdź” działa na X, Facebooku, Instagramie, Reddicie i TikToku. Tekst z innych stron wklej w okienku wtyczki."
   }

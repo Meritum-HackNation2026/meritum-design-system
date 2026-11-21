@@ -1,6 +1,6 @@
 /* Generated from contracts/meritum_contracts.py by contracts/generate.sh. Do not edit. */
 
-export type Channel = "web" | "extension" | "discord" | "mcp";
+export type Channel = "web" | "extension" | "discord" | "sms" | "mcp";
 export type Text = string | null;
 export type Url = string | null;
 /**
@@ -24,9 +24,23 @@ export type FragmentFoundVerbatim = true;
 export type Claim = string;
 export type Verdict = "confirmed" | "false" | "misleading" | "insufficient_evidence" | "not_verifiable";
 export type Level = "strong" | "moderate" | "weak";
+/**
+ * Distinct publishers (institutions) among the citations.
+ */
 export type IndependentSources = number;
+/**
+ * Distinct primary-tier publishers among the citations.
+ */
 export type PrimarySources = number;
-export type NewestSourceAgeDays = number | null;
+/**
+ * Hours between the newest source and the date the claim refers to, not now.
+ */
+export type NewestSourceAgeHours = number | null;
+/**
+ * Threshold from the catalogue entry of the newest source.
+ */
+export type MaxAgeHours = number;
+export type Validity = "expires" | "in_force" | "updated_in_place" | "past_event";
 export type Agreement = "consistent" | "conflicting";
 export type Citations = Citation[];
 export type Explanation = string;
@@ -68,6 +82,9 @@ export type Claims = ClaimResult[];
  */
 export type Message = string | null;
 export type Limitations = string[];
+/**
+ * Id of the scheduled corpus snapshot.
+ */
 export type CorpusVersion = string;
 export type AiDisclosure = true;
 export type Code1 =
@@ -99,10 +116,14 @@ export type OutputTokens = number;
 export type CostUsd = number;
 export type CheckId2 = string;
 /**
- * Random id kept in the browser; no account.
+ * Random id kept in the browser session.
  */
 export type SessionId = string;
-export type Channel1 = "web" | "extension" | "discord" | "mcp";
+/**
+ * Signed-in users only (Google or Microsoft account); None for anonymous checks.
+ */
+export type UserId = string | null;
+export type Channel1 = "web" | "extension" | "discord" | "sms" | "mcp";
 export type ReceivedAt = string;
 export type AnsweredAt = string;
 /**
@@ -136,6 +157,14 @@ export type Tier1 = "primary" | "secondary";
 export type License = string;
 export type Ingest = "static" | "rss" | "sitemap" | "web_search";
 export type RefreshHours = number | null;
+/**
+ * Age override for every document of this entry; past_event is set per evidence.
+ */
+export type Validity1 = "expires" | "in_force" | "updated_in_place" | "past_event";
+/**
+ * Shorter threshold for short-lived sources (warnings, roads, weather: hours or days).
+ */
+export type MaxAgeHours1 = number | null;
 export type QualifiedBecause = string;
 export type Excluded = boolean;
 export type ExclusionReason = string | null;
@@ -220,7 +249,9 @@ export interface EvidenceStrength {
 export interface Premises {
   independent_sources: IndependentSources;
   primary_sources: PrimarySources;
-  newest_source_age_days?: NewestSourceAgeDays;
+  newest_source_age_hours?: NewestSourceAgeHours;
+  max_age_hours?: MaxAgeHours;
+  validity?: Validity;
   agreement: Agreement;
 }
 /**
@@ -325,6 +356,7 @@ export interface ModelUsage {
 export interface CheckRecord {
   check_id: CheckId2;
   session_id: SessionId;
+  user_id?: UserId;
   channel: Channel1;
   received_at: ReceivedAt;
   answered_at: AnsweredAt;
@@ -370,6 +402,8 @@ export interface CatalogEntry {
   license: License;
   ingest: Ingest;
   refresh_hours?: RefreshHours;
+  validity?: Validity1;
+  max_age_hours?: MaxAgeHours1;
   qualified_because: QualifiedBecause;
   excluded?: Excluded;
   exclusion_reason?: ExclusionReason;

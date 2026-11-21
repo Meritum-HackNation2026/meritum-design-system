@@ -93,7 +93,7 @@
   },
   "CatalogEntry": {
     "domain": "isap.sejm.gov.pl", "publisher": "Kancelaria Sejmu", "kind": "akt_prawny", "tier": "primary",
-    "license": "dokument urzędowy, art. 4 ustawy o prawie autorskim", "ingest": "static",
+    "license": "dokument urzędowy, art. 4 ustawy o prawie autorskim", "ingest": "static", "validity": "in_force",
     "qualified_because": "Oficjalna baza aktów prawnych publikowanych w Dzienniku Ustaw i Monitorze Polskim."
   }
 }

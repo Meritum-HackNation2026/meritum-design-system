@@ -7,7 +7,7 @@
 - [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md): specyfikacja dla całego zespołu i dla agentów AI (kolory, typografia, logo, komponenty, ton). Sekcja 12 to gotowe polecenie do wklejenia.
 - [PRODUCT.md](PRODUCT.md): kim są użytkownicy, co robi produkt, zasady.
 - [KEY_SELLING_POINTS.md](KEY_SELLING_POINTS.md): jak odpowiadamy na wymagania konkursu MSZ i co pokazujemy na demo.
-- [docs/product-doc.html](docs/product-doc.html): dokument produktowy: historie użytkowników, funkcje, decyzje architektoniczne (ADR).
+- [docs/product-doc.html](docs/product-doc.html): dokument produktowy dla zespołu i agentów AI: historie użytkowników, funkcje, decyzje architektoniczne (ADR), prawa autorskie i licencje, słownik pojęć.
 
 ## Zawartość
 
@@ -17,8 +17,8 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 |---|---|
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
 | `components/meritum/` | komponenty React (shadcn/ui): karta wyniku (`ContextCard`), pasek postępu sprawdzenia (`AnalysisSteps`), znak. Z poprzedniego zakresu (NASK, konsensus) zostały `QuickReportPopover`, `BotDefenseTelemetry` i `CampaignRotation`: nie są częścią produktu dla MSZ |
-| `contracts/` | kontrakty danych (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia |
-| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, błędy |
+| `contracts/` | robocza kopia kontraktów danych (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
+| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie, SMS, błędy |
 | `extension/` | zestaw wtyczki Chrome (drugi kanał): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
 | `brand/` | logo (SVG, PNG, logotyp) |
 | `presentation/` | szablon PPTX, slajdy HTML, zrzuty demo, grafiki social |

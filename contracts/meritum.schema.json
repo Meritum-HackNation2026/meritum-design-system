@@ -11,6 +11,7 @@
             "web",
             "extension",
             "discord",
+            "sms",
             "mcp"
           ],
           "title": "Channel",
@@ -317,16 +318,18 @@
       "description": "Explicit premises behind a verdict (MSZ: strength must follow from quality, recency, agreement, independence).",
       "properties": {
         "independent_sources": {
+          "description": "Distinct publishers (institutions) among the citations.",
           "minimum": 0,
           "title": "Independent Sources",
           "type": "integer"
         },
         "primary_sources": {
+          "description": "Distinct primary-tier publishers among the citations.",
           "minimum": 0,
           "title": "Primary Sources",
           "type": "integer"
         },
-        "newest_source_age_days": {
+        "newest_source_age_hours": {
           "anyOf": [
             {
               "minimum": 0,
@@ -337,7 +340,26 @@
             }
           ],
           "default": null,
-          "title": "Newest Source Age Days"
+          "description": "Hours between the newest source and the date the claim refers to, not now.",
+          "title": "Newest Source Age Hours"
+        },
+        "max_age_hours": {
+          "default": 8760,
+          "description": "Threshold from the catalogue entry of the newest source.",
+          "minimum": 1,
+          "title": "Max Age Hours",
+          "type": "integer"
+        },
+        "validity": {
+          "default": "expires",
+          "enum": [
+            "expires",
+            "in_force",
+            "updated_in_place",
+            "past_event"
+          ],
+          "title": "Validity",
+          "type": "string"
         },
         "agreement": {
           "enum": [
@@ -566,6 +588,7 @@
           "default": null
         },
         "corpus_version": {
+          "description": "Id of the scheduled corpus snapshot.",
           "maxLength": 40,
           "minLength": 1,
           "title": "Corpus Version",
@@ -752,17 +775,33 @@
           "type": "string"
         },
         "session_id": {
-          "description": "Random id kept in the browser; no account.",
+          "description": "Random id kept in the browser session.",
           "maxLength": 64,
           "minLength": 8,
           "title": "Session Id",
           "type": "string"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Signed-in users only (Google or Microsoft account); None for anonymous checks.",
+          "title": "User Id"
         },
         "channel": {
           "enum": [
             "web",
             "extension",
             "discord",
+            "sms",
             "mcp"
           ],
           "title": "Channel",
@@ -1020,6 +1059,32 @@
           ],
           "default": null,
           "title": "Refresh Hours"
+        },
+        "validity": {
+          "default": "expires",
+          "description": "Age override for every document of this entry; past_event is set per evidence.",
+          "enum": [
+            "expires",
+            "in_force",
+            "updated_in_place",
+            "past_event"
+          ],
+          "title": "Validity",
+          "type": "string"
+        },
+        "max_age_hours": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Shorter threshold for short-lived sources (warnings, roads, weather: hours or days).",
+          "title": "Max Age Hours"
         },
         "qualified_because": {
           "maxLength": 300,
