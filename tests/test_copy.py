@@ -85,6 +85,8 @@ REQUIRED_KEYS = (
     "discord.claims.few",
     "discord.claims.many",
     "discord.claims.other",
+    # daily recording upload limit, apart from the per-minute one (design-system#43)
+    "errors.rate_limited_daily",
 )
 
 
