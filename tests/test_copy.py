@@ -211,6 +211,24 @@ class Tone(unittest.TestCase):
             with self.subTest(key=key, absent=absent):
                 self.assertNotIn(absent, str(lookup(key)))
 
+    def test_moderation_counts_have_polish_plurals(self) -> None:
+        # Gherkin "odmiana liczby" from design-system#65; keys are Intl.PluralRules("pl") categories
+        for key in ("moderation.similar", "moderation.askers"):
+            forms = lookup(key)
+            with self.subTest(key=key):
+                self.assertIsInstance(forms, dict)
+                for form in ("one", "few", "many", "other"):
+                    self.assertIn("{count}", forms[form])
+        self.assertEqual(lookup("moderation.askers.one"), "{count} osoba pytająca")
+        self.assertEqual(lookup("moderation.similar.few"), "{count} podobne pytania")
+        self.assertEqual(lookup("moderation.similar.many"), "{count} podobnych pytań")
+
+    def test_moderation_queue_counts_all_questions_with_plural(self) -> None:
+        # Gherkin "parafraza w jednej sprawie" from design-system#65: two questions show "2 podobne pytania"
+        source = (Path(__file__).parent.parent / "components" / "meritum" / "moderation-queue.tsx").read_text(encoding="utf-8")
+        self.assertNotIn("asked - 1", source)
+        self.assertIn("plural(t.moderation.similar, asked)", source)
+
     def test_discord_skin_in_platform_skins(self) -> None:
         tokens = (Path(__file__).parent.parent / "tokens" / "meritum.css").read_text(encoding="utf-8")
         self.assertIn('[data-host="discord"]', tokens)
