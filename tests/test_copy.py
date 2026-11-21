@@ -1,6 +1,6 @@
 """Checks copy/pl.json: required screen keys and the tone of DESIGN_SYSTEM.md section 8.
 
-Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22
+Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39
 Run: python3 -m unittest discover -s tests
 """
 
@@ -76,6 +76,15 @@ REQUIRED_KEYS = (
     "extension.popup_delete_failed",
     # check form: a link longer than the contract's url.maxLength (design-system#35)
     "errors.url_too_long",
+    # Discord mock: author of the user's message, reply templates, claim plurals (design-system#39)
+    "discord.user_author",
+    "discord.claim_undated",
+    "discord.claim_no_strength",
+    "discord.claim_undated_no_strength",
+    "discord.claims.one",
+    "discord.claims.few",
+    "discord.claims.many",
+    "discord.claims.other",
 )
 
 
@@ -139,6 +148,26 @@ class Tone(unittest.TestCase):
         for key in ("extension.popup_connecting", "extension.popup_api_down"):
             with self.subTest(key=key):
                 self.assertNotIn("API", str(lookup(key)))
+
+    def test_discord_claim_plurals_and_templates_without_date_or_strength(self) -> None:
+        # Gherkin "makieta Discorda bierze teksty z copy" from design-system#39;
+        # plural keys are Intl.PluralRules("pl") categories
+        for form, word in (("one", "twierdzenie"), ("few", "twierdzenia"), ("many", "twierdzeń"), ("other", "twierdzenia")):
+            with self.subTest(form=form):
+                self.assertEqual(lookup(f"discord.claims.{form}"), f"{{count}} {word}")
+        self.assertIn("{claims}", str(lookup("discord.summary")))
+        for key, absent in (
+            ("discord.claim_undated", "{date}"),
+            ("discord.claim_no_strength", "{strength}"),
+            ("discord.claim_undated_no_strength", "{date}"),
+            ("discord.claim_undated_no_strength", "{strength}"),
+        ):
+            with self.subTest(key=key, absent=absent):
+                self.assertNotIn(absent, str(lookup(key)))
+
+    def test_discord_skin_in_platform_skins(self) -> None:
+        tokens = (Path(__file__).parent.parent / "tokens" / "meritum.css").read_text(encoding="utf-8")
+        self.assertIn('[data-host="discord"]', tokens)
 
 
 if __name__ == "__main__":
