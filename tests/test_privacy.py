@@ -125,7 +125,7 @@ class Policies(unittest.TestCase):
     def test_web_sign_in_names_oauth_scopes_and_account_data(self) -> None:
         # Gherkin "polityka strony opisuje logowanie kontem Google albo Microsoft" from design-system#28
         text = " ".join(str(t) for _, t in texts(POLICIES["web"]["sign_in"])).lower()
-        for phrase in ("dobrowolne", "openid, email i profile", "imię i nazwisko", "identyfikator konta",
+        for phrase in ("dobrowolne", "openid, email i profile", "imię i nazwisko", "adres e-mail", "identyfikator konta",
                        "nie dostajemy hasła", "poczty, plików czy kontaktów", "sesji logowania", "historii",
                        "ról", "nie używamy do reklam", "dopóki masz konto",
                        "cofnąć w ustawieniach konta google albo microsoft"):
@@ -136,6 +136,7 @@ class Policies(unittest.TestCase):
         for where, text in (
             ("processors.sign_in", ACTIVE["sign_in"]["data"]),
             ("policies.web.data", POLICIES["web"]["data"]),
+            ("policies.web.sign_in.scopes", POLICIES["web"]["sign_in"]["scopes"]),
             ("account.stored", str(lookup("account.stored"))),
         ):
             with self.subTest(where=where):
