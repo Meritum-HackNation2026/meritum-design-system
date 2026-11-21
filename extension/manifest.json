@@ -23,6 +23,7 @@
         "https://*.instagram.com/*",
         "https://*.reddit.com/*",
         "https://*.tiktok.com/*",
+        "https://*.gburek.app/*",
         "http://localhost:52990/*"
       ],
       "js": ["reference/api.js", "reference/content.js"],
@@ -35,7 +36,7 @@
       "matches": [
         "https://x.com/*", "https://*.x.com/*", "https://twitter.com/*", "https://*.twitter.com/*",
         "https://*.facebook.com/*", "https://*.instagram.com/*", "https://*.reddit.com/*", "https://*.tiktok.com/*",
-        "http://localhost:52990/*"
+        "https://*.gburek.app/*", "http://localhost:52990/*"
       ]
     }
   ]

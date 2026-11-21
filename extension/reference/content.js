@@ -25,6 +25,9 @@
     const m = location.pathname.match(/\/demo\/(?:platforms|live)\/(x|facebook|instagram|reddit|tiktok)\//);
     if (m) return m[1];
     const host = location.hostname;
+    // Deployed mocks (meritum-mocks): meritum-<platform>.gburek.app, dev with a -dev suffix.
+    const mock = host.match(/^meritum-(x|facebook|instagram|reddit|tiktok)(?:-dev)?\.gburek\.app$/);
+    if (mock) return mock[1];
     const map = { 'x.com': 'x', 'twitter.com': 'x', 'facebook.com': 'facebook', 'instagram.com': 'instagram', 'reddit.com': 'reddit', 'tiktok.com': 'tiktok' };
     for (const [d, p] of Object.entries(map)) if (host === d || host.endsWith('.' + d)) return p;
     return null;
