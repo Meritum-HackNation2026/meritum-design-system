@@ -61,7 +61,8 @@
     .map(s => {
       const stateIsVisible = s.status === 'skipped' || s.status === 'failed';
       const stateSeparator = stateIsVisible ? '<span class="m-sr">, </span>' : ', ';
-      return `<li class="${s.status}"><i></i><span class="m-step-label">${esc(T.analysis.steps[s.code])}</span><span class="${stateIsVisible ? 'm-step-status' : 'm-sr'}">${stateSeparator}${esc(T.analysis.step_status[s.status])}</span></li>`;
+      const state = `<span class="${stateIsVisible ? 'm-step-status' : 'm-sr'}">${stateSeparator}${esc(T.analysis.step_status[s.status])}</span>`;
+      return `<li class="${esc(s.status)}"><i></i><span class="m-step-label">${esc(T.analysis.steps[s.code])}</span>${state}</li>`;
     })
     .join('')}</ol>${status.draft ? `<p class="m-draft">${esc(T.analysis.draft)}</p>` : ''}`;
 

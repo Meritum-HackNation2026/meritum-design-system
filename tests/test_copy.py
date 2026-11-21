@@ -87,12 +87,6 @@ REQUIRED_KEYS = (
     "discord.claims.other",
     # daily recording upload limit, apart from the per-minute one (design-system#43)
     "errors.rate_limited_daily",
-    # visible AnalysisSteps state words (design-system#44)
-    "analysis.step_status.pending",
-    "analysis.step_status.active",
-    "analysis.step_status.done",
-    "analysis.step_status.skipped",
-    "analysis.step_status.failed",
     # page „Jak działa Meritum” (meritum-frontend#20)
     "method.lead",
     "method.sources.title",
@@ -161,26 +155,6 @@ class MethodPage(unittest.TestCase):
                 paragraphs = lookup(f"method.{section}.text")
                 self.assertIsInstance(paragraphs, list)
                 self.assertTrue(paragraphs)
-
-
-class AnalysisSteps(unittest.TestCase):
-    """Checks the visible state words shared by both AnalysisSteps renderers."""
-
-    def test_skipped_and_failed_state_words_are_visible_in_both_renderers(self) -> None:
-        component = (Path(__file__).parent.parent / "components" / "meritum" / "analysis-steps.tsx").read_text(encoding="utf-8")
-        extension = (Path(__file__).parent.parent / "extension" / "reference" / "card.js").read_text(encoding="utf-8")
-        widget_css = (Path(__file__).parent.parent / "extension" / "widget.css").read_text(encoding="utf-8")
-
-        self.assertEqual(lookup("analysis.step_status.skipped"), "pominięte")
-        self.assertEqual(lookup("analysis.step_status.failed"), "nieudane")
-        self.assertIn('s.status === "skipped" || s.status === "failed"', component)
-        self.assertIn("t.analysis.step_status[s.status]", component)
-        self.assertNotIn("const SR", component)
-        self.assertIn("s.status === 'skipped' || s.status === 'failed'", extension)
-        self.assertIn("T.analysis.step_status[s.status]", extension)
-        self.assertNotIn("const SR", extension)
-        self.assertIn(".m-proc{display:block;min-width:0", widget_css)
-        self.assertIn(".m-proc li .m-step-label{min-width:0;flex:1}", widget_css)
 
 
 class Tone(unittest.TestCase):

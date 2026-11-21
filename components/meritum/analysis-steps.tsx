@@ -21,35 +21,32 @@ export function AnalysisSteps({ steps, draft = false, className }: { steps: Anal
         {t.analysis.title}
       </p>
       <ol className="mt-2 grid gap-1.5">
-        {steps.map((s) => (
-          <li
-            key={s.code}
-            className={cn(
-              "flex items-center gap-2.5 text-small transition-colors",
-              s.status === "pending" || s.status === "skipped" ? "text-muted-foreground" : "text-foreground",
-            )}
-          >
-            <StepMark status={s.status} />
-            <span className={cn("min-w-0 flex-1", s.status === "skipped" && "line-through decoration-muted-foreground/60")}>
-              {t.analysis.steps[s.code]}
-            </span>
-            <span
+        {steps.map((s) => {
+          const stateIsVisible = s.status === "skipped" || s.status === "failed"
+          return (
+            <li
+              key={s.code}
               className={cn(
-                "shrink-0 text-meta font-semibold text-muted-foreground",
-                !(s.status === "skipped" || s.status === "failed") && "sr-only",
+                "flex items-center gap-2.5 text-small transition-colors",
+                s.status === "pending" || s.status === "skipped" ? "text-muted-foreground" : "text-foreground",
               )}
             >
-              {s.status === "skipped" || s.status === "failed" ? (
-                <>
-                  <span className="sr-only">, </span>
-                  {t.analysis.step_status[s.status]}
-                </>
-              ) : (
-                `, ${t.analysis.step_status[s.status]}`
-              )}
-            </span>
-          </li>
-        ))}
+              <StepMark status={s.status} />
+              <span className={cn("min-w-0 flex-1", s.status === "skipped" && "line-through decoration-muted-foreground/60")}>
+                {t.analysis.steps[s.code]}
+              </span>
+              <span
+                className={cn(
+                  "shrink-0 text-meta font-semibold text-muted-foreground",
+                  !stateIsVisible && "sr-only",
+                )}
+              >
+                <span className="sr-only">, </span>
+                {t.analysis.step_status[s.status]}
+              </span>
+            </li>
+          )
+        })}
       </ol>
       {draft && <p className="mt-2.5 border-t border-border/70 pt-2 text-small text-muted-foreground">{t.analysis.draft}</p>}
     </output>
