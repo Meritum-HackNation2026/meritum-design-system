@@ -149,8 +149,7 @@ class Policies(unittest.TestCase):
         deletion = POLICIES["extension"]["deletion"]
         self.assertIn("„Usuń moje sprawdzenia”", deletion)
         self.assertIn("nowy losowy identyfikator", deletion)
-        self.assertIn("losowy identyfikator", POLICIES["extension"]["data"])
-        self.assertIn("tylko w przeglądarce", policy_text("extension"))
+        self.assertIn("losowy identyfikator sesji, zapisany tylko w przeglądarce", POLICIES["extension"]["data"])
 
     def test_every_purpose_counts_repetitions(self) -> None:
         # Gherkin "cel przetwarzania obejmuje liczenie powtórzeń w każdym kanale" from design-system#31
