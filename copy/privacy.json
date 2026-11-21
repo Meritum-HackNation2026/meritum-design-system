@@ -1,5 +1,5 @@
 {
-  "$comment": "Privacy policies per channel and the processor register (pl). Single source for the frontend, the Discord bot, the extension, the SMS adapter and README. Facts from the product document: ADR-13, ADR-14, US-BEZ-06, US-BEZ-07, US-WDR-03. policies.<channel>.processors lists ids from processors.items. channel_privacy in pl.json is the short in-channel summary of the same rules. Tone: DESIGN_SYSTEM.md section 8. controller and external_mcp_clients are shown in every policy. Decisions from the team on PR #20 (2026-11-21). controller.contact: {contact} is the team address, still to be filled in.",
+  "$comment": "Privacy policies per channel and the processor register (pl). Single source for the frontend, the Discord bot, the extension, the SMS adapter and README. Facts from the product document and the team decisions on PR #20: ADR-13, ADR-14, US-BEZ-06, US-BEZ-07, US-WDR-03. policies.<channel>.processors lists ids from processors.items; planned_processors lists ids from processors.planned_items. channel_privacy in pl.json is the short in-channel summary of the same rules. Tone: DESIGN_SYSTEM.md section 8. controller and external_mcp_clients are shown in every policy. Decisions from the team on PR #20 (2026-11-21). controller.contact: {contact} is the team address, still to be filled in.",
   "controller": {
     "$comment": "Shown at the top of every policy. {contact}: team contact address, not decided yet (open item on PR #20).",
     "title": "Kto odpowiada za dane",
@@ -16,9 +16,11 @@
       "retention": "Historię sprawdzeń i powiadomienia usuwamy automatycznie po 30 dniach, a wcześniej, jeśli usuniesz historię albo konto. Plik nagrania przechowujemy najwyżej tak długo jak zapis sprawdzenia. Logowanie jest opcjonalne. Identyfikator konta przechowujemy do kliknięcia „Usuń konto”.",
       "deletion": "Przycisk „Usuń moje sprawdzenia” usuwa zapisy twojej sesji. Po zalogowaniu „Usuń moją historię” usuwa historię, a „Usuń konto” także konto.",
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
-      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu trzymamy tylko w pamięci przez czas okna limitu, bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
+      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane strony przetwarzają te podmioty:",
-      "processors": ["team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "cloudflare_workers_ai", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "vertex_ai_ranking", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "sign_in", "moderator_notifications"]
+      "processors": ["team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "sign_in", "moderator_notifications"],
+      "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
+      "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"]
     },
     "discord": {
       "title": "Polityka prywatności bota Meritum na Discordzie",
@@ -28,9 +30,11 @@
       "moderators": "Twoja nazwa i identyfikator nigdy nie trafiają do moderatorów.",
       "deletion": "Napisz /usun-moje-dane, a usuniemy zapisy sprawdzeń dla twojego identyfikatora.",
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
-      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu trzymamy tylko w pamięci przez czas okna limitu, bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
+      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane tego kanału przetwarzają te podmioty:",
-      "processors": ["discord", "team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "cloudflare_workers_ai", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "vertex_ai_ranking", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"]
+      "processors": ["discord", "team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
+      "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
+      "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"]
     },
     "extension": {
       "title": "Polityka prywatności wtyczki Meritum",
@@ -39,9 +43,11 @@
       "retention": "Zapis sprawdzenia usuwamy automatycznie po 30 dniach.",
       "deletion": "Wtyczka nie pobiera ani nie przekazuje twojego identyfikatora z serwisów społecznościowych. Bez niego nie możemy powiązać wcześniejszych sprawdzeń z tobą, więc zapis znika sam po 30 dniach.",
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
-      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu trzymamy tylko w pamięci przez czas okna limitu, bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
+      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane tego kanału przetwarzają te podmioty:",
-      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "cloudflare_workers_ai", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "vertex_ai_ranking", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"]
+      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
+      "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
+      "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"]
     },
     "sms": {
       "title": "Polityka prywatności kanału SMS Meritum",
@@ -52,9 +58,11 @@
       "moderators": "Twój numer telefonu nigdy nie trafia do moderatorów.",
       "deletion": "Wyślij SMS ze słowem USUN, a usuniemy zapisy sprawdzeń z tego numeru.",
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
-      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu trzymamy tylko w pamięci przez czas okna limitu, bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
+      "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane tego kanału przetwarzają te podmioty:",
-      "processors": ["sms_gateway", "team_server", "gcp_europe_central2", "cloudflare", "cloudflare_workers_ai", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "vertex_ai_ranking", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"]
+      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
+      "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
+      "planned_processors": ["sms_gateway", "cloudflare_workers_ai", "vertex_ai_ranking"]
     }
   },
   "external_mcp_clients": {

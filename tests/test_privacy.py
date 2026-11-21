@@ -1,6 +1,6 @@
 """Checks copy/privacy.json: channel privacy policies and the ADR-14 processor register.
 
-Features: US-BEZ-06, US-BEZ-07, US-WDR-03, F-20, F-21
+Features: US-BEZ-05, US-BEZ-06, US-BEZ-07, US-WTY-09, US-WDR-03, F-20, F-21, ADR-13, ADR-14
 Run: python3 -m unittest discover -s tests
 """
 
@@ -77,7 +77,8 @@ class Policies(unittest.TestCase):
             with self.subTest(channel=channel):
                 listed = POLICIES[channel]["processors"]
                 self.assertTrue(listed)
-                self.assertLessEqual(set(listed), set(PROCESSORS))
+                self.assertLessEqual(set(listed), set(ACTIVE))
+                self.assertLessEqual(set(POLICIES[channel].get("planned_processors", [])), set(PLANNED))
 
     def test_discord_policy(self) -> None:
         # Gherkin "polityka kanału Discord" from design-system#8
@@ -95,7 +96,7 @@ class Policies(unittest.TestCase):
         self.assertIn("bezpłatna", text)
         self.assertIn("standardowe opłaty operatora", text)
         self.assertIn("USUN", POLICIES["sms"]["deletion"])
-        self.assertIn("sms_gateway", POLICIES["sms"]["processors"])
+        self.assertIn("sms_gateway", POLICIES["sms"]["planned_processors"])
 
     def test_controller_and_contact(self) -> None:
         controller = PRIVACY["controller"]
@@ -110,7 +111,8 @@ class Policies(unittest.TestCase):
             with self.subTest(channel=channel):
                 text = POLICIES[channel]["ip_addresses"]
                 self.assertIn("14 dniach", text)
-                self.assertIn("pamięci", text)
+                self.assertIn("bez trwałego zapisu", text)
+                self.assertNotIn("pamięci", text)
                 self.assertIn("Cloudflare", text)
 
     def test_web_history_30_days_account_until_deleted(self) -> None:
@@ -150,6 +152,9 @@ class Processors(unittest.TestCase):
     def test_candidates_and_sms_gateway_are_planned(self) -> None:
         self.assertEqual(set(PLANNED), set(PLANNED_PROCESSORS))
         self.assertTrue(PRIVACY["processors"]["planned_lead"].strip())
+        for channel in CHANNELS:
+            with self.subTest(channel=channel):
+                self.assertTrue(POLICIES[channel]["planned_processors_lead"].strip())
 
     def test_conservative_regions(self) -> None:
         for processor in ("fact_check_tools", "moderator_notifications"):
