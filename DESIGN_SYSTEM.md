@@ -149,7 +149,7 @@ Jedna karta na sprawdzenie, a w niej jeden blok na każde twierdzenie. Białe t�
 - **Kontekst:** ocena fact-checkera z ClaimReview z linkiem (`result.claim_review`), zawsze jako kontekst, nigdy jako cytat. Przy nagraniu transkrypcja z podpisem (`result.transcript_hint`).
 - **Ostrzeżenia:** dowód nieaktualny, podobieństwo do znanego incydentu z bazy organizatora albo EUvsDisinfo, z nazwą bazy, albo link do serwisu z takiej bazy (jako kontekst, nie podstawa oceny; przy EUvsDisinfo zastrzeżenie `result.euvsdisinfo_disclaimer`) i neutralna informacja, że treść pochodzi od podmiotu z oficjalnej listy sankcji UE. Każde w osobnym wierszu, bez czerwieni. Żadne nie zmienia werdyktu.
 - **Technika:** nazwa techniki manipulacji + podpowiedź „jak rozpoznać?”, gdy dotyczy.
-- **Stopka:** „Ograniczenia” (zawsze), stan przekazania moderatorom (`escalation`: zalecane, przekazane, dołączone do sprawy), informacja o użyciu AI, przycisk drugorzędny „Zgłoś błąd” (`result.report_error`) i link „Jak działa Meritum”.
+- **Stopka:** „Ograniczenia” (zawsze), stan przekazania moderatorom (`escalation`: zalecane, przekazane, dołączone do sprawy; przy nieudanym zapisie sprawy — `escalation.not_saved`, bez numeru sprawy), informacja o użyciu AI, przycisk drugorzędny „Zgłoś błąd” (`result.report_error`) i link „Jak działa Meritum”.
 - **Pojawienie się:** karta rozwija się z wysokości 0 i unosi o 8 px w 0,5 s.
 
 Gdy wynik nie jest werdyktem (doprecyzuj, poza zakresem, problem techniczny), karta ma tylko ikonę, tytuł stanu i komunikat z `status_hint`. Żadnej plakietki, żadnych źródeł.
