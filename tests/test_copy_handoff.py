@@ -1,6 +1,6 @@
 """Checks copy/pl.json texts for hand-off and error-report failures on the result card.
 
-Features: US-MOD-03, US-MOD-06, F-24, F-17, design-system#64
+Features: US-MOD-03, US-MOD-06, F-24, F-17, design-system#64, design-system#80
 Run: python3 -m unittest discover -s tests
 """
 
@@ -34,6 +34,14 @@ class HandoffCopy(unittest.TestCase):
         self.assertRegex(str(lookup("errors.rate_limited_handoff")), r"zgłosze.*minut")
         self.assertNotRegex(str(lookup("errors.rate_limited_handoff")), r"sprawdze")
         self.assertRegex(str(lookup("errors.handoff_not_found")), r"nie da się już przekazać")
+
+    def test_handoff_rejected_fits_escalation_and_report(self) -> None:
+        # Gherkin "odrzucone przekazanie mówi, co zrobić" (design-system#80)
+        text = str(lookup("errors.handoff_rejected"))
+        self.assertNotRegex(text, r"znak|skró|uzasadnieni|4000")
+        self.assertRegex(text, r"[Nn]ie udało się wysłać")
+        self.assertRegex(text, r"ponownie|jeszcze raz")
+        self.assertRegex(text, r"odśwież")
 
     def test_report_send_button_differs_from_opening_button(self) -> None:
         # Gherkin "osobny napis przycisku wysyłki"

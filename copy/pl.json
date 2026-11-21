@@ -383,7 +383,7 @@
     "check_not_found": "Nie mamy zapisanego wyniku pod tym adresem. Zapis mógł zostać usunięty albo adres jest nieprawidłowy. To nie jest ocena treści. Wklej treść jeszcze raz i kliknij „Sprawdź”.",
     "rate_limited_handoff": "Za dużo zgłoszeń w krótkim czasie. Spróbuj za minutę.",
     "handoff_not_found": "Tego wyniku nie da się już przekazać, bo nie mamy go zapisanego. Sprawdź treść jeszcze raz.",
-    "handoff_rejected": "Nie udało się zapisać uzasadnienia. Skróć je do 4000 znaków i wyślij jeszcze raz."
+    "handoff_rejected": "Nie udało się wysłać. Spróbuj jeszcze raz albo odśwież wynik."
   },
   "ai_notice": {
     "$comment": "AI Act art. 50: shown at first contact in every channel. first_contact: above the web form field and in the extension popup; discord: first bot reply; sms: first SMS to a new number, must fit one UCS-2 SMS (70 characters); mcp: in every MCP tool result. The result card line is result.ai_disclosure.",
