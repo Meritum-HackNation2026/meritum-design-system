@@ -8,3 +8,4 @@ node_modules/
 .impeccable/hook.cache.json
 __pycache__/
 *.pyc
+.wrangler/

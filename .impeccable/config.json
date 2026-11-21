@@ -65,6 +65,24 @@
         ],
         "createdAt": "2026-11-21T09:41:32.215Z",
         "reason": "Claude: 1080x1920 story poster whose only content is the 6-word tagline; display size is the intent"
+      },
+      {
+        "rule": "oversized-h1",
+        "value": "*",
+        "files": [
+          "presentation/slides/index.html"
+        ],
+        "createdAt": "2026-11-21T10:04:31.975Z",
+        "reason": "Claude: title and closing slides carry only the tagline as a poster"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "presentation/slides/index.html"
+        ],
+        "createdAt": "2026-11-21T10:04:31.994Z",
+        "reason": "Claude: 52px timeline rows with centred text; detector misreads border-top rows"
       }
     ]
   }

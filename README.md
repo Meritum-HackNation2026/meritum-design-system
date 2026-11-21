@@ -26,6 +26,10 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 | `docs/` | dokument produktowy: user stories, feature'y, ADR |
 | `artifact/` | pliki opublikowanego Design System artifactu |
 
+## Podgląd online
+
+https://meritum-demo.pages.dev, za Cloudflare Access: logowanie jednorazowym kodem wysłanym na e-mail z listy zespołu. Nową wersję wdraża `scripts/deploy-demo.sh` (wymaga `wrangler login`).
+
 ## Podgląd lokalnie
 
 ```bash
