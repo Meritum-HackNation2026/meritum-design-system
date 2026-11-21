@@ -1,0 +1,13 @@
+/* Shared Meritum social styles. Tokens from tokens/meritum.css. */
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Azeret+Mono:wght@400;500;600&display=swap");
+:root{--bg:#F6F7F5;--card:#FFFFFF;--ink:#14191E;--ink2:#4C5862;--line:#D9DEDD;--sea:#1D6A86;--red:#C8213A}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--ink);font-family:"Archivo",Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+.c{position:relative;background:var(--bg);overflow:hidden}
+h1{font-weight:700;font-stretch:108%;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
+h1 .a{color:var(--sea)}
+p{color:var(--ink2);line-height:1.4;text-wrap:pretty}
+.shot{display:block;border:1px solid var(--line);border-radius:12px;background:#fff}
+.crop{overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff}
+.crop img{display:block}
+.lock{display:block}

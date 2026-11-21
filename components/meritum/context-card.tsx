@@ -161,13 +161,28 @@ export function ContextCard(props: ContextCardProps) {
 }
 
 function Row({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
-  const row = (
-    <div tabIndex={hint ? 0 : undefined} className="flex items-baseline gap-2.5 border-b border-border/70 py-1.5">
+  return (
+    <div className="flex items-baseline gap-2.5 border-b border-border/70 py-1.5">
       <dt className="w-16 shrink-0 text-meta text-muted-foreground">{label}</dt>
-      <dd className="flex min-w-0 flex-1 items-baseline gap-2">{children}</dd>
+      <dd className="flex min-w-0 flex-1 items-baseline gap-2">
+        {children}
+        {hint && <InfoButton text={hint} label={`${label}: wyjaśnienie`} />}
+      </dd>
     </div>
   )
-  return hint ? <Hint text={hint}>{row}</Hint> : row
+}
+
+function InfoButton({ text, label }: { text: string; label: string }) {
+  return (
+    <Hint text={text} align="end">
+      <button type="button" aria-label={label} className="ml-auto grid size-5 shrink-0 place-items-center self-center rounded-full text-muted-foreground hover:text-foreground">
+        <svg viewBox="0 0 16 16" className="size-4" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.8" fill="none" stroke="currentColor" strokeWidth={1.3} />
+          <path d="M8 7.2v4.3M8 4.8v.1" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" />
+        </svg>
+      </button>
+    </Hint>
+  )
 }
 
 function Consensus({ a, b, thresholdPct }: { a: GroupScore; b: GroupScore; thresholdPct: number }) {
@@ -181,9 +196,14 @@ function Consensus({ a, b, thresholdPct }: { a: GroupScore; b: GroupScore; thres
     </div>
   )
   return (
-    <Hint text={`Obie grupy muszą przekroczyć próg ${thresholdPct}% ocen „pomocne”. Głosy kont z klastrów botów nie są liczone.`}>
-      <div tabIndex={0} className="cursor-help px-3.5 pt-2.5">
-        <p className="mb-1.5 font-sans text-small font-semibold">Zatwierdzone przez różne perspektywy</p>
+    <div className="px-3.5 pt-2.5">
+        <p className="mb-1.5 flex items-center font-sans text-small font-semibold">
+          Zatwierdzone przez różne perspektywy
+          <InfoButton
+            text={`Obie grupy muszą przekroczyć próg ${thresholdPct}% ocen „pomocne”. Głosy kont z klastrów botów nie są liczone.`}
+            label="Jak działa zgoda perspektyw"
+          />
+        </p>
         <div className="grid grid-cols-[1fr_2px_1fr] items-center gap-1.5">
           {bar(a, "left")}
           <span className="h-4 rounded-[1px] bg-foreground" />
@@ -198,7 +218,6 @@ function Consensus({ a, b, thresholdPct }: { a: GroupScore; b: GroupScore; thres
           </span>
         </div>
       </div>
-    </Hint>
   )
 }
 

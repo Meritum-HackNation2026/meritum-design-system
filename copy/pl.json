@@ -1,0 +1,156 @@
+{
+  "$comment": "Meritum UI copy (pl). Keys mirror codes in contracts/meritum_contracts.py. Tone: DESIGN_SYSTEM.md section 8.",
+  "brand": {
+    "name": "Meritum",
+    "subtitle": "obywatelski radar dezinformacji oraz scamu",
+    "taglines": ["Jeden fejk, cała kampania. Jeden kontekst, ponad podziałami.", "AI pisze. Ludzie decydują. Źródła są obowiązkowe."]
+  },
+  "widget": {
+    "label": "Meritum",
+    "why": "Dlaczego to widzę?",
+    "how_made": "Jak powstała?",
+    "dispute": "To pomyłka?",
+    "consensus_title": "Zatwierdzone przez różne perspektywy",
+    "consensus_hint": "Notatka publikuje się dopiero, gdy obie grupy przekroczą próg {threshold}% ocen „pomocne”. Głosy kont z klastrów botów nie są liczone.",
+    "group_label": "Grupa {name}: {pct}% pomocne, {ratings} ocen",
+    "row_source": "Źródło",
+    "row_campaign": "Kampania",
+    "row_evidence": "Dowód",
+    "row_technique": "Technika",
+    "how_to_spot": "jak rozpoznać?",
+    "evidence_saved": "Zapisany o {time}: zrzut, adres, {redirects} przekierowania",
+    "campaign_summary": "{ads} reklam, {domains} domeny w {days} dni",
+    "see_campaign": "zobacz kampanię",
+    "why_note": "Szkic AI z uwag {reports} osób i {sources} źródeł. Opublikowany, bo zgodziły się dwie grupy, które zwykle oceniają inaczej.",
+    "why_scam": "Dwa niezależne sygnały: {signals}.",
+    "how_made_note": "AI napisała szkic. O publikacji zdecydowali ludzie, a źródła są obowiązkowe.",
+    "dispute_hint": "Każde ostrzeżenie można zakwestionować. Trafia wtedy do ponownej oceny przez ludzi."
+  },
+  "card_title": {
+    "note": "Kontekst od społeczności",
+    "pending": "Kontekst w przygotowaniu",
+    "scam": "Fałszywa reklama"
+  },
+  "status": {
+    "verified": "Zweryfikowany",
+    "pending": "W ocenie",
+    "scam": "Oszustwo"
+  },
+  "actions": {
+    "helpful": "Pomocne",
+    "unhelpful": "Niepomocne",
+    "hide_ad": "Ukryj reklamę",
+    "show_ad": "Pokaż",
+    "report_to_platform": "Zgłoś platformie",
+    "report": "Zgłoś",
+    "reported": "Zgłoszono",
+    "send": "Wyślij zgłoszenie",
+    "sending": "Wysyłanie…",
+    "sent": "Wysłane",
+    "close": "Zamknij"
+  },
+  "report": {
+    "title": "Zgłoś treść",
+    "post": "Post {handle}",
+    "kind": { "manipulation": "Manipulacja", "scam": "Oszustwo" },
+    "reasons_legend": "Co jest nie tak? Wybierz jedno lub więcej",
+    "note_label": "Albo opisz własnymi słowami",
+    "note_placeholder": "Np. to nagranie jest z 2019 roku",
+    "source_label": "Link do źródła (opcjonalnie)",
+    "evidence_hint": "Dowód zapiszemy sami: zrzut ekranu, adres i czas. Zgłoszenie jest anonimowe.",
+    "reasons": {
+      "false_information": "Fałszywa informacja",
+      "conspiracy_theory": "Teoria spiskowa",
+      "out_of_context": "Wyrwane z kontekstu",
+      "false_authority": "Fałszywy autorytet",
+      "manipulated_media": "Zmanipulowane zdjęcie lub wideo",
+      "fake_celebrity_endorsement": "Fałszywy wizerunek znanej osoby",
+      "suspicious_investment": "Podejrzana inwestycja",
+      "impersonating_bank_or_office": "Podszywanie się pod bank lub urząd",
+      "fake_shop_or_fundraiser": "Fałszywy sklep lub zbiórka"
+    },
+    "thanks_single": "Dziękujemy. To pierwsze zgłoszenie tego posta. Notatka powstaje, gdy podobnych zgłoszeń będzie więcej.",
+    "already_sent": "To zgłoszenie już wysłałeś. Dziękujemy."
+  },
+  "analysis": {
+    "title": "Meritum analizuje zgłoszenie",
+    "steps": {
+      "link_similar_reports": "Łączymy z {count} podobnymi zgłoszeniami",
+      "collect_sources": "Zbieramy źródła",
+      "draft_and_rate": "AI pisze szkic, oceniają dwie grupy",
+      "save_evidence": "Zapisujemy dowód: zrzut, adres, przekierowania",
+      "match_campaigns": "Porównujemy ze znanymi kampaniami",
+      "check_cert_list": "Sprawdzamy domenę na liście CERT Polska",
+      "store_report": "Zapisujemy zgłoszenie"
+    }
+  },
+  "techniques": {
+    "false_authority": { "name": "Fałszywy autorytet", "how_to_spot": "Ekspert bez nazwiska albo znana twarz bez potwierdzenia w jej oficjalnych kanałach." },
+    "conspiracy_theory": { "name": "Teoria spiskowa", "how_to_spot": "Każdy dowód przeciw zostaje nazwany fałszerstwem, a „oni” ukrywają prawdę." },
+    "out_of_context": { "name": "Wyrwanie z kontekstu", "how_to_spot": "Prawdziwe nagranie lub cytat z innego miejsca, czasu albo sensu. Sprawdź datę i źródło oryginału." },
+    "urgency_pressure": { "name": "Presja czasu", "how_to_spot": "„Zostało 12 miejsc”, „tylko dziś”. Prawdziwe inwestycje nie znikają do jutra." },
+    "fabricated_quote": { "name": "Zmyślony cytat", "how_to_spot": "Cytat bez linku do wypowiedzi. Szukaj go u autora, nie w udostępnieniach." },
+    "manipulated_media": { "name": "Zmanipulowane zdjęcie lub wideo", "how_to_spot": "Nienaturalne usta i dłonie, rozjechany dźwięk, brak tego materiału w oficjalnych źródłach." },
+    "impersonation": { "name": "Podszywanie się", "how_to_spot": "Nazwa i logo podobne do prawdziwych, ale inny adres strony lub konta." },
+    "cherry_picking": { "name": "Wybiórcze dane", "how_to_spot": "Jedna liczba bez punktu odniesienia. Zapytaj: w porównaniu z czym?" }
+  },
+  "source_kind": {
+    "akt_prawny": "akt prawny",
+    "instytucja": "instytucja",
+    "media": "media",
+    "fact_check": "fact-checking",
+    "encyklopedia": "encyklopedia",
+    "oswiadczenie": "oświadczenie"
+  },
+  "signals": {
+    "cert_warning_list": "domena jest na liście ostrzeżeń CERT Polska",
+    "known_campaign": "reklama pasuje do znanej kampanii",
+    "celebrity_registry": "wizerunek z rejestru osób, które się zgodziły",
+    "user_reports": "zgłoszenia użytkowników"
+  },
+  "telemetry": {
+    "title_ok": "Atak odparty, notatka bez zmian",
+    "title_changed": "Atak zmienił status notatki",
+    "lead": "Klaster {cluster} kont głosuje na notatkę {note} od {from}.",
+    "lead_ok": "Żaden z jego głosów nie trafił do konsensusu.",
+    "lead_changed": "Sprawdź oceny ręcznie.",
+    "sum": "Oddane {cast} = liczone {counted} + odrzucone {rejected}",
+    "counted": "Liczone",
+    "counted_sub": "realne osoby",
+    "rejected": "Odrzucone",
+    "rejected_sub": "klaster kont",
+    "front": "front {time}",
+    "reasons": {
+      "same_cluster": "ten sam klaster",
+      "timing_pattern": "rytm 1 głos/s",
+      "new_account": "nowe konto",
+      "rating_graph": "ten sam graf ocen"
+    },
+    "simulated": "Dane symulowane na potrzeby demo."
+  },
+  "campaign": {
+    "title": "Kampania {id}: {name}",
+    "lead": "{ads} reklam na {platforms} platformach i {domains} domen w {days} dni.",
+    "rotation": "Rotacja domen",
+    "state": { "active": "aktywna", "dead": "nieaktywna", "predicted": "przewidziana z logów certyfikatów" },
+    "sum": "Reklamy {total} = {parts}",
+    "shared_traces": "Wspólny ślad",
+    "traces": {
+      "celebrity_face": "Twarz z rejestru: {name}",
+      "landing_template": "Ten sam szablon strony z formularzem karty",
+      "cert_issuer_pattern": "Ten sam wystawca certyfikatów i wzorzec nazwy domeny",
+      "payment_gateway": "Ta sama bramka płatności",
+      "advertiser_accounts": "Profile reklamodawców założone w tym samym tygodniu",
+      "ad_copy": "Ta sama obietnica w kilku wersjach tekstu"
+    },
+    "export": "Eksport dowodów dla CERT"
+  },
+  "errors": {
+    "send_failed": "Nie udało się wysłać. Sprawdź połączenie i spróbuj ponownie; twoje odpowiedzi zostały w formularzu.",
+    "reason_or_note": "Wybierz powód albo opisz problem (co najmniej 3 znaki).",
+    "invalid_url": "To nie wygląda na adres strony. Wklej pełny link zaczynający się od https://.",
+    "analysis_failed": "Analiza nie powiodła się. Zgłoszenie jest zapisane; spróbujemy ponownie za kilka minut.",
+    "offline": "Brak połączenia. Meritum pokaże notatki, gdy wrócisz do sieci.",
+    "unsupported_site": "Meritum działa na X, Facebooku, Instagramie, Reddicie i TikToku."
+  }
+}

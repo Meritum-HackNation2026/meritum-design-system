@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 226 48" width="226" height="48" role="img" aria-label="Meritum">
+<style>@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&amp;display=swap');
+.w{font-family:Archivo,Arial,sans-serif;font-weight:650;font-stretch:112%;font-variation-settings:'wdth' 112;letter-spacing:-0.02em;font-size:40px}
+.s{font-family:Archivo,Arial,sans-serif;font-weight:400;font-size:13px}</style>
+<path d="M10 40V25c0-5.5 3.1-9 7-9s7 3.5 7 9v15M24 25c0-5.5 3.1-9 7-9s7 3.5 7 9v15" fill="none" stroke="#E7ECEE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M24 25v15" fill="none" stroke="#5DB3CF" stroke-width="4" stroke-linecap="round"/>
+<circle cx="24" cy="7.6" r="3.5" fill="#5DB3CF"/>
+<text class="w" x="51" y="41" fill="#E7ECEE">meritum</text>
+</svg>

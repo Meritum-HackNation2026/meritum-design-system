@@ -10,7 +10,7 @@ export interface AnalysisStep {
 /** Processing strip shown under a post between "Wysłane" and the published note or warning. Drive `steps` from the DBOS workflow status. */
 export function AnalysisSteps({ steps, className }: { steps: AnalysisStep[]; className?: string }) {
   return (
-    <div role="status" className={cn("animate-rise mt-3 rounded-[var(--host-radius,var(--radius))] border border-border bg-card px-3.5 py-3 font-sans", className)}>
+    <output className={cn("animate-rise mt-3 block rounded-[var(--host-radius,var(--radius))] border border-border bg-card px-3.5 py-3 font-sans", className)}>
       <p className="flex items-center gap-1.5 text-meta font-semibold text-muted-foreground">
         <MeritumMark className="size-3.5" />
         Meritum analizuje zgłoszenie
@@ -28,7 +28,7 @@ export function AnalysisSteps({ steps, className }: { steps: AnalysisStep[]; cla
               )}
             >
               {s.status === "done" && (
-                <svg viewBox="0 0 16 16" className="size-3 text-card">
+                <svg viewBox="0 0 16 16" className="size-3 text-card" aria-hidden="true">
                   <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
@@ -38,6 +38,6 @@ export function AnalysisSteps({ steps, className }: { steps: AnalysisStep[]; cla
           </li>
         ))}
       </ol>
-    </div>
+    </output>
   )
 }

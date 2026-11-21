@@ -1,0 +1,44 @@
+{
+  "InjectedCard.note": {
+    "kind": "note", "status": "verified",
+    "body": "Kształt Ziemi zmierzono na wiele sposobów: zdjęcia z orbity, pomiary satelitów GPS i obserwacje, które każdy może powtórzyć.",
+    "sources": [
+      {"title": "NASA: fakty o Ziemi", "url": "https://science.nasa.gov/earth/facts/", "domain": "science.nasa.gov", "kind": "instytucja"},
+      {"title": "ESA: obserwacje z orbity", "url": "https://www.esa.int/Applications/Observing_the_Earth", "domain": "esa.int", "kind": "instytucja"}
+    ],
+    "technique": {"code": "conspiracy_theory"},
+    "consensus": {"group_a": {"label": "A", "helpful_pct": 88, "ratings": 231}, "group_b": {"label": "B", "helpful_pct": 84, "ratings": 198}, "threshold_pct": 70},
+    "drafted_from_reports": 57
+  },
+  "InjectedCard.scam": {
+    "kind": "scam",
+    "body": "Tomasz Rewiński nie poleca tej inwestycji: jego wizerunek użyto bez zgody. Nie podawaj tam żadnych danych.",
+    "sources": [{"title": "CERT Polska: lista ostrzeżeń", "url": "https://cert.pl/lista-ostrzezen/", "domain": "cert.pl", "kind": "instytucja"}],
+    "technique": {"code": "urgency_pressure"},
+    "campaign": {"id": "#K-118", "ads": 47, "domains": 23, "days": 9},
+    "evidence": {"saved_at": "2026-11-21T14:02:11+01:00", "screenshot": true, "redirects": 3, "final_domain": "inwest-polska24.online"},
+    "signals": ["cert_warning_list", "known_campaign"]
+  },
+  "ReportPayload": {
+    "platform": "x", "post_url": "https://x.com/prawda_o_ziemi/status/1", "post_handle": "@prawda_o_ziemi",
+    "kind": "manipulation", "reasons": ["conspiracy_theory", "false_authority"], "note": "", "source_url": null
+  },
+  "AnalysisStatus": {
+    "report_id": "r_01", "outcome": "running",
+    "steps": [{"code": "link_similar_reports", "status": "done"}, {"code": "collect_sources", "status": "active"}, {"code": "draft_and_rate", "status": "pending"}]
+  },
+  "BotDefenseSnapshot": {
+    "note_id": "#N-2291", "cluster_size": 312, "attack_from": "14:32:07", "status_changed": false,
+    "series": [{"t": "14:31", "counted": 41, "rejected": 0}, {"t": "14:32", "counted": 43, "rejected": 288}],
+    "rejected_accounts": [{"at": "2026-11-21T14:32:07+01:00", "handle": "@pl_patriot_88231", "reason": "timing_pattern"}]
+  },
+  "Campaign": {
+    "id": "#K-118", "title": "inwestycja z prezenterem", "ads_total": 47,
+    "ads_by_platform": {"facebook": 31, "instagram": 12, "x": 4},
+    "domains": [
+      {"domain": "inwest-polska24.online", "state": "active", "first_seen": "2026-11-19T08:00:00+01:00", "ads": 14},
+      {"domain": "polska24-inwest.online", "state": "predicted", "first_seen": "2026-11-21T11:20:00+01:00", "ads": 0}
+    ],
+    "shared_traces": [{"code": "celebrity_face", "ads": 41}, {"code": "landing_template", "ads": 47}]
+  }
+}

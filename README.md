@@ -10,15 +10,20 @@
 
 ## Zawartość
 
+Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md).
+
 | Ścieżka | Co |
 |---|---|
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
-| `components/meritum/` | komponenty React (shadcn/ui): karta kontekstu, szybkie zgłoszenie, pasek analizy, telemetria ataku botów |
-| `brand/` | logo (SVG) |
-| `demo/x/` | interaktywne demo: zgłoszenie, analiza, notatka i ostrzeżenie na makiecie X |
-| `demo/widgets/` | widżet na 5 platformach i wszystkie jego stany |
-| `demo/logo/` | warianty znaku (wybrany: B „Dwa łuki”) |
-| `demo/platforms/` | makiety X, Facebooka, Instagrama, Reddita i TikToka do pokazu na żywo + `SELECTORS.md` dla wtyczki |
+| `components/meritum/` | komponenty React (shadcn/ui): karta kontekstu, szybkie zgłoszenie, pasek analizy, telemetria ataku botów, widok kampanii |
+| `contracts/`, `copy/pl.json` | kontrakty danych (Pydantic, JSON Schema, TypeScript) i teksty interfejsu |
+| `extension/` | zestaw wtyczki Chrome: style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
+| `brand/` | logo (SVG, PNG, logotyp) |
+| `presentation/` | szablon PPTX, slajdy HTML, zrzuty demo, grafiki social |
+| `demo/live/` | makiety platform z pełnym przepływem Meritum na pokaz |
+| `demo/platforms/` | czyste makiety platform + `SELECTORS.md` dla wtyczki |
+| `demo/x/`, `demo/widgets/`, `demo/logo/` | demo na X, widżety i ich stany, warianty logo |
+| `docs/` | dokument produktowy: user stories, feature'y, ADR |
 | `artifact/` | pliki opublikowanego Design System artifactu |
 
 ## Podgląd lokalnie
@@ -27,6 +32,6 @@
 python3 -m http.server 52990 --bind 127.0.0.1
 ```
 
-Potem otwórz http://localhost:52990/demo/x/ (skróty w demo: R reset, T motyw, Esc zamyka okno).
+Potem otwórz http://localhost:52990/demo/live/ (makiety na pokaz) albo http://localhost:52990/demo/x/. Skróty: R reset, T motyw, Esc zamyka okno.
 
 Wszystkie liczby, konta i osoby w makietach są fikcyjne i oznaczone jako dane przykładowe.

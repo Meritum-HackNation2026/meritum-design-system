@@ -1,0 +1,238 @@
+/*
+  Meritum widget: Shadow DOM build of demo/meritum.css.
+  Every injected element is a <meritum-root data-part="button|slot|overlay|placeholder" data-host="x|facebook|instagram|reddit|tiktok">
+  with an open shadow root that adopts this sheet. Class names match demo/meritum.css, so markup from demo/x works unchanged.
+  Dark mode: class "dark" on the host element (set by the content script from the page background).
+  Tokens mirror tokens/meritum.css; the --m-* names are the short widget names used by demo/meritum.css.
+*/
+
+/* Fonts. Chrome ignores @font-face inside shadow roots, so content.js copies these four rules into the
+   document. Family names are prefixed so they never collide with a host font called "Archivo". */
+@font-face{font-family:"Meritum Archivo";font-style:normal;font-weight:400 800;font-stretch:75% 125%;font-display:swap;
+  src:url(https://fonts.gstatic.com/s/archivo/v25/k3kQo8UDI-1M0wlSfdfoLmvDIaK18A.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Meritum Archivo";font-style:normal;font-weight:400 800;font-stretch:75% 125%;font-display:swap;
+  src:url(https://fonts.gstatic.com/s/archivo/v25/k3kQo8UDI-1M0wlSfdnoLmvDIaI.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Meritum Azeret Mono";font-style:normal;font-weight:400 600;font-display:swap;
+  src:url(https://fonts.gstatic.com/s/azeretmono/v21/3XFuErsiyJsY9O_Gepph-HHvZfn23vRKV0U.woff2) format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Meritum Azeret Mono";font-style:normal;font-weight:400 600;font-display:swap;
+  src:url(https://fonts.gstatic.com/s/azeretmono/v21/3XFuErsiyJsY9O_Gepph-HHhZfn23vRK.woff2) format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* ---------- host reset + tokens (light) ---------- */
+:host{
+  all:initial;display:block;
+  --m-ink:#14191E; --m-ink2:#4C5862; --m-card:#FFFFFF; --m-sunk:#F6F7F5; --m-line:#D9DEDD; --m-line2:#E8ECEB;
+  --m-sea:#1D6A86; --m-sea-t:#E1EDF2; --m-ok:#13506A;
+  --m-red:#C8213A; --m-red-d:#9E1A2E; --m-red-t:#FBE6E9; --m-red-line:#F0C9D0;
+  --m-amber:#7A4E08; --m-amber-t:#F8EEDB;
+  --m-tip:#14191E; --m-tip-tx:#F3F5F4;
+  --m-brand:"Meritum Archivo","Archivo",system-ui,sans-serif; --m-mono:"Meritum Azeret Mono","Azeret Mono",ui-monospace,monospace;
+  --m-font:var(--m-brand); --m-r:12px; --m-btn-r:999px; --m-link:var(--m-sea);
+  --m-host-card:var(--m-card); --m-host-line:var(--m-line);
+  --m-e:cubic-bezier(.16,1,.3,1); --m-shadow:0 12px 32px rgba(20,25,30,.16),0 0 0 1px rgba(20,25,30,.08);
+  color:var(--m-ink);font:400 15px/1.4 var(--m-font);text-align:left;-webkit-font-smoothing:antialiased;
+}
+:host(.dark){
+  --m-ink:#E7ECEE; --m-ink2:#9AA6AE; --m-card:#0B0F12; --m-sunk:#151A1E; --m-line:#2F3336; --m-line2:#22282C;
+  --m-sea:#5DB3CF; --m-sea-t:#123441; --m-ok:#9FD8EC;
+  --m-red:#FF6B7D; --m-red-d:#FFB3BE; --m-red-t:#43161D; --m-red-line:#5A2029;
+  --m-amber:#F2C46D; --m-amber-t:#3A2C10;
+  --m-tip:#E7ECEE; --m-tip-tx:#0B0F12; --m-shadow:0 12px 32px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.1);
+  color-scheme:dark;
+}
+
+/* parts: how each injected element sits in the host page */
+:host([data-part="button"]){display:inline-flex;align-items:center;flex:none;color:inherit;font:inherit;vertical-align:middle}
+:host([data-part="overlay"]){position:fixed;top:0;left:0;width:0;height:0;z-index:2147483600;overflow:visible}
+
+/* ---------- platform skins: frame from the host, signal from Meritum ---------- */
+:host([data-host="x"]){--m-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--m-r:16px;--m-btn-r:999px;--m-link:#1D6FB0;--m-host-line:#CFD9DE}
+:host([data-host="x"].dark){--m-link:#1D9BF0;--m-host-card:#000000;--m-host-line:#2F3336}
+:host([data-host="facebook"]){--m-font:"Segoe UI Historic","Segoe UI",Helvetica,Arial,sans-serif;--m-r:8px;--m-btn-r:6px;--m-link:#0064D1;--m-host-line:#CED0D4}
+:host([data-host="facebook"].dark){--m-link:#5AA7FF;--m-host-card:#252728;--m-host-line:#3E4042}
+:host([data-host="instagram"]){--m-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--m-r:0px;--m-btn-r:8px;--m-link:#00376B;--m-host-card:transparent;--m-host-line:transparent}
+:host([data-host="instagram"].dark){--m-link:#E0F1FF}
+:host([data-host="reddit"]){--m-font:"Reddit Sans",-apple-system,BlinkMacSystemFont,sans-serif;--m-r:16px;--m-btn-r:999px;--m-link:#0045AC;--m-host-line:#DFE3E5}
+:host([data-host="reddit"].dark){--m-link:#648EFC;--m-host-card:#0E1113;--m-host-line:#2A3236}
+:host([data-host="tiktok"]){--m-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--m-r:8px;--m-btn-r:4px;--m-link:var(--m-ink)}
+:host([data-host="tiktok"].dark){--m-host-card:#121212;--m-host-line:rgba(255,255,255,.14)}
+
+/* per-platform placement. Host-page CSS (e.g. `*{margin:0;padding:0}`) beats :host rules, so spacing lives on
+   elements inside the shadow root, never on the host element. TikTok's floating slot is positioned inline by content.js. */
+:host([data-host="facebook"]) :is(.m-proc,.m-card,.m-inline){margin-left:12px;margin-right:12px;margin-bottom:12px}
+:host([data-host="instagram"]) :is(.m-proc,.m-card,.m-inline){margin-bottom:8px}
+:host([data-host="reddit"]) :is(.m-proc,.m-card,.m-inline){margin:4px 16px 12px}
+:host([data-host="reddit"][data-part="button"]){display:flex}
+:host([data-host="reddit"]) .m-report{margin:-6px 16px 8px}
+:host([data-host="tiktok"][data-part="button"]){display:flex;justify-content:center}
+:host([data-host="tiktok"]) .m-report{margin:4px 0 8px}
+:host([data-host="tiktok"]) :is(.m-proc,.m-card){margin-top:0}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+button,input,textarea{font:inherit;color:inherit}
+a{color:inherit}
+fieldset{border:0;min-width:0}
+.m-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.m-num{font-family:var(--m-mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.m-mark{width:16px;height:16px;flex:none;color:var(--m-ink)}
+.m-mark .acc{fill:var(--m-sea);stroke:var(--m-sea)}
+.m-ic{width:16px;height:16px;flex:none}
+
+/* tooltip */
+.m-t{position:relative}
+.m-tip{position:absolute;z-index:60;bottom:calc(100% + 8px);left:50%;width:max-content;max-width:260px;transform:translate(-50%,4px);
+  background:var(--m-tip);color:var(--m-tip-tx);font:500 12.5px/1.4 var(--m-brand);letter-spacing:0;padding:8px 10px;border-radius:8px;
+  opacity:0;pointer-events:none;transition:opacity .16s var(--m-e),transform .16s var(--m-e);text-align:left;white-space:normal;text-decoration:none}
+.m-tip.r{left:auto;right:0;transform:translateY(4px)}.m-tip.l{left:0;transform:translateY(4px)}
+.m-t:hover>.m-tip,.m-t:focus-visible>.m-tip,.m-t:focus-within>.m-tip{opacity:1;transform:translate(-50%,0)}
+.m-t:hover>.m-tip.r,.m-t:focus-visible>.m-tip.r,.m-t:hover>.m-tip.l,.m-t:focus-visible>.m-tip.l{transform:none}
+
+/* report button injected into the host action bar; at rest it takes the host icon colour */
+.m-report{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 10px 0 8px;border:0;border-radius:999px;background:none;
+  color:inherit;font:600 13px var(--m-brand);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+.m-report .m-mark{color:currentColor}
+.m-report:hover,.m-report[aria-expanded="true"]{background:var(--m-sea-t);color:var(--m-ok)}
+.m-report:focus-visible{outline:2px solid var(--m-sea);outline-offset:1px}
+.m-report.done{color:var(--m-ok)}
+.m-report[aria-disabled="true"]{cursor:default}
+:host([data-host="x"]) .m-report{gap:4px;padding:0 8px 0 6px}
+:host([data-host="facebook"]) .m-report{border-radius:6px;height:32px;font-size:14px}
+:host([data-host="instagram"]) .m-report{padding:0 8px 0 6px;border-radius:8px}
+:host([data-host="instagram"]) .m-report .m-mark{width:22px!important;height:22px!important}
+:host([data-host="reddit"]) .m-report{height:32px;padding:0 12px 0 8px;background:var(--m-reddit-btn,#E5EBEE);font-size:12px}
+:host([data-host="reddit"].dark) .m-report{--m-reddit-btn:#2A3236}
+:host([data-host="reddit"]) .m-report:hover,:host([data-host="reddit"]) .m-report[aria-expanded="true"]{background:var(--m-sea-t)}
+/* TikTok: same format as the other actions, a 48px round button with a caption under it */
+:host([data-host="tiktok"]) .m-report{flex-direction:column;gap:4px;height:auto;padding:0;background:none;font:700 12px/16px var(--m-font)}
+:host([data-host="tiktok"]) .m-report .m-mark{width:48px!important;height:48px!important;padding:13px;border-radius:50%;background:rgba(22,24,35,.06);transition:background .15s}
+:host([data-host="tiktok"].dark) .m-report .m-mark{background:rgba(255,255,255,.12)}
+:host([data-host="tiktok"]) .m-report:hover,:host([data-host="tiktok"]) .m-report[aria-expanded="true"]{background:none}
+:host([data-host="tiktok"]) .m-report:hover .m-mark,:host([data-host="tiktok"]) .m-report[aria-expanded="true"] .m-mark{background:var(--m-sea-t)}
+
+/* buttons */
+.m-btn{font:650 13px var(--m-font);padding:7px 14px;border-radius:var(--m-btn-r);border:1px solid var(--m-line);background:var(--m-host-card);color:var(--m-ink);
+  cursor:pointer;transition:border-color .15s,background .15s,transform .1s}
+.m-btn:hover{border-color:var(--m-ink2)}.m-btn:active{transform:scale(.97)}
+.m-btn:focus-visible{outline:2px solid var(--m-sea);outline-offset:2px}
+.m-btn.p{background:var(--m-ink);color:var(--m-card);border-color:var(--m-ink)}
+.m-btn[aria-pressed="true"]{background:var(--m-ink);color:var(--m-card);border-color:var(--m-ink)}
+.m-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* report popover (lives in the overlay host, positioned by the content script) */
+.m-pop{position:fixed;z-index:50;width:356px;max-width:calc(100vw - 24px);max-height:calc(100vh - 24px);overflow:auto;background:var(--m-card);color:var(--m-ink);border-radius:14px;box-shadow:var(--m-shadow);
+  font-family:var(--m-brand);text-align:left;transform-origin:top right;animation:m-pop .28s var(--m-e) both}
+.m-pop.up{transform-origin:bottom right}
+.m-pop.out{animation:m-popout .32s var(--m-e) forwards}
+.m-pop-h{display:flex;align-items:center;gap:8px;padding:14px 16px 0}
+.m-pop-h strong{font-size:16px;font-weight:700;font-stretch:110%}
+.m-pop-h .who{font-size:12.5px;color:var(--m-ink2);font-weight:500}
+.m-x{margin-left:auto;width:30px;height:30px;border:0;border-radius:8px;background:none;color:var(--m-ink);display:grid;place-items:center;cursor:pointer}
+.m-x:hover{background:var(--m-sunk)}.m-x:focus-visible{outline:2px solid var(--m-sea)}
+.m-pop form{display:grid;gap:12px;padding:12px 16px 16px}
+.m-seg{display:grid;grid-template-columns:1fr 1fr;background:var(--m-sunk);border-radius:10px;padding:3px}
+.m-seg label{position:relative;text-align:center;font-size:13.5px;font-weight:600;padding:7px 4px;border-radius:8px;cursor:pointer;color:var(--m-ink2);transition:background .15s,color .15s}
+.m-seg input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.m-seg label:has(input:checked){background:var(--m-card);color:var(--m-ink);box-shadow:0 1px 2px rgba(20,25,30,.14)}
+.m-seg label:has(input:focus-visible){outline:2px solid var(--m-sea)}
+.m-lbl{font-size:13px;font-weight:650;margin-bottom:6px;display:block}
+.m-chips{display:flex;flex-wrap:wrap;gap:6px}
+.m-chip{position:relative;display:inline-flex;align-items:center;gap:6px;font-size:13.5px;padding:6px 11px;border:1px solid var(--m-line);border-radius:999px;cursor:pointer;
+  transition:background .15s,border-color .15s,color .15s,transform .1s}
+.m-chip:hover{border-color:var(--m-ink2)}.m-chip:active{transform:scale(.97)}
+.m-chip input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.m-chip:has(input:checked){background:var(--m-ink);border-color:var(--m-ink);color:var(--m-card)}
+.m-chip:has(input:focus-visible){outline:2px solid var(--m-sea);outline-offset:2px}
+.m-field{width:100%;border:1px solid var(--m-line);border-radius:10px;padding:9px 11px;font:14px/1.4 var(--m-brand);background:var(--m-card);color:var(--m-ink);resize:none}
+.m-field::placeholder{color:var(--m-ink2)}
+.m-field:focus{outline:2px solid var(--m-sea);outline-offset:-1px;border-color:transparent}
+.m-hint{font-size:12.5px;line-height:17px;color:var(--m-ink2);display:flex;gap:7px}
+.m-hint .m-ic{margin-top:1px}
+.m-err{font-size:13px;line-height:18px;color:var(--m-red-d);background:var(--m-red-t);border-radius:10px;padding:9px 11px}
+.m-send{position:relative;overflow:hidden;font:700 14px var(--m-brand);height:42px;border:0;border-radius:10px;background:var(--m-ink);color:var(--m-card);cursor:pointer;transition:transform .1s,opacity .15s}
+.m-send:active{transform:scale(.98)}.m-send:disabled{opacity:.4;cursor:not-allowed}
+.m-send.sending:disabled,.m-send.sent:disabled{opacity:1;cursor:default}
+.m-send:focus-visible{outline:2px solid var(--m-sea);outline-offset:2px}
+.m-send .bar{position:absolute;left:0;top:0;bottom:0;width:100%;background:var(--m-sea);transform:scaleX(0);transform-origin:left}
+.m-send.sending .bar{animation:m-fill .9s var(--m-e) forwards}
+.m-send span{position:relative;display:inline-flex;gap:6px;align-items:center}
+.m-send.sent{background:var(--m-sea)}
+
+/* processing strip */
+.m-proc{margin-top:12px;border:1px solid var(--m-host-line);border-radius:var(--m-r);background:var(--m-host-card);padding:12px 14px;font-family:var(--m-brand);color:var(--m-ink);animation:m-rise .35s var(--m-e) both}
+:host([data-host="instagram"]) .m-proc{border:1px solid var(--m-line);border-radius:8px}
+.m-proc-h{display:flex;align-items:center;gap:7px;font:600 12px var(--m-brand);color:var(--m-ink2)}
+.m-proc ol{list-style:none;margin-top:8px;display:grid;gap:6px}
+.m-proc li{display:flex;align-items:center;gap:9px;font-size:13.5px;color:var(--m-ink2);transition:color .2s}
+.m-proc li.on{color:var(--m-ink)}.m-proc li.ok{color:var(--m-ink)}
+.m-proc li i{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--m-line);flex:none;display:grid;place-items:center;transition:border-color .2s,background .2s}
+.m-proc li.on i{border-color:var(--m-sea);border-top-color:transparent;animation:m-spin .8s linear infinite}
+.m-proc li.ok i{border-color:var(--m-sea);background:var(--m-sea)}
+.m-proc li.ok i:after{content:"";width:6px;height:3px;border-left:1.6px solid var(--m-card);border-bottom:1.6px solid var(--m-card);transform:translateY(-1px) rotate(-45deg)}
+
+/* reveal wrapper (height 0 -> auto); after the transition the content may overflow so tooltips are not clipped */
+.m-reveal{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--m-e)}
+.m-reveal.open{grid-template-rows:1fr}
+.m-reveal>div{overflow:hidden;min-height:0}
+.m-reveal.settled>div{overflow:visible}
+
+/* note / warning card: frame (background, border, radius, body font) from the host */
+.m-card{margin-top:12px;border:1px solid var(--m-host-line);border-radius:var(--m-r);background:var(--m-host-card);color:var(--m-ink);font-family:var(--m-font)}
+.m-card.scam{border-color:var(--m-red-line)}
+:host([data-host="instagram"]) .m-card{border-width:1px 0;border-color:var(--m-line)}
+:host([data-host="instagram"]) .m-card.scam{border-color:var(--m-red-line)}
+:host([data-host="instagram"]) .m-top,:host([data-host="instagram"]) .m-ttl,:host([data-host="instagram"]) .m-card p,:host([data-host="instagram"]) .m-cons,:host([data-host="instagram"]) .m-acts{padding-left:0;padding-right:0}
+:host([data-host="instagram"]) .m-rows{margin-left:0;margin-right:0}
+.m-reveal.open .m-card{animation:m-rise .5s .08s var(--m-e) both}
+.m-top{display:flex;align-items:center;gap:6px;padding:11px 14px 0;font:600 12px/1 var(--m-brand);color:var(--m-ink2)}
+.m-top .why{margin-left:auto;font-weight:500;text-decoration:underline;text-underline-offset:2px;cursor:help}
+.m-ttl{display:flex;align-items:center;gap:8px;padding:8px 14px 0}
+.m-ttl b{font:700 15px var(--m-brand);font-stretch:108%}
+.m-badge{margin-left:auto;font:650 12px/1 var(--m-brand);padding:5px 9px;border-radius:999px;white-space:nowrap;cursor:help}
+.m-badge.ok{color:var(--m-ok);background:var(--m-sea-t)}.m-badge.bad{color:var(--m-red-d);background:var(--m-red-t)}.m-badge.pend{color:var(--m-amber);background:var(--m-amber-t)}
+.m-card p{font-size:15px;line-height:1.45;padding:6px 14px 0}
+.m-rows{margin:10px 14px 0;border-top:1px solid var(--m-line2)}
+.m-row{display:flex;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px solid var(--m-line2);font-size:13.5px;line-height:1.35}
+.m-row .k{width:64px;flex:none;color:var(--m-ink2);font-size:12.5px}
+.m-row a{color:var(--m-link);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--m-link) 35%,transparent);text-underline-offset:3px}
+.m-row a:hover{text-decoration-color:currentColor}
+.m-row small{margin-left:auto;color:var(--m-ink2);font-size:12.5px;white-space:nowrap}
+.m-cons{padding:10px 14px 0}
+.m-cons .bars{display:grid;grid-template-columns:1fr 2px 1fr;gap:6px;align-items:center;cursor:help;position:relative}
+.m-cons .bars i{height:7px;border-radius:4px;background:var(--m-line2);position:relative;overflow:hidden}
+.m-cons .bars i b{position:absolute;top:0;bottom:0;background:var(--m-sea);border-radius:4px;transform-origin:left;animation:m-grow .9s .45s var(--m-e) both}
+.m-cons .bars i:first-child b{right:0;transform-origin:right}
+.m-cons .bars i u{position:absolute;top:0;bottom:0;width:2px;background:var(--m-ink)}
+.m-cons .bars em{height:18px;background:var(--m-ink);border-radius:1px}
+.m-cons .lab{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;color:var(--m-ink2);margin-top:6px}
+.m-acts{display:flex;align-items:center;gap:8px;padding:12px 14px 13px;flex-wrap:wrap}
+.m-acts .m-t.why{margin-left:auto;font-size:12.5px;color:var(--m-ink2);text-decoration:underline;text-underline-offset:3px;cursor:help}
+.m-inline{margin-top:12px;display:flex;gap:8px;align-items:flex-start;font:13.5px/1.4 var(--m-brand);color:var(--m-ink2);animation:m-rise .35s var(--m-e) both}
+:host([data-host="tiktok"]) .m-inline{background:var(--m-host-card);border:1px solid var(--m-host-line);border-radius:8px;padding:10px 12px}
+
+/* "ad hidden" row that replaces the post */
+.hidden-ad{display:flex;align-items:center;gap:10px;padding:12px 16px;font:14px/1.35 var(--m-brand);color:var(--m-ink2)}
+.hidden-ad button{margin-left:auto}
+:host([data-host="tiktok"][data-part="placeholder"]) .hidden-ad{height:100%;flex-direction:column;justify-content:center;text-align:center;border:1px solid var(--m-line);border-radius:8px;background:var(--m-sunk)}
+:host([data-host="tiktok"][data-part="placeholder"]) .hidden-ad button{margin-left:0}
+
+/* toast */
+.m-toast{position:fixed;left:50vw;bottom:24px;z-index:90;transform:translateX(-50%);width:max-content;max-width:calc(100vw - 32px);background:var(--m-ink);color:var(--m-card);font:600 14px/1.35 var(--m-brand);padding:11px 16px;border-radius:12px;
+  box-shadow:var(--m-shadow);display:flex;gap:8px;align-items:center;animation:m-toast 3.2s var(--m-e) forwards}
+.m-toast .m-mark{color:var(--m-card)}
+
+@keyframes m-pop{from{opacity:0;transform:translateY(-6px) scale(.97)}}
+@keyframes m-popout{to{opacity:0;transform:translateY(-4px) scale(.94)}}
+@keyframes m-rise{from{opacity:0;transform:translateY(8px)}}
+@keyframes m-grow{from{transform:scaleX(0)}}
+@keyframes m-fill{to{transform:scaleX(1)}}
+@keyframes m-spin{to{transform:rotate(360deg)}}
+@keyframes m-toast{0%{opacity:0;transform:translate(-50%,10px)}10%,85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,6px)}}
+@media (prefers-reduced-motion:reduce){
+  .m-pop,.m-pop.out,.m-proc,.m-card,.m-inline,.m-toast,.m-cons .bars i b,.m-send .bar,.m-reveal.open .m-card{animation-duration:.01s!important;animation-delay:0s!important}
+  .m-reveal,.m-tip,.m-chip,.m-btn,.m-report,.m-proc li,.m-proc li i{transition:none!important}
+  .m-proc li.on i{animation:none}
+}

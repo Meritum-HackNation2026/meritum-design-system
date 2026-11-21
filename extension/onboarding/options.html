@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ustawienia Meritum</title>
+<link rel="icon" href="../icons/icon-32.png">
+<link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="pages.css">
+</head>
+<body>
+<div class="wrap">
+ <header class="head">
+  <span class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 40V25c0-5.5 3.1-9 7-9s7 3.5 7 9v15M24 25c0-5.5 3.1-9 7-9s7 3.5 7 9v15" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="acc" d="M24 25v15" fill="none" stroke-width="4" stroke-linecap="round"/><circle class="dot" cx="24" cy="7.6" r="3.5"/></svg>meritum</span>
+  <a href="https://meritum.example/panel" class="small" target="_blank" rel="noopener">Otwórz panel</a>
+ </header>
+
+ <main>
+  <h1>Ustawienia</h1>
+  <p class="saved" data-saved aria-live="polite"></p>
+
+  <section aria-labelledby="sites-h">
+   <h2 id="sites-h">Gdzie działa Meritum</h2>
+   <div class="panel">
+    <div class="set"><span class="grow" id="s-x"><b>X <span class="dom">x.com</span></b></span><label class="switch"><input type="checkbox" role="switch" value="x.com" data-setting="site" aria-labelledby="s-x"><span></span></label></div>
+    <div class="set"><span class="grow" id="s-fb"><b>Facebook <span class="dom">facebook.com</span></b></span><label class="switch"><input type="checkbox" role="switch" value="facebook.com" data-setting="site" aria-labelledby="s-fb"><span></span></label></div>
+    <div class="set"><span class="grow" id="s-ig"><b>Instagram <span class="dom">instagram.com</span></b></span><label class="switch"><input type="checkbox" role="switch" value="instagram.com" data-setting="site" aria-labelledby="s-ig"><span></span></label></div>
+    <div class="set"><span class="grow" id="s-rd"><b>Reddit <span class="dom">reddit.com</span></b></span><label class="switch"><input type="checkbox" role="switch" value="reddit.com" data-setting="site" aria-labelledby="s-rd"><span></span></label></div>
+    <div class="set"><span class="grow" id="s-tt"><b>TikTok <span class="dom">tiktok.com</span></b></span><label class="switch"><input type="checkbox" role="switch" value="tiktok.com" data-setting="site" aria-labelledby="s-tt"><span></span></label></div>
+   </div>
+   <p class="note">Wyłączony serwis nie dostaje przycisku „Zgłoś” ani notatek. Zmiana działa po odświeżeniu karty.</p>
+  </section>
+
+  <section aria-labelledby="opiekun">
+   <h2 id="opiekun">Tryb opiekuna</h2>
+   <div class="panel">
+    <div class="set">
+     <span class="grow" id="g-l"><b>Prostsze ostrzeżenia</b><span class="m">Większy tekst w notatkach, krótsze zdania i ostrzeżenie o oszustwie przed treścią reklamy. Włącz go na komputerze rodzica lub dziadka.</span></span>
+     <label class="switch"><input type="checkbox" role="switch" data-setting="guardian" aria-labelledby="g-l"><span></span></label>
+    </div>
+   </div>
+  </section>
+
+  <section aria-labelledby="look-h">
+   <h2 id="look-h">Wygląd</h2>
+   <div class="seg theme" role="radiogroup" aria-labelledby="look-h">
+    <label><input type="radio" name="theme" value="light" data-setting="theme">Jasny</label>
+    <label><input type="radio" name="theme" value="dark" data-setting="theme">Ciemny</label>
+    <label><input type="radio" name="theme" value="auto" data-setting="theme">Jak w systemie</label>
+   </div>
+   <p class="note">Dotyczy okienka i ustawień Meritum. Pod postami Meritum zawsze dopasowuje się do motywu serwisu.</p>
+  </section>
+
+  <section aria-labelledby="prywatnosc">
+   <h2 id="prywatnosc">Prywatność</h2>
+   <div class="panel">
+    <ul class="promises">
+     <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Zgłoszenia są anonimowe. Nie zakładasz konta i nie podajesz adresu e-mail.</span></li>
+     <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Do Meritum trafia tylko to, co sam zgłosisz: adres posta, jego treść i zrzut jako dowód.</span></li>
+     <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Lista twoich ostatnich zgłoszeń jest zapisana tylko na tym komputerze.</span></li>
+    </ul>
+   </div>
+   <div class="actions" style="margin-top:12px"><button class="btn" type="button" data-clear>Usuń historię zgłoszeń z tego komputera</button></div>
+  </section>
+
+  <p class="foot">Meritum <span class="num" data-version>0.1.0</span>. AI pisze. Ludzie decydują. Źródła są obowiązkowe.</p>
+ </main>
+</div>
+<script src="settings.js"></script>
+</body>
+</html>

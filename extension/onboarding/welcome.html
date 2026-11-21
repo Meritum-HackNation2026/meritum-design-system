@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Witaj w Meritum</title>
+<link rel="icon" href="../icons/icon-32.png">
+<link rel="stylesheet" href="../ui.css">
+<link rel="stylesheet" href="pages.css">
+</head>
+<body>
+<div class="wrap">
+ <header class="head">
+  <span class="logo"><svg class="mark" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 40V25c0-5.5 3.1-9 7-9s7 3.5 7 9v15M24 25c0-5.5 3.1-9 7-9s7 3.5 7 9v15" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="acc" d="M24 25v15" fill="none" stroke-width="4" stroke-linecap="round"/><circle class="dot" cx="24" cy="7.6" r="3.5"/></svg>meritum</span>
+  <a href="options.html" class="small">Ustawienia</a>
+ </header>
+
+ <main>
+  <h1>Meritum jest gotowe</h1>
+  <p class="lead">Pod postami na X, Facebooku, Instagramie, Reddicie i TikToku pojawi się przycisk „Zgłoś”. Z jednego zgłoszenia odsłaniamy całą kampanię, a notatkę pokazujemy dopiero wtedy, gdy zgodzą się ludzie, którzy zwykle się nie zgadzają.</p>
+
+  <section aria-labelledby="how-h">
+   <h2 id="how-h">Jak to działa</h2>
+   <div class="panel">
+    <ul class="steps">
+     <li>
+      <div class="demo" aria-hidden="true"><span class="rep"><svg viewBox="0 0 48 48"><path d="M10 40V25c0-5.5 3.1-9 7-9s7 3.5 7 9v15M24 25c0-5.5 3.1-9 7-9s7 3.5 7 9v15" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path class="acc" d="M24 25v15" fill="none" stroke-width="4" stroke-linecap="round"/><circle class="dot" cx="24" cy="7.6" r="3.5"/></svg>Zgłoś</span></div>
+      <div><b>Zgłaszasz</b><p>Coś wygląda na manipulację albo oszustwo? Kliknij „Zgłoś” pod postem i zaznacz, co jest nie tak. Zrzut i adres zapiszemy sami.</p></div>
+     </li>
+     <li>
+      <div class="demo" aria-hidden="true"><ol><li><i></i>Łączymy z podobnymi</li><li><i></i>Zbieramy źródła</li><li><i class="on"></i>Oceniają dwie grupy</li></ol></div>
+      <div><b>Sprawdzamy</b><p>Łączymy twoje zgłoszenie z podobnymi, szukamy źródeł i porównujemy reklamy ze znanymi kampaniami oszustów.</p></div>
+     </li>
+     <li>
+      <div class="demo" aria-hidden="true"><span class="badge ok">Zweryfikowany</span><span class="badge bad">Oszustwo</span></div>
+      <div><b>Widzisz kontekst</b><p>Pod postem pojawia się notatka ze źródłami albo ostrzeżenie przed oszustwem. AI pisze szkic, a o publikacji decydują ludzie.</p></div>
+     </li>
+    </ul>
+   </div>
+  </section>
+
+  <section aria-labelledby="priv-h">
+   <h2 id="priv-h">Twoja prywatność</h2>
+   <div class="panel">
+    <ul class="promises">
+     <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Zgłoszenia są anonimowe. Nie zakładasz konta i nie podajesz adresu e-mail.</span></li>
+     <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Do Meritum trafia tylko to, co sam zgłosisz: adres posta, jego treść i zrzut jako dowód.</span></li>
+     <li><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Meritum działa tylko na pięciu serwisach. Nie widzi twoich wiadomości ani historii przeglądania.</span></li>
+    </ul>
+   </div>
+  </section>
+
+  <section aria-labelledby="look-h">
+   <h2 id="look-h">Wygląd</h2>
+   <div class="seg theme" role="radiogroup" aria-labelledby="look-h">
+    <label><input type="radio" name="theme" value="light" data-setting="theme">Jasny</label>
+    <label><input type="radio" name="theme" value="dark" data-setting="theme">Ciemny</label>
+    <label><input type="radio" name="theme" value="auto" data-setting="theme">Jak w systemie</label>
+   </div>
+   <p class="note">Dotyczy okienka i ustawień Meritum. Pod postami Meritum zawsze dopasowuje się do motywu serwisu.</p>
+  </section>
+
+  <div class="actions">
+   <button class="btn p" type="button" data-close>Zaczynam przeglądać</button>
+   <a class="btn" href="options.html">Więcej ustawień</a>
+  </div>
+  <p class="saved" data-saved aria-live="polite"></p>
+ </main>
+</div>
+<script src="settings.js"></script>
+</body>
+</html>

@@ -11,6 +11,60 @@
         ],
         "createdAt": "2026-11-21T08:05:50.168Z",
         "reason": "Claude: flagged element is the host X tab bar mock, copied from measured x.com layout (53px tabs, flush underline)"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "demo/platforms/**"
+        ],
+        "createdAt": "2026-11-21T09:20:57.210Z",
+        "reason": "Claude: fixtures reproducing third-party host chrome (X/FB/IG/Reddit/TikTok) measured from the real sites for the live demo; Meritum UI is injected separately"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "demo/platforms/**"
+        ],
+        "createdAt": "2026-11-21T09:20:57.248Z",
+        "reason": "Claude: fixtures reproducing third-party host chrome (X/FB/IG/Reddit/TikTok) measured from the real sites for the live demo; Meritum UI is injected separately"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "demo/x/index.html"
+        ],
+        "createdAt": "2026-11-21T09:20:57.290Z",
+        "reason": "Claude: X host chrome colours (#1d9bf0 hashtags, disabled composer button) copied from x.com; Meritum widget colours pass AA"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "demo/live/**"
+        ],
+        "createdAt": "2026-11-21T09:41:32.174Z",
+        "reason": "Claude: demo/live copies the measured third-party host chrome of demo/platforms for the stage demo; Meritum widget styles live in extension/widget.css"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "demo/live/**"
+        ],
+        "createdAt": "2026-11-21T09:41:32.194Z",
+        "reason": "Claude: demo/live copies the measured third-party host chrome of demo/platforms for the stage demo; Meritum widget styles live in extension/widget.css"
+      },
+      {
+        "rule": "oversized-h1",
+        "value": "*",
+        "files": [
+          "presentation/social/story-1080x1920.html"
+        ],
+        "createdAt": "2026-11-21T09:41:32.215Z",
+        "reason": "Claude: 1080x1920 story poster whose only content is the 6-word tagline; display size is the intent"
       }
     ]
   }

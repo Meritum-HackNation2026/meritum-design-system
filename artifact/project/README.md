@@ -4,7 +4,7 @@
 
 ![Znak Meritum: małe „m” z dwóch łuków](/_blob/e651a1909f767e201392a93160ffe775)
 
-Ten brand book opisuje, jak Meritum wygląda i jak mówi. Tokeny są w zakładkach Kolory, Typografia i Odstępy, a komponenty z podglądami w zakładce Komponenty. Przekaż go agentowi AI, który robi slajdy, makiety albo materiały marketingowe, razem z poleceniem z sekcji 12. Wszystkie wartości są ostateczne, chyba że ten plik powie inaczej.
+Ten brand book opisuje, jak Meritum wygląda i jak mówi. Tokeny są w zakładkach Kolory, Typografia i Odstępy, a komponenty z podglądami w zakładce Komponenty. Ścieżki plików odnoszą się do repozytorium Meritum-HackNation2026/meritum-design-system. Przekaż go agentowi AI, który robi slajdy, makiety albo materiały marketingowe, razem z poleceniem z sekcji 12. Wszystkie wartości są ostateczne, chyba że ten plik powie inaczej.
 
 ---
 
@@ -34,6 +34,7 @@ Znak **„Dwa łuki”**: małe „m” z dwóch łuków. Łuki to dwie strony s
 - Pole ochronne: wysokość kropki nad „m” z każdej strony.
 - Trzon i kropka zawsze w kolorze akcentu (`#1D6A86` jasno, `#5DB3CF` ciemno). Łuki w kolorze tekstu.
 - W widżecie na platformach znak ma 14 px i stoi przed słowem „Meritum” w małym nagłówku.
+- Gotowe pliki PNG (512, 1024), ikony 16 do 512 px i poziomy logotyp z podtytułem są w `brand/exports/`.
 
 **Nie wolno:** obracać znaku, dodawać cienia ani gradientu, zmieniać koloru trzonu na inny niż akcent, umieszczać znaku obok logotypów platform tak, jakby był ich częścią, ani rozciągać go.
 
@@ -66,7 +67,7 @@ Pierwsza wartość dotyczy trybu jasnego, druga ciemnego. Wszystkie pary tekst/t
 
 **Zasady koloru:**
 - Stan nigdy nie jest oznaczony samym kolorem: zawsze ma też słowo („Zweryfikowany”, „Oszustwo”) albo znak (front z trójkątami przy ataku).
-- Na wykresach jest co najwyżej 4 kolory: atrament (realne osoby), czerwień (odrzucone), akcent i szary dla przeszłości.
+- Na wykresach są co najwyżej 4 kolory: atrament (realne osoby), czerwień (odrzucone), akcent i szary dla przeszłości.
 - Przycisk główny jest prawie czarny (`#14191E`), nigdy w kolorze akcentu.
 
 **Zakazane:** gradienty fioletowo-niebieskie (i w ogóle gradienty), zielony tekst na czarnym tle w stylu „hakerskim”, neonowe poświaty, granat z czerwienią w stylu urzędowym, kremowe tło z terakotą.
@@ -112,7 +113,7 @@ Nic poniżej 12 px. Nagłówki zdaniowe (wielka litera tylko na początku), bez 
 
 ## 6. Komponenty
 
-Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`. Interaktywne makiety wszystkich stanów: `demo/widgets/`, pełny przepływ na makiecie X: `demo/x/`.
+Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Shadow DOM wtyczki w `extension/widget.css`, dane opisują `contracts/`. Interaktywne makiety wszystkich stanów: `demo/widgets/`, pełny przepływ na makiecie X: `demo/x/`.
 
 ### 6.1 Przycisk „Zgłoś” (wstrzykiwany)
 Znak Meritum 18 px + słowo „Zgłoś” w pasku akcji posta, obok zakładki. Stany: spoczynek (kolor ikon platformy), najechanie (tło `#E1EDF2`, tekst `#13506A`), otwarty, „Zgłoszono” (po wysłaniu, nieaktywny).
@@ -150,7 +151,7 @@ Wstrzykiwana pod post. Białe tło, obramowanie 1 px, promień platformy.
 - **Bez kafelków KPI z ikonami** i bez różowych banerów.
 
 ### 6.6 Widok kampanii (dla konkursu NASK)
-Oś czasu rotacji domen: każda domena to wiersz, pasek pokazuje, kiedy działała. Martwe domeny szare, aktywne czerwone, przewidziane z logów certyfikatów przerywane (jedna zapala się na żywo). Pod spodem suma „Reklamy 47 = Facebook 31 + Instagram 12 + X 4” i tabela „Wspólny ślad”.
+Oś czasu rotacji domen: każda domena to wiersz, pasek pokazuje, kiedy działała. Martwe domeny szare, aktywne czerwone, przewidziane z logów certyfikatów przerywane (jedna zapala się na żywo). Pod spodem suma „Reklamy 47 = Facebook 31 + Instagram 12 + X 4” i tabela „Wspólny ślad”. Komponent: `CampaignRotation`.
 
 ---
 
@@ -237,15 +238,47 @@ wymyślone statystyki bez dopisku „dane symulowane”.
 
 ---
 
-## 13. Pliki
+## 13. Kto czego używa
+
+### Wtyczka Chrome (programista)
+- `extension/widget.css`: style widżetu dla Shadow DOM (`:host`), tokeny jasne i ciemne, skórki platform przez `:host([data-host=…])`. Nazwy klas takie same jak w makietach, więc markup z `demo/x/` działa bez zmian.
+- `extension/manifest.json` i `extension/reference/`: referencyjny skrypt (MV3) bez frameworka: wykrywa platformę, znajduje posty selektorami z `demo/platforms/SELECTORS.md`, wstawia przycisk „Zgłoś” we własnym Shadow DOM, gra przepływ zgłoszenie → analiza → karta z mockiem API, wykrywa jasny lub ciemny motyw gospodarza. Działa na makietach i jest przygotowany pod prawdziwe strony.
+- `extension/popup/` (okienko z paska przeglądarki, `states.html` pokazuje wszystkie stany), `extension/onboarding/` (powitanie i ustawienia), `extension/icons/` (16, 32, 48, 128 px; małe rozmiary mają grubszy znak).
+- Opis techniczny po angielsku: `extension/README.md`.
+
+### Backend i panel (FastAPI, React)
+- `contracts/meritum_contracts.py`: modele Pydantic v2, jedyne źródło prawdy dla API, wtyczki i panelu (notatka, ostrzeżenie o oszustwie, zgłoszenie, status analizy, telemetria ataku, kampania). Reguły produktu są w modelach: karta bez źródła nie przejdzie walidacji, „Zweryfikowany” wymaga zgody obu grup, ostrzeżenie wymaga dwóch niezależnych sygnałów, suma reklam z platform musi się domykać.
+- `contracts/generate.sh` tworzy z nich `meritum.schema.json` (JSON Schema) i `meritum.ts` (typy TypeScript) oraz sprawdza przykłady z `examples.json`.
+- `copy/pl.json`: wszystkie teksty interfejsu, powody zgłoszeń, techniki manipulacji z podpowiedzią „jak rozpoznać”, komunikaty błędów. Klucze odpowiadają kodom z kontraktów.
+- `components/meritum/`: komponenty React (shadcn/ui) dla panelu i wtyczki, w tym `CampaignRotation` (widok kampanii). Sprawdzone `tsc --strict` i `biome check`.
+
+### Prezentacje, pitch i marketing (cały zespół)
+- `presentation/meritum-template.pptx`: szablon PowerPoint (10 slajdów, otwiera się w Google Slides i Keynote), generowany przez `presentation/build_pptx.py`.
+- `presentation/slides/index.html`: ta sama prezentacja w przeglądarce (strzałki, N notatki, druk do PDF).
+- `presentation/screenshots/`: zrzuty demo w jednym rozmiarze, gotowe do slajdów.
+- `presentation/social/`: grafika OG, post kwadratowy, story, baner LinkedIn (HTML i PNG).
+- `brand/exports/`: logo w PNG (512, 1024), ikona aplikacji 16 do 512 px, poziomy logotyp z podtytułem i bez, jasny i ciemny.
+- Instrukcja dla osób nietechnicznych: `presentation/README.md` (jak używać szablonu, jak robić zrzuty, gotowe polecenie dla AI).
+
+### Pokaz na scenie
+- `demo/live/<platforma>/`: makiety X, Facebooka, Instagrama, Reddita i TikToka z pełnym przepływem Meritum bez instalowania wtyczki. Sterowanie w lewym dolnym rogu: R resetuje, T zmienia motyw, „Przyspiesz” skraca analizę.
+- `demo/platforms/`: te same makiety bez Meritum, do testowania prawdziwej wtyczki.
+
+## 14. Pliki
 
 | Ścieżka | Zawartość |
 |---|---|
+| `DESIGN_SYSTEM.md` | ta specyfikacja |
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
-| `components/meritum/` | komponenty React: `ContextCard`, `QuickReportPopover`, `AnalysisSteps`, `BotDefenseTelemetry`, `MeritumMark` |
-| `brand/` | logo w SVG |
-| `demo/x/` | interaktywne demo na makiecie X |
-| `demo/widgets/` | widżet na 5 platformach i wszystkie jego stany |
-| `demo/logo/` | warianty znaku (wybrany: B) |
-| `demo/platforms/` | makiety pięciu platform do pokazu na żywo (w przygotowaniu) |
+| `components/meritum/` | komponenty React: `ContextCard`, `QuickReportPopover`, `AnalysisSteps`, `BotDefenseTelemetry`, `CampaignRotation`, `MeritumMark` |
+| `contracts/` | kontrakty Pydantic, JSON Schema, typy TS, przykłady |
+| `copy/pl.json` | teksty interfejsu |
+| `extension/` | zestaw wtyczki Chrome: style Shadow DOM, skrypt referencyjny, popup, onboarding, ikony |
+| `brand/` | logo w SVG, `brand/exports/` w PNG i logotyp |
+| `presentation/` | szablon PPTX, slajdy HTML, zrzuty, grafiki social, instrukcja |
+| `demo/live/` | interaktywne makiety platform na pokaz |
+| `demo/platforms/` | czyste makiety platform i `SELECTORS.md` |
+| `demo/x/`, `demo/widgets/`, `demo/logo/` | demo na X, widżet na platformach ze stanami, warianty znaku |
+| `docs/` | dokument produktowy (user stories, feature'y, ADR), źródło dla Google Docs |
+| `artifact/` | pliki opublikowanego Design System artifactu |
 | `PRODUCT.md`, `KEY_SELLING_POINTS.md` | produkt i strategia na oba konkursy |

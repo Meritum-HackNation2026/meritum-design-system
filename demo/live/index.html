@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Meritum na żywo</title>
+<link rel="icon" href="../../brand/meritum-mark.svg">
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&display=swap");
+:root{--bg:#F6F7F5;--card:#FFFFFF;--ink:#14191E;--ink2:#4C5862;--line:#D9DEDD;--sea:#1D6A86}
+@media (prefers-color-scheme:dark){:root{--bg:#0B0F12;--card:#0B0F12;--ink:#E7ECEE;--ink2:#9AA6AE;--line:#2F3336;--sea:#5DB3CF}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font:16px/1.5 "Archivo",system-ui,sans-serif;background:var(--bg);color:var(--ink);padding:48px 16px}
+main{max-width:720px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px}
+header svg{width:28px;height:28px}
+h1{font-size:22px;line-height:28px;font-weight:700;font-stretch:108%}
+p{color:var(--ink2);margin-top:12px;max-width:60ch}
+ul{list-style:none;margin-top:24px;display:grid;gap:8px}
+li{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+li b{flex:1;min-width:140px;font-weight:650}
+li a{font-size:14px;font-weight:600;padding:5px 12px;border:1px solid var(--line);border-radius:999px;color:var(--ink);text-decoration:none}
+li a:hover{border-color:var(--ink2)}
+a:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+kbd{font:600 13px ui-monospace,monospace;border:1px solid var(--line);border-radius:5px;padding:0 5px}
+</style>
+</head>
+<body>
+<main>
+ <header><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 40V25c0-5.5 3.1-9 7-9s7 3.5 7 9v15M24 25c0-5.5 3.1-9 7-9s7 3.5 7 9v15" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 25v15" fill="none" stroke="var(--sea)" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="7.6" r="3.5" fill="var(--sea)"/></svg><h1>Meritum na żywo, bez instalowania wtyczki</h1></header>
+ <p>Te same makiety co w <a href="../platforms/">demo/platforms</a>, z dołączonym skryptem wtyczki. Kliknij „Zgłoś” pod postem o płaskiej Ziemi albo pod reklamą Finanse Dziś i wyślij zgłoszenie. Dane są symulowane.</p>
+ <p>Sterowanie w lewym dolnym rogu: <kbd>R</kbd> od nowa, <kbd>T</kbd> motyw, „Przyspiesz” skraca animacje trzykrotnie. <kbd>Esc</kbd> zamyka okno zgłoszenia.</p>
+ <ul>
+  <li><b>X</b><a href="x/">jasny</a><a href="x/?theme=dark">ciemny</a></li>
+  <li><b>Facebook</b><a href="facebook/">jasny</a><a href="facebook/?theme=dark">ciemny</a></li>
+  <li><b>Instagram</b><a href="instagram/">jasny</a><a href="instagram/?theme=dark">ciemny</a></li>
+  <li><b>Reddit</b><a href="reddit/">jasny</a><a href="reddit/?theme=dark">ciemny</a></li>
+  <li><b>TikTok</b><a href="tiktok/">jasny</a><a href="tiktok/?theme=dark">ciemny</a></li>
+ </ul>
+ <p>Makiety na potrzeby pokazu. Nie są to serwisy X, Facebook, Instagram, Reddit ani TikTok.</p>
+</main>
+</body>
+</html>

@@ -98,23 +98,28 @@ export function QuickReportPopover({ targetHandle, defaultKind = "manipulation",
             if (canSend) void send()
           }}
         >
-          <div role="radiogroup" aria-label="Rodzaj zgłoszenia" className="grid grid-cols-2 rounded-[10px] bg-muted p-0.75">
+          <fieldset className="grid grid-cols-2 rounded-[10px] bg-muted p-0.75">
+            <legend className="sr-only">Rodzaj zgłoszenia</legend>
             {(["manipulation", "scam"] as const).map((k) => (
-              <button
+              <label
                 key={k}
-                type="button"
-                role="radio"
-                aria-checked={kind === k}
-                onClick={() => {
-                  setKind(k)
-                  setReasons([])
-                }}
-                className="rounded-lg py-1.75 text-small font-semibold text-muted-foreground aria-checked:bg-card aria-checked:text-foreground aria-checked:shadow-xs"
+                className="relative cursor-pointer rounded-lg py-1.75 text-center text-small font-semibold text-muted-foreground has-checked:bg-card has-checked:text-foreground has-checked:shadow-xs has-focus-visible:outline-2 has-focus-visible:outline-ring"
               >
+                <input
+                  type="radio"
+                  name="report-kind"
+                  value={k}
+                  checked={kind === k}
+                  onChange={() => {
+                    setKind(k)
+                    setReasons([])
+                  }}
+                  className="absolute inset-0 cursor-pointer opacity-0"
+                />
                 {k === "manipulation" ? "Manipulacja" : "Oszustwo"}
-              </button>
+              </label>
             ))}
-          </div>
+          </fieldset>
 
           <fieldset>
             <legend className="mb-1.5 text-small font-semibold">Co jest nie tak? Wybierz jedno lub więcej</legend>

@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Meritum: prezentacja</title>
+<link rel="icon" href="../../brand/meritum-app-icon.svg">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&family=Azeret+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Meritum slide template. 1920x1080, one idea per slide. Tokens from tokens/meritum.css. */
+:root{
+  --bg:#F6F7F5; --card:#FFFFFF; --ink:#14191E; --ink2:#4C5862; --line:#D9DEDD; --raised:#E8ECEB;
+  --sea:#1D6A86; --sea-t:#E1EDF2; --sea-d:#13506A;
+  --amber:#B7791F; --amber-t:#F8EEDB; --amber-d:#7A4E08;
+  --red:#C8213A; --red-t:#FBE6E9; --red-d:#9E1A2E; --grey:#A9B3B8;
+  --sans:"Archivo",Arial,sans-serif; --mono:"Azeret Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#E8ECEB;color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+body{overflow:hidden}
+.deck{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center}
+.slide{position:absolute;inset:0;display:none;background:var(--bg);padding:112px 128px 120px;overflow:hidden}
+.slide.on{display:block}
+aside{display:none}
+
+/* chrome: logo bottom-left, number bottom-right */
+.foot{position:absolute;left:128px;right:128px;bottom:48px;display:flex;align-items:center;gap:14px;font-size:20px;color:var(--ink2)}
+.foot svg{width:30px;height:30px}
+.foot b{font-weight:650;font-stretch:112%;letter-spacing:-.02em;color:var(--ink);font-size:24px}
+.foot .n{margin-left:auto;font-variant-numeric:tabular-nums}
+.sim{font-size:20px;color:var(--ink2)}
+
+/* type */
+h1,h2{font-weight:700;font-stretch:108%;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
+h1{font-size:104px}
+h2{font-size:72px;max-width:1500px}
+.lead{font-size:32px;line-height:1.4;color:var(--ink2);max-width:1200px;margin-top:28px;text-wrap:pretty}
+p,li,td,th{font-size:28px;line-height:1.4}
+.mono,.num{font-family:var(--mono);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px}
+.badge{display:inline-block;padding:6px 16px;border-radius:999px;font-size:22px;font-weight:650}
+.badge.ok{background:var(--sea-t);color:var(--sea-d)}
+.badge.wait{background:var(--amber-t);color:var(--amber-d)}
+.badge.bad{background:var(--red-t);color:var(--red-d)}
+.shot{display:block;border:1px solid var(--line);border-radius:12px;background:#fff}
+figure figcaption{font-size:22px;color:var(--ink2);margin-top:16px;line-height:1.35}
+figure figcaption b{color:var(--ink);font-weight:650}
+
+/* 1 title */
+.s-title{display:grid;grid-template-columns:1fr 640px;gap:96px;align-items:center;height:100%}
+.s-title .lockup{width:420px;display:block;margin-bottom:72px}
+.s-title h1{font-size:96px}
+.s-title .meta{position:absolute;left:128px;bottom:48px;font-size:22px;color:var(--ink2)}
+.s-title img.shot{width:640px}
+
+/* 2 problem table */
+table{border-collapse:collapse;width:100%}
+.tbl{margin-top:64px}
+.tbl th{text-align:left;font-weight:650;font-size:26px;padding:0 24px 18px 0;color:var(--ink)}
+.tbl td{padding:22px 24px 22px 0;border-top:1px solid var(--line);vertical-align:top}
+.tbl td:first-child{color:var(--ink2);width:300px}
+
+/* 3 thesis sequence */
+.seq{display:grid;grid-template-columns:repeat(4,1fr);margin-top:120px;position:relative}
+.seq::before{content:"";position:absolute;left:0;right:0;top:27px;height:2px;background:var(--ink)}
+.seq li{list-style:none;padding-right:48px;position:relative}
+.seq .dot{width:56px;height:56px;border-radius:50%;background:var(--bg);border:2px solid var(--ink);display:grid;place-items:center;font-weight:700;font-size:24px;position:relative;margin-bottom:32px}
+.seq li:nth-child(3) .dot{background:var(--sea);border-color:var(--sea);color:#fff}
+.seq b{display:block;font-size:40px;font-weight:700;font-stretch:108%;margin-bottom:10px}
+.seq p{color:var(--ink2);font-size:26px}
+
+/* 4 demo */
+.demo{display:flex;gap:40px;align-items:flex-start;margin-top:56px}
+.crop{width:420px;height:620px;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:#fff}
+.crop img{width:860px;margin:-372px 0 0 0;display:block}
+
+/* 5 consensus */
+.cons{display:grid;grid-template-columns:600px 1fr;gap:96px;margin-top:72px}
+.steps li{list-style:none;padding:22px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:56px 1fr}
+.steps li:last-child{border-bottom:1px solid var(--line)}
+.steps span{font-weight:700;color:var(--ink2)}
+.bars{padding:36px 40px}
+.bars+.bars{margin-top:24px}
+.bars .hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.bars .hd b{font-size:30px;font-weight:700}
+.axis{display:grid;grid-template-columns:1fr 4px 1fr;gap:10px;align-items:center;height:28px}
+.axis>i{display:block;height:16px;background:var(--raised);border-radius:999px;position:relative}
+.axis>i:first-child{transform:scaleX(-1)}
+.axis>i b{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--sea)}
+.axis>i b.wait{background:var(--amber)}
+.axis>i u{position:absolute;left:70%;top:-6px;bottom:-6px;width:3px;background:var(--ink)}
+.axis>em{display:block;height:36px;background:var(--ink);border-radius:2px}
+.bars .lab{display:flex;justify-content:space-between;margin-top:18px;font-size:24px;color:var(--ink2)}
+
+/* 6 campaign */
+.camp{display:grid;grid-template-columns:520px 1fr;gap:80px;margin-top:48px}
+.camp img.shot{width:520px}
+.tl{padding:32px 36px}
+.tl .days,.tl .row{display:grid;grid-template-columns:330px 1fr;align-items:center}
+.tl .days div{display:grid;grid-template-columns:repeat(9,1fr);font-size:20px;color:var(--ink2)}
+.tl .row{height:52px;border-top:1px solid var(--line)}
+.tl .row span{font-family:var(--mono);font-size:21px;letter-spacing:-.02em}
+.tl .row.dead span{color:var(--ink2)}
+.tl .track{position:relative;height:100%}
+.tl .track i{position:absolute;top:17px;height:18px;border-radius:999px;background:var(--grey)}
+.tl .row.live i{background:var(--red)}
+.tl .row.pred i{background:none;border:2px dashed var(--red);top:16px}
+.tl .row.pred span{color:var(--red-d)}
+.tl .leg{display:flex;flex-wrap:wrap;gap:8px 28px;font-size:20px;color:var(--ink2);margin-top:18px}
+.tl .leg span{white-space:nowrap}
+.sum{display:flex;align-items:baseline;flex-wrap:wrap;gap:12px;padding:22px 0;margin-top:24px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);font-size:28px;color:var(--ink2)}
+.sum b{font-family:var(--mono);font-weight:600;color:var(--ink);font-size:34px;letter-spacing:-.02em}
+.sum b.r{color:var(--red)}
+
+/* 7 telemetry */
+.tele{display:grid;grid-template-columns:1fr 600px;gap:64px;margin-top:40px}
+.front{display:inline-flex;align-items:center;gap:24px}
+.front svg{width:90px;height:36px;flex:none}
+.chart{padding:24px 24px 12px}
+.chart svg{display:block;width:100%;height:auto}
+.chart text{font-family:var(--mono);font-size:18px;fill:var(--ink2)}
+.rej td{font-size:22px;padding:12px 0;border-top:1px solid var(--line)}
+.rej th{font-size:20px;font-weight:600;color:var(--ink2);text-align:left;padding-bottom:10px}
+.rej td:nth-child(2){font-family:var(--mono);color:var(--red);text-decoration:line-through;text-decoration-thickness:2px;letter-spacing:-.02em}
+.rej td:first-child{font-family:var(--mono);color:var(--ink2);width:110px}
+.rej td:last-child,.rej th:last-child{text-align:right;color:var(--ink2)}
+
+/* 8 architecture */
+.arch{margin-top:56px;display:grid;gap:20px}
+.layer{display:grid;grid-template-columns:260px 1fr;align-items:stretch;gap:24px}
+.layer>span{font-size:24px;color:var(--ink2);padding-top:24px}
+.layer .cells{display:flex;gap:20px}
+.layer .card{flex:1;padding:22px 28px}
+.layer .card b{display:block;font-size:30px;font-weight:700;margin-bottom:4px}
+.layer .card p{font-size:22px;color:var(--ink2);line-height:1.35}
+.layer .card.core{border-color:var(--sea);border-width:2px}
+.infra{border-top:1px solid var(--line);padding-top:24px}
+
+/* 9 team */
+.team{display:grid;grid-template-columns:1fr 1fr;gap:96px;margin-top:64px}
+.team h3{font-size:36px;font-weight:700;margin-bottom:20px}
+.ppl li{list-style:none;padding:20px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between}
+.ppl li span{color:var(--ink2)}
+.ask li{list-style:none;padding:20px 0;border-top:1px solid var(--line)}
+.ask li b{font-weight:650}
+
+/* 10 closing (dark mode not used: one mode per deck) */
+.s-close.on{display:flex;flex-direction:column;justify-content:center}
+.s-close h1{font-size:112px;max-width:1600px}
+.s-close h2{color:var(--ink2);margin-top:40px;font-size:64px;line-height:1.05;font-weight:650}
+.s-close .lockup{width:360px;margin-top:96px}
+
+/* presenter notes overlay (press N) */
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:40vh;overflow:auto;background:var(--ink);color:#F3F5F4;font:18px/1.5 var(--sans);padding:20px 28px;display:none;z-index:9}
+body.notes #notes{display:block}
+
+@media print{
+  @page{size:1920px 1080px;margin:0}
+  html,body{background:none;overflow:visible}
+  .deck{position:static;transform:none!important}
+  .slide{position:relative;display:block;break-after:page;page-break-after:always;width:1920px;height:1080px}
+  .slide.s-close{display:flex;flex-direction:column;justify-content:center}
+  #notes{display:none!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="mm" viewBox="0 0 48 48"><path d="M10 40V25c0-5.5 3.1-9 7-9s7 3.5 7 9v15M24 25c0-5.5 3.1-9 7-9s7 3.5 7 9v15" fill="none" stroke="#14191E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 25v15" fill="none" stroke="#1D6A86" stroke-width="4" stroke-linecap="round"/><circle cx="24" cy="7.6" r="3.5" fill="#1D6A86"/></symbol>
+ <symbol id="front" viewBox="0 0 30 12"><path d="M0 11H30" stroke="#C8213A" stroke-width="1.6"/><path d="M1 11l4.5-7 4.5 7zM11 11l4.5-7 4.5 7zM21 11l4.5-7 4.5 7z" fill="#C8213A"/></symbol>
+</svg>
+
+<main class="deck" id="deck">
+
+<!-- 1. Tytuł -->
+<section class="slide" data-layout="tytul">
+ <div class="s-title">
+  <div>
+   <img class="lockup" src="../../brand/exports/meritum-lockup-subtitle-light.svg" alt="Meritum — obywatelski radar dezinformacji oraz scamu">
+   <h1>Jeden fejk, cała kampania. Jeden kontekst, ponad podziałami.</h1>
+  </div>
+  <img class="shot" src="../screenshots/x-04-context-note.png" alt="Notatka Meritum pod postem na makiecie X">
+ </div>
+ <div class="meta">HackNation 2026 · MSZ „Prawdowid” · NASK „Kolekcjoner fejków”</div>
+ <aside>Otwieramy jednym zdaniem: Meritum to niezależna warstwa zaufania nad mediami społecznościowymi. Z jednego zgłoszenia odsłania całą kampanię, a kontekst publikuje dopiero wtedy, gdy zgodzą się ludzie, którzy zwykle się nie zgadzają.</aside>
+</section>
+
+<!-- 2. Problem -->
+<section class="slide" data-layout="problem">
+ <h2>Fakt-check jest gdzieś w sieci, ale nie tam, gdzie ludzie czytają</h2>
+ <table class="tbl">
+  <thead><tr><th></th><th>Dezinformacja (MSZ „Prawdowid”)</th><th>Fałszywe reklamy (NASK „Kolekcjoner fejków”)</th></tr></thead>
+  <tbody>
+   <tr><td>Zagrożenie</td><td>manipulacja, fałszywe narracje</td><td>reklamy z wizerunkiem znanych osób użytym bez zgody</td></tr>
+   <tr><td>Co utrudnia</td><td>nadmiar informacji, brak wiarygodnych źródeł</td><td>szybko znikają, wracają pod nowymi adresami</td></tr>
+   <tr><td>Czego brakuje</td><td>narzędzia do świadomej oceny treści</td><td>szerszego obrazu: jeden materiał to fragment kampanii</td></tr>
+  </tbody>
+ </table>
+ <aside>Problem w 20 sekund. Post o rzekomym zakazie płacenia gotówką ma setki tysięcy wyświetleń, a sprostowanie leży na stronie, której nikt nie odwiedzi. Reklama z deepfake'iem prezentera po zgłoszeniu znika i jutro wraca pod nową domeną. Obie sytuacje to ten sam problem: pojedyncza treść jest częścią większej operacji.</aside>
+</section>
+
+<!-- 3. Teza -->
+<section class="slide" data-layout="teza">
+ <h2>Jeden fejk, cała kampania</h2>
+ <p class="lead">Farma botów forsująca fałszywą narrację i sieć domen rotująca reklamy z deepfake'iem działają tak samo: wiele kopii, krótkie życie, skoordynowane konta. Dlatego budujemy jeden silnik.</p>
+ <ol class="seq">
+  <li><div class="dot">1</div><b>Zbiera</b><p>zgłoszenia i ślady: zrzut, adres, przekierowania, czas</p></li>
+  <li><div class="dot">2</div><b>Łączy</b><p>okazy w kampanie po obrazie, tekście, szablonie strony i domenach</p></li>
+  <li><div class="dot">3</div><b>Wyjaśnia</b><p>co widzisz, ze źródłami i nazwą techniki manipulacji</p></li>
+  <li><div class="dot">4</div><b>Chroni</b><p>przed kliknięciem i przed manipulacją głosowaniem</p></li>
+ </ol>
+ <aside>To jest argument dla jury: widzą platformę, a nie jednorazowy prototyp. Ten sam produkt odpowiada na oba wyzwania, zmienia się tylko scena główna demo.</aside>
+</section>
+
+<!-- 4. Demo -->
+<section class="slide" data-layout="demo">
+ <h2>Trzy kliknięcia od zgłoszenia do notatki</h2>
+ <div class="demo">
+  <figure><img class="shot" src="../screenshots/x-02-report-popover.png" alt="Okienko zgłoszenia z wybranym powodem Teoria spiskowa" style="height:600px"><figcaption><b>1. Zgłoszenie.</b> Powód do wyboru albo własne słowa.</figcaption></figure>
+  <figure><img class="shot" src="../screenshots/x-04-context-note.png" alt="Opublikowana notatka z trzema źródłami i paskami zgody dwóch grup" style="height:600px"><figcaption><b>2. Notatka.</b> Źródła obowiązkowe, technika nazwana.</figcaption></figure>
+  <figure><div class="crop"><img src="../screenshots/widgets-02-platforms.png" alt="Ta sama karta ostrzeżenia na makiecie Facebooka"></div><figcaption><b>3. Pięć platform.</b> Rama od gospodarza, sygnał od Meritum.</figcaption></figure>
+ </div>
+ <aside>Pokaz na żywo: http://localhost:52990/demo/x/. Kliknij „Zgłoś” pod postem o płaskiej Ziemi, zaznacz „Teoria spiskowa”, wyślij. Po około 5 sekundach pod postem pojawia się notatka. Zrzuty na slajdzie to ten sam przepływ, na wypadek braku internetu.</aside>
+</section>
+
+<!-- 5. Konsensus -->
+<section class="slide" data-layout="konsensus">
+ <h2>Notatka wychodzi, gdy zgodzą się obie strony</h2>
+ <div class="cons">
+  <ol class="steps">
+   <li><span>1</span><p>AI pisze szkic z uwag użytkowników i źródeł.</p></li>
+   <li><span>2</span><p>Oceniają go dwie grupy, które zwykle oceniają inaczej.</p></li>
+   <li><span>3</span><p>Publikacja dopiero, gdy obie przekroczą próg 70% ocen „pomocne”.</p></li>
+   <li><span>4</span><p>Większość nie wystarcza, więc farma botów nie przepchnie notatki.</p></li>
+  </ol>
+  <div>
+   <div class="card bars">
+    <div class="hd"><b>Obie grupy powyżej progu</b><span class="badge ok">Zweryfikowany</span></div>
+    <div class="axis"><i><b style="width:88%"></b><u></u></i><em></em><i><b style="width:84%"></b><u></u></i></div>
+    <div class="lab"><span>Grupa A: 88% pomocne, <span class="num">231</span> ocen</span><span>Grupa B: 84%, <span class="num">198</span> ocen</span></div>
+   </div>
+   <div class="card bars">
+    <div class="hd"><b>Jedna grupa poniżej progu</b><span class="badge wait">W ocenie</span></div>
+    <div class="axis"><i><b class="wait" style="width:95%"></b><u></u></i><em></em><i><b class="wait" style="width:41%"></b><u></u></i></div>
+    <div class="lab"><span>Grupa A: 95% pomocne, <span class="num">310</span> ocen</span><span>Grupa B: 41%, <span class="num">122</span> ocen</span></div>
+   </div>
+   <p class="sim" style="margin-top:20px">Dane symulowane. Kreska na każdym pasku to próg 70%.</p>
+  </div>
+ </div>
+ <aside>Algorytm typu „bridging”, ten sam rodzaj co otwarty algorytm Community Notes, ale niezależny od platformy. Pytanie jury „kto decyduje, co jest prawdą?”: nikt sam. AI pisze szkic, ludzie z różnych stron muszą się zgodzić, źródła są publiczne.</aside>
+</section>
+
+<!-- 6. Kampania -->
+<section class="slide" data-layout="kampania">
+ <h2>Jedno zgłoszenie, cała kampania <span class="mono">#K-118</span></h2>
+ <div class="camp">
+  <img class="shot" src="../screenshots/x-05-scam-warning.png" alt="Ostrzeżenie Meritum pod fałszywą reklamą z wizerunkiem fikcyjnego prezentera">
+  <div>
+   <div class="card tl">
+    <div class="days"><span></span><div><span>dzień 1</span><span></span><span>3</span><span></span><span>5</span><span></span><span>7</span><span></span><span>9</span></div></div>
+    <div class="row dead"><span>inwest-polska24.online</span><div class="track"><i style="left:0;width:24%"></i></div></div>
+    <div class="row dead"><span>zysk-dzis-pl.site</span><div class="track"><i style="left:16%;width:22%"></i></div></div>
+    <div class="row dead"><span>prezenter-wywiad.info</span><div class="track"><i style="left:30%;width:20%"></i></div></div>
+    <div class="row dead"><span>bank-ukrywa.online</span><div class="track"><i style="left:44%;width:18%"></i></div></div>
+    <div class="row live"><span>sekret-zarobku.site</span><div class="track"><i style="left:58%;width:42%"></i></div></div>
+    <div class="row live"><span>inwest-polska25.online</span><div class="track"><i style="left:72%;width:28%"></i></div></div>
+    <div class="row pred"><span>inwest-polska26.online</span><div class="track"><i style="left:90%;width:10%"></i></div></div>
+    <div class="leg"><span>6 z 23 domen kampanii + 1 przewidziana</span><span>szare: wyłączone</span><span>czerwone: aktywne</span><span>przerywane: z logów certyfikatów</span></div>
+   </div>
+   <div class="sum">Reklamy <b>47</b> = Facebook <b>31</b> + Instagram <b>12</b> + X <b>4</b></div>
+   <p class="sim" style="margin-top:16px">Dane symulowane. Prezenter „Tomasz Rewiński” i wszystkie domeny są fikcyjne.</p>
+  </div>
+ </div>
+ <aside>Scena główna pitchu NASK. Użytkownik zgłasza jedną reklamę, a panel rozwija kampanię #K-118: 47 wariantów, 23 domeny, 9 dni. Przerywana linia to domena wyłapana w logach Certificate Transparency, zanim trafiła do reklamy. Uczciwie: to sygnał do weryfikacji, a nie wyrok.</aside>
+</section>
+
+<!-- 7. Telemetria -->
+<section class="slide" data-layout="telemetria">
+ <h2 class="front"><svg aria-hidden="true"><use href="#front"/></svg>Atak odparty, notatka bez zmian</h2>
+ <div class="tele">
+  <div>
+   <div class="card chart"><svg id="chart" viewBox="0 0 1040 430" role="img" aria-label="Głosy na minutę: liczone i odrzucone, atak od 14:32"></svg></div>
+   <div class="sum" id="sum"></div>
+  </div>
+  <div>
+   <p style="color:var(--ink2);margin-bottom:24px">Klaster <span class="num">312</span> kont głosuje na notatkę <span class="num">#N-2291</span> od <span class="num">14:32</span>. Żaden z jego głosów nie trafił do konsensusu.</p>
+   <table class="rej">
+    <thead><tr><th>Czas</th><th>Odrzucone konto</th><th>Powód</th></tr></thead>
+    <tbody>
+     <tr><td>14:41</td><td>@pl_patriot_88231</td><td>ten sam klaster</td></tr>
+     <tr><td>14:41</td><td>@glos_ludu_4410</td><td>rytm 1 głos/s</td></tr>
+     <tr><td>14:40</td><td>@marek_k_20931</td><td>konto ma 2 dni</td></tr>
+     <tr><td>14:39</td><td>@prawda_tv_7781</td><td>ten sam klaster</td></tr>
+     <tr><td>14:38</td><td>@ania_m_55102</td><td>konto ma 2 dni</td></tr>
+    </tbody>
+   </table>
+   <p class="sim" style="margin-top:20px">Dane symulowane. Wszystkie nazwy kont są wymyślone.</p>
+  </div>
+ </div>
+ <aside>Zwrot w pitchu MSZ. Farma 312 kont próbuje zakopać notatkę. Czerwona linia to odrzucone głosy, czarna to realne osoby. Suma się domyka: wszystkie oddane głosy to liczone plus odrzucone. Status notatki się nie zmienia.</aside>
+</section>
+
+<!-- 8. Architektura -->
+<section class="slide" data-layout="architektura">
+ <h2>Działa dziś, skaluje się jutro</h2>
+ <div class="arch">
+  <div class="layer"><span>Dla ludzi</span><div class="cells">
+   <div class="card"><b>Wtyczka do przeglądarki</b><p>zgłoszenie, notatka, ostrzeżenie, sejf dowodów</p></div>
+   <div class="card"><b>Panel analityka</b><p>React, TanStack: kampanie i ataki na żywo</p></div>
+   <div class="card"><b>Asystenci AI redakcji</b><p>serwer MCP (FastMCP): „czy ta domena należy do kampanii?”</p></div></div></div>
+  <div class="layer"><span>Rdzeń</span><div class="cells">
+   <div class="card core"><b>FastAPI</b><p>otwarte API: notatki, konsensus, kampanie</p></div>
+   <div class="card core"><b>Pydantic AI</b><p>szkic notatki ze źródłami; nie decyduje o publikacji</p></div>
+   <div class="card core"><b>DBOS</b><p>trwałe przepływy; demo odtwarzane bez internetu</p></div></div></div>
+  <div class="layer"><span>Dane</span><div class="cells">
+   <div class="card"><b>PostgreSQL + pgvector</b><p>graf kampanii: podobieństwo obrazu, tekstu, szablonu strony, domen</p></div></div></div>
+  <div class="layer infra"><span>Infrastruktura</span><div class="cells"><p style="padding-top:2px">GCP (aplikacja i baza) + Cloudflare (ruch, ochrona API)</p></div></div>
+ </div>
+ <aside>Wszystko na jednym slajdzie, 20 sekund. Najważniejsze: ten sam silnik jest dostępny jako API i jako serwer MCP, więc redakcje, uczelnie i CERT mogą się podpiąć bez instalowania wtyczki.</aside>
+</section>
+
+<!-- 9. Zespół i prośba -->
+<section class="slide" data-layout="zespol">
+ <h2>Zespół i czego potrzebujemy</h2>
+ <div class="team">
+  <div><h3>Zespół</h3>
+   <ul class="ppl">
+    <li><b>[Imię Nazwisko]</b><span>backend, API, DBOS</span></li>
+    <li><b>[Imię Nazwisko]</b><span>AI i graf kampanii</span></li>
+    <li><b>[Imię Nazwisko]</b><span>wtyczka i panel</span></li>
+    <li><b>[Imię Nazwisko]</b><span>projekt i pitch</span></li>
+   </ul></div>
+  <div><h3>Prośba</h3>
+   <ul class="ask">
+    <li><b>Pilotaż z redakcją lub uczelnią:</b> pierwsi użytkownicy API i serwera MCP.</li>
+    <li><b>Dostęp do listy ostrzeżeń:</b> gotowe do integracji z CERT Polska.</li>
+    <li><b>Konsultacja prawna:</b> RODO, wizerunek i status zaufanego podmiotu sygnalizującego z DSA.</li>
+   </ul></div>
+ </div>
+ <aside>Uzupełnij imiona przed pitchem. Nie mówimy o współpracy z NASK, CERT Polska, MSZ ani mediami, dopóki jej nie ma; mówimy „gotowe do integracji z…”.</aside>
+</section>
+
+<!-- 10. Zamknięcie -->
+<section class="slide s-close" data-layout="zamkniecie">
+ <h1>Jeden fejk, cała kampania. Jeden kontekst, ponad podziałami.</h1>
+  <h2>AI pisze. Ludzie decydują. Źródła są obowiązkowe.</h2>
+ <img class="lockup" src="../../brand/exports/meritum-lockup-subtitle-light.svg" alt="Meritum — obywatelski radar dezinformacji oraz scamu">
+ <aside>Hasło pod konkretny konkurs. MSZ: „AI pisze. Ludzie decydują. Źródła są obowiązkowe.” NASK: „Pojedynczy fejk znika. Kolekcja zostaje.”</aside>
+</section>
+
+</main>
+<div id="notes" aria-live="polite"></div>
+
+<script>
+// Telemetry demo data (simulated). Totals are computed from these rows, so the sum always closes.
+const T0 = 20; // 14:20
+const counted  = [37,41,40,39,42,40,41,38,40,43,39,41, 40,42,39,41,40,38,42,40,41,39,40,42,40,41,39,40,38,41];
+const rejected = [0,0,0,0,0,0,0,0,0,0,0,0, 180,300,310,320,330,300,320,310,290,300,320,310,300,320,290,312,0,0];
+(function chart(){
+  const W = 1040, H = 430, L = 64, R = 140, Tp = 20, B = 50, max = 350, n = counted.length;
+  const x = i => L + i * (W - L - R) / (n - 1), y = v => Tp + (H - Tp - B) * (1 - v / max);
+  const line = a => a.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)} ${y(v).toFixed(1)}`).join('');
+  const a0 = 12, a1 = 27, hh = m => `14:${String(T0 + m).padStart(2, '0')}`;
+  let s = `<rect x="${x(a0)}" y="${Tp}" width="${x(a1) - x(a0)}" height="${H - Tp - B}" fill="#FBE6E9" opacity=".6"/>`;
+  for (const v of [0, 100, 200, 300]) s += `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="#D9DEDD"/><text x="${L - 12}" y="${y(v) + 6}" text-anchor="end">${v}</text>`;
+  for (let i = 0; i < n; i += 6) s += `<text x="${x(i)}" y="${H - 14}" text-anchor="middle">${hh(i)}</text>`;
+  s += `<line x1="${x(a0)}" x2="${x(a0)}" y1="${Tp}" y2="${H - B}" stroke="#C8213A" stroke-width="2"/>`;
+  s += `<text x="${x(a0) + 10}" y="${Tp + 22}" style="font-family:Archivo,Arial;font-weight:700;fill:#9E1A2E">front ${hh(a0)}</text>`;
+  s += `<path d="${line(counted)}" fill="none" stroke="#14191E" stroke-width="3"/><path d="${line(rejected)}" fill="none" stroke="#C8213A" stroke-width="3"/>`;
+  s += `<text x="${W - R + 12}" y="${y(counted[n - 1]) + 6}" style="font-family:Archivo,Arial;fill:#14191E;font-weight:600">liczone</text>`;
+  s += `<text x="${x(a1) + 12}" y="${y(rejected[a1]) + 6}" style="font-family:Archivo,Arial;fill:#C8213A;font-weight:600">odrzucone</text>`;
+  document.getElementById('chart').innerHTML = s;
+  const sum = a => a.reduce((p, c) => p + c, 0), f = v => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F'); // Polish thin-space grouping, also for 4 digits
+  const c = sum(counted), r = sum(rejected);
+  console.assert(c === 1204 && r === 4812, 'telemetry totals drifted', c, r);
+  document.getElementById('sum').innerHTML = `Oddane <b>${f(c + r)}</b> = liczone <b>${f(c)}</b> + odrzucone <b class="r">${f(r)}</b><span class="sim" style="margin-left:auto">dane symulowane</span>`;
+})();
+
+// Navigation: arrows, space, PageUp/Down, Home/End, N for notes, #3 in the URL opens slide 3.
+const slides = [...document.querySelectorAll('.slide')];
+slides.forEach((s, i) => s.insertAdjacentHTML('beforeend',
+  s.dataset.layout === 'tytul' ? '' : `<div class="foot"><svg aria-hidden="true"><use href="#mm"/></svg><b>meritum</b><span class="n">${i + 1} / ${slides.length}</span></div>`));
+let cur = 0;
+function go(i) {
+  cur = Math.max(0, Math.min(slides.length - 1, i));
+  slides.forEach((s, k) => s.classList.toggle('on', k === cur));
+  document.getElementById('notes').textContent = slides[cur].querySelector('aside')?.textContent.trim() || '';
+  history.replaceState(null, '', '#' + (cur + 1));
+}
+function fit() {
+  const k = Math.min(innerWidth / 1920, innerHeight / 1080);
+  document.getElementById('deck').style.transform = `translate(-50%,-50%) scale(${k})`;
+}
+addEventListener('resize', fit);
+addEventListener('keydown', e => {
+  if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+  else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+  else if (e.key === 'Home') go(0);
+  else if (e.key === 'End') go(slides.length - 1);
+  else if (e.key === 'n' || e.key === 'N') document.body.classList.toggle('notes');
+});
+addEventListener('click', e => { if (!e.target.closest('a,#notes')) go(cur + (e.clientX > innerWidth / 3 ? 1 : -1)); });
+fit(); go((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

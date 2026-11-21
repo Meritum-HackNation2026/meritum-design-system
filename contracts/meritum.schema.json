@@ -1,0 +1,811 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Meritum UI contracts",
+  "$defs": {
+    "CampaignRef": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "pattern": "^#K-\\d+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "ads": {
+          "minimum": 1,
+          "title": "Ads",
+          "type": "integer"
+        },
+        "domains": {
+          "minimum": 1,
+          "title": "Domains",
+          "type": "integer"
+        },
+        "days": {
+          "minimum": 1,
+          "title": "Days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "ads",
+        "domains",
+        "days"
+      ],
+      "title": "CampaignRef",
+      "type": "object"
+    },
+    "Consensus": {
+      "additionalProperties": false,
+      "description": "Bridging consensus: published only when BOTH groups pass the threshold.",
+      "properties": {
+        "group_a": {
+          "$ref": "#/$defs/GroupScore"
+        },
+        "group_b": {
+          "$ref": "#/$defs/GroupScore"
+        },
+        "threshold_pct": {
+          "default": 70,
+          "maximum": 100,
+          "minimum": 50,
+          "title": "Threshold Pct",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "group_a",
+        "group_b"
+      ],
+      "title": "Consensus",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "description": "What the extension saved before the ad could vanish.",
+      "properties": {
+        "saved_at": {
+          "format": "date-time",
+          "title": "Saved At",
+          "type": "string"
+        },
+        "screenshot": {
+          "title": "Screenshot",
+          "type": "boolean"
+        },
+        "redirects": {
+          "minimum": 0,
+          "title": "Redirects",
+          "type": "integer"
+        },
+        "final_domain": {
+          "title": "Final Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "saved_at",
+        "screenshot",
+        "redirects",
+        "final_domain"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "GroupScore": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 40,
+          "title": "Label",
+          "type": "string"
+        },
+        "helpful_pct": {
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Helpful Pct",
+          "type": "integer"
+        },
+        "ratings": {
+          "minimum": 0,
+          "title": "Ratings",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "label",
+        "helpful_pct",
+        "ratings"
+      ],
+      "title": "GroupScore",
+      "type": "object"
+    },
+    "NoteCard": {
+      "additionalProperties": false,
+      "description": "Community context note under a post (MSZ \"Prawdowid\").",
+      "properties": {
+        "kind": {
+          "const": "note",
+          "default": "note",
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "verified",
+            "pending"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 600,
+          "minLength": 20,
+          "title": "Body",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/Source"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "technique": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Technique"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "consensus": {
+          "$ref": "#/$defs/Consensus"
+        },
+        "drafted_from_reports": {
+          "description": "How many user remarks the AI draft used.",
+          "minimum": 1,
+          "title": "Drafted From Reports",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "status",
+        "body",
+        "sources",
+        "consensus",
+        "drafted_from_reports"
+      ],
+      "title": "NoteCard",
+      "type": "object"
+    },
+    "ScamWarningCard": {
+      "additionalProperties": false,
+      "description": "Fake ad / scam warning (NASK \"Kolekcjoner fejków\"). Requires two independent signals.",
+      "properties": {
+        "kind": {
+          "const": "scam",
+          "default": "scam",
+          "title": "Kind",
+          "type": "string"
+        },
+        "body": {
+          "maxLength": 600,
+          "minLength": 20,
+          "title": "Body",
+          "type": "string"
+        },
+        "sources": {
+          "items": {
+            "$ref": "#/$defs/Source"
+          },
+          "minItems": 1,
+          "title": "Sources",
+          "type": "array"
+        },
+        "technique": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Technique"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CampaignRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "$ref": "#/$defs/Evidence"
+        },
+        "signals": {
+          "items": {
+            "enum": [
+              "cert_warning_list",
+              "known_campaign",
+              "celebrity_registry",
+              "user_reports"
+            ],
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Signals",
+          "type": "array"
+        }
+      },
+      "required": [
+        "body",
+        "sources",
+        "evidence",
+        "signals"
+      ],
+      "title": "ScamWarningCard",
+      "type": "object"
+    },
+    "Source": {
+      "additionalProperties": false,
+      "description": "A citation. Every published card has at least one.",
+      "properties": {
+        "title": {
+          "maxLength": 140,
+          "minLength": 3,
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "domain": {
+          "maxLength": 100,
+          "minLength": 3,
+          "title": "Domain",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "akt_prawny",
+            "instytucja",
+            "media",
+            "fact_check",
+            "encyklopedia",
+            "oswiadczenie"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "spectrum": {
+          "anyOf": [
+            {
+              "maximum": 1,
+              "minimum": -1,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Media only: position from left (-1) to right (1) as rated by users.",
+          "title": "Spectrum"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "domain",
+        "kind"
+      ],
+      "title": "Source",
+      "type": "object"
+    },
+    "Technique": {
+      "additionalProperties": false,
+      "description": "Named manipulation technique; the card teaches how to spot it.",
+      "properties": {
+        "code": {
+          "enum": [
+            "false_authority",
+            "conspiracy_theory",
+            "out_of_context",
+            "urgency_pressure",
+            "fabricated_quote",
+            "manipulated_media",
+            "impersonation",
+            "cherry_picking"
+          ],
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "Technique",
+      "type": "object"
+    },
+    "InjectedCard": {
+      "discriminator": {
+        "mapping": {
+          "note": "#/$defs/NoteCard",
+          "scam": "#/$defs/ScamWarningCard"
+        },
+        "propertyName": "kind"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NoteCard"
+        },
+        {
+          "$ref": "#/$defs/ScamWarningCard"
+        }
+      ]
+    },
+    "ReportPayload": {
+      "additionalProperties": false,
+      "description": "Sent by the Quick Report Popover.",
+      "properties": {
+        "platform": {
+          "enum": [
+            "x",
+            "facebook",
+            "instagram",
+            "reddit",
+            "tiktok"
+          ],
+          "title": "Platform",
+          "type": "string"
+        },
+        "post_url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Post Url",
+          "type": "string"
+        },
+        "post_handle": {
+          "maxLength": 60,
+          "title": "Post Handle",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "manipulation",
+            "scam"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "reasons": {
+          "default": [],
+          "items": {
+            "anyOf": [
+              {
+                "enum": [
+                  "false_information",
+                  "conspiracy_theory",
+                  "out_of_context",
+                  "false_authority",
+                  "manipulated_media"
+                ],
+                "type": "string"
+              },
+              {
+                "enum": [
+                  "fake_celebrity_endorsement",
+                  "suspicious_investment",
+                  "impersonating_bank_or_office",
+                  "fake_shop_or_fundraiser"
+                ],
+                "type": "string"
+              }
+            ]
+          },
+          "title": "Reasons",
+          "type": "array"
+        },
+        "note": {
+          "default": "",
+          "maxLength": 1000,
+          "title": "Note",
+          "type": "string"
+        },
+        "source_url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source Url"
+        }
+      },
+      "required": [
+        "platform",
+        "post_url",
+        "post_handle",
+        "kind"
+      ],
+      "title": "ReportPayload",
+      "type": "object"
+    },
+    "AnalysisStep": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "link_similar_reports",
+            "collect_sources",
+            "draft_and_rate",
+            "save_evidence",
+            "match_campaigns",
+            "check_cert_list",
+            "store_report"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "active",
+            "done",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "status"
+      ],
+      "title": "AnalysisStep",
+      "type": "object"
+    },
+    "AnalysisStatus": {
+      "additionalProperties": false,
+      "description": "Polled (or streamed) by the extension after a report; mirrors the DBOS workflow.",
+      "properties": {
+        "report_id": {
+          "title": "Report Id",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/AnalysisStep"
+          },
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "outcome": {
+          "enum": [
+            "running",
+            "note_published",
+            "note_pending",
+            "scam_flagged",
+            "collected",
+            "failed"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "card": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "note": "#/$defs/NoteCard",
+                  "scam": "#/$defs/ScamWarningCard"
+                },
+                "propertyName": "kind"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/NoteCard"
+                },
+                {
+                  "$ref": "#/$defs/ScamWarningCard"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Card"
+        }
+      },
+      "required": [
+        "report_id",
+        "steps",
+        "outcome"
+      ],
+      "title": "AnalysisStatus",
+      "type": "object"
+    },
+    "RejectedAccount": {
+      "additionalProperties": false,
+      "properties": {
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        },
+        "handle": {
+          "title": "Handle",
+          "type": "string"
+        },
+        "reason": {
+          "enum": [
+            "same_cluster",
+            "timing_pattern",
+            "new_account",
+            "rating_graph"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "at",
+        "handle",
+        "reason"
+      ],
+      "title": "RejectedAccount",
+      "type": "object"
+    },
+    "VoteMinute": {
+      "additionalProperties": false,
+      "properties": {
+        "t": {
+          "pattern": "^\\d{2}:\\d{2}$",
+          "title": "T",
+          "type": "string"
+        },
+        "counted": {
+          "minimum": 0,
+          "title": "Counted",
+          "type": "integer"
+        },
+        "rejected": {
+          "minimum": 0,
+          "title": "Rejected",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "t",
+        "counted",
+        "rejected"
+      ],
+      "title": "VoteMinute",
+      "type": "object"
+    },
+    "BotDefenseSnapshot": {
+      "additionalProperties": false,
+      "description": "Live Dashboard telemetry. Totals are derived from `series`, never sent separately.",
+      "properties": {
+        "note_id": {
+          "pattern": "^#N-\\d+$",
+          "title": "Note Id",
+          "type": "string"
+        },
+        "cluster_size": {
+          "minimum": 1,
+          "title": "Cluster Size",
+          "type": "integer"
+        },
+        "attack_from": {
+          "pattern": "^\\d{2}:\\d{2}(:\\d{2})?$",
+          "title": "Attack From",
+          "type": "string"
+        },
+        "status_changed": {
+          "title": "Status Changed",
+          "type": "boolean"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/VoteMinute"
+          },
+          "minItems": 1,
+          "title": "Series",
+          "type": "array"
+        },
+        "rejected_accounts": {
+          "items": {
+            "$ref": "#/$defs/RejectedAccount"
+          },
+          "title": "Rejected Accounts",
+          "type": "array"
+        },
+        "simulated": {
+          "default": true,
+          "title": "Simulated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "note_id",
+        "cluster_size",
+        "attack_from",
+        "status_changed",
+        "series",
+        "rejected_accounts"
+      ],
+      "title": "BotDefenseSnapshot",
+      "type": "object"
+    },
+    "CampaignDomain": {
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "active",
+            "dead",
+            "predicted"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "first_seen": {
+          "format": "date-time",
+          "title": "First Seen",
+          "type": "string"
+        },
+        "last_seen": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Seen"
+        },
+        "ads": {
+          "minimum": 0,
+          "title": "Ads",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "domain",
+        "state",
+        "first_seen",
+        "ads"
+      ],
+      "title": "CampaignDomain",
+      "type": "object"
+    },
+    "SharedTrace": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "celebrity_face",
+            "landing_template",
+            "cert_issuer_pattern",
+            "payment_gateway",
+            "advertiser_accounts",
+            "ad_copy"
+          ],
+          "title": "Code",
+          "type": "string"
+        },
+        "ads": {
+          "minimum": 1,
+          "title": "Ads",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "code",
+        "ads"
+      ],
+      "title": "SharedTrace",
+      "type": "object"
+    },
+    "Campaign": {
+      "additionalProperties": false,
+      "description": "Campaign view: one sighting, the whole operation.",
+      "properties": {
+        "id": {
+          "pattern": "^#K-\\d+$",
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 80,
+          "title": "Title",
+          "type": "string"
+        },
+        "ads_total": {
+          "minimum": 1,
+          "title": "Ads Total",
+          "type": "integer"
+        },
+        "ads_by_platform": {
+          "additionalProperties": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "x",
+              "facebook",
+              "instagram",
+              "reddit",
+              "tiktok"
+            ]
+          },
+          "title": "Ads By Platform",
+          "type": "object"
+        },
+        "domains": {
+          "items": {
+            "$ref": "#/$defs/CampaignDomain"
+          },
+          "minItems": 1,
+          "title": "Domains",
+          "type": "array"
+        },
+        "shared_traces": {
+          "items": {
+            "$ref": "#/$defs/SharedTrace"
+          },
+          "title": "Shared Traces",
+          "type": "array"
+        },
+        "simulated": {
+          "default": true,
+          "title": "Simulated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "ads_total",
+        "ads_by_platform",
+        "domains",
+        "shared_traces"
+      ],
+      "title": "Campaign",
+      "type": "object"
+    }
+  }
+}
