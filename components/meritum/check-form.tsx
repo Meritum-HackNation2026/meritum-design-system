@@ -18,7 +18,6 @@ type ErrorKey = keyof typeof t.errors
  */
 export function toRequest(raw: string, channel: CheckRequest["channel"] = "web"): CheckRequest | ErrorKey {
   const value = raw.trim()
-  if (value.length > MAX) return "too_long"
   if (/^\S+$/.test(value) && /^([a-z][a-z\d+.-]*:\/\/|www\.)/i.test(value)) {
     try {
       const url = new URL(value)
@@ -28,6 +27,7 @@ export function toRequest(raw: string, channel: CheckRequest["channel"] = "web")
       return "invalid_url"
     }
   }
+  if (value.length > MAX) return "too_long"
   return value.length < 3 ? "empty" : { channel, text: value }
 }
 
