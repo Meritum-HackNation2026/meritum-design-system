@@ -7,6 +7,10 @@ export type Url = string | null;
  * Extension only: the post the text came from.
  */
 export type PageUrl = string | null;
+/**
+ * Uploaded audio file or Discord voice message; transcribed in an EU region, then checked like text.
+ */
+export type AudioId = string | null;
 export type Id = string;
 export type Title = string;
 export type Publisher = string;
@@ -21,13 +25,13 @@ export type Tier = "primary" | "secondary";
 export type PublishedAt = string | null;
 export type FetchedAt = string;
 export type Language = string;
-export type Via = "corpus" | "rss" | "web_search";
+export type Via = "corpus" | "rss" | "web_search" | "mcp";
 export type Fragment = string;
 export type Stance = "supports" | "refutes" | "context";
 /**
- * Age rule for this piece of evidence: the catalogue entry's validity, or past_event set per evidence.
+ * Age rule for this piece of evidence: the catalogue entry's validity, or past_event / superseded set per evidence.
  */
-export type Validity = "expires" | "in_force" | "updated_in_place" | "past_event";
+export type Validity = "expires" | "in_force" | "updated_in_place" | "past_event" | "superseded";
 export type FragmentFoundVerbatim = true;
 export type Claim = string;
 /**
@@ -57,7 +61,7 @@ export type NewestSourceAgeHours = number | null;
  * Threshold from the catalogue entry of the newest source.
  */
 export type MaxAgeHours = number;
-export type Validity1 = "expires" | "in_force" | "updated_in_place" | "past_event";
+export type Validity1 = "expires" | "in_force" | "updated_in_place" | "past_event" | "superseded";
 export type Agreement = "consistent" | "conflicting";
 export type Citations = Citation[];
 export type Explanation = string;
@@ -81,12 +85,21 @@ export type Technique =
       | "cherry_picking"
     )
   | null;
+export type Database = "organiser" | "euvsdisinfo";
 export type IncidentId = string;
 export type MatchedOn = "content" | "domain";
 export type Title1 = string;
 export type Date = string;
 export type Url2 = string;
 export type Similarity = number;
+export type Publisher1 = string;
+/**
+ * textualRating as published.
+ */
+export type Rating = string;
+export type Url3 = string;
+export type ReviewedAt = string | null;
+export type ClaimReviews = ClaimReviewContext[];
 export type State = "recommended" | "created" | "updated";
 export type CaseId = string | null;
 export type Code = "eu_sanctioned_entity";
@@ -119,6 +132,7 @@ export type ExpiresAt = string;
 export type Code1 =
   | "receive"
   | "fetch_url"
+  | "transcribe_audio"
   | "screen_injection"
   | "extract_claims"
   | "search_corpus"
@@ -149,7 +163,7 @@ export type OutputTokens = number;
 export type CostUsd = number;
 export type CheckId2 = string;
 /**
- * Random id kept in the browser session.
+ * Web and extension: random id kept in the browser session. Discord, SMS, MCP: the salted hash of the channel user id (equal to channel_user_hash).
  */
 export type SessionId = string;
 /**
@@ -158,7 +172,7 @@ export type SessionId = string;
 export type UserId = string | null;
 export type Channel1 = "web" | "extension" | "discord" | "sms" | "mcp";
 /**
- * Discord and SMS only: salted SHA-256 of the user id or phone number, used to reply and count repeats; never shown to moderators.
+ * Discord, SMS and MCP only: salted SHA-256 of the user id, phone number or MCP client id, used to reply and count repeats; never shown to moderators.
  */
 export type ChannelUserHash = string | null;
 export type ReceivedAt = string;
@@ -191,8 +205,8 @@ export type State1 = "open" | "answered" | "closed";
  * @minItems 1
  */
 export type Reasons = [
-  "insufficient_evidence" | "high_risk" | "repeated_unanswered",
-  ...("insufficient_evidence" | "high_risk" | "repeated_unanswered")[]
+  "insufficient_evidence" | "high_risk" | "repeated_unanswered" | "user_dispute",
+  ...("insufficient_evidence" | "high_risk" | "repeated_unanswered" | "user_dispute")[]
 ];
 /**
  * Topic from the admin's high-risk list that matched.
@@ -207,28 +221,52 @@ export type Summary = string;
  * @minItems 1
  */
 export type Claims2 = [CaseClaim, ...CaseClaim[]];
+/**
+ * Distinct sessions or users who asked; raises the case's priority only, never decides whether it exists.
+ */
+export type DistinctAskers = number;
 export type FirstSeen = string;
 export type LastSeen = string;
 export type AssigneeRole = "moderator" | "analyst";
 export type Domain1 = string;
-export type Publisher1 = string;
+export type Publisher2 = string;
 export type PublisherId1 = string;
 export type Kind1 = "akt_prawny" | "dane_publiczne" | "instytucja" | "fact_check" | "media";
 export type Tier1 = "primary" | "secondary";
 export type License = string;
-export type Ingest = "static" | "rss" | "sitemap" | "web_search";
+/**
+ * mcp: the local EUvsDisinfo copy; api: Google Fact Check Tools, used only to discover URLs and show the rating as context.
+ */
+export type Ingest = "static" | "rss" | "sitemap" | "web_search" | "mcp" | "api";
 export type RefreshHours = number | null;
 /**
- * Age override for every document of this entry; past_event is set per evidence.
+ * Age override for every document of this entry; past_event and superseded are set per evidence.
  */
-export type Validity2 = "expires" | "in_force" | "updated_in_place" | "past_event";
+export type Validity2 = "expires" | "in_force" | "updated_in_place" | "past_event" | "superseded";
 /**
  * Shorter threshold for short-lived sources (warnings, roads, weather: hours or days).
  */
 export type MaxAgeHours1 = number | null;
 export type QualifiedBecause = string;
+/**
+ * Machine-readable text and data mining opt-out (robots.txt incl. Content-Signal, meta tags, tdmrep), checked per domain.
+ */
+export type TdmReservation = "none" | "reserved" | "unknown";
 export type Excluded = boolean;
 export type ExclusionReason = string | null;
+export type Id2 = string;
+export type Kind2 = "check_progress" | "check_done" | "moderator_answer" | "new_evidence" | "case_assigned" | "system";
+export type Status4 = "unread" | "read";
+export type SessionId1 = string | null;
+export type UserId1 = string | null;
+export type CheckId3 = string | null;
+export type CaseId1 = string | null;
+/**
+ * In-app path to open.
+ */
+export type Link = string;
+export type CreatedAt = string;
+export type RetentionUntil1 = string;
 
 export interface MeritumContracts {
   [k: string]: unknown;
@@ -244,6 +282,7 @@ export interface CheckRequest {
   text?: Text;
   url?: Url;
   page_url?: PageUrl;
+  audio_id?: AudioId;
 }
 /**
  * A fragment of a source and how it bears on the claim. The pipeline drops fragments it cannot find verbatim.
@@ -296,6 +335,7 @@ export interface ClaimResult {
   archival?: Archival;
   technique?: Technique;
   incident?: IncidentMatch | null;
+  claim_reviews?: ClaimReviews;
 }
 /**
  * Strength level together with the premises it follows from.
@@ -323,21 +363,39 @@ export interface Premises {
   agreement: Agreement;
 }
 /**
- * Similarity to a known incident. Context only: never a basis for the verdict by itself, and never changes it.
+ * Similarity to a known incident (organiser's database or the local EUvsDisinfo copy). Context only.
  *
- * `domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists,
- * and the incident's topic matches the claim.
+ * Never a basis for the verdict by itself, and never changes it. An EUvsDisinfo `fact` text is cited as a Citation,
+ * not carried here.
+ *
+ * `domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists
+ * (for EUvsDisinfo: linksToDisinformation), and the incident's topic matches the claim.
  *
  * This interface was referenced by `MeritumContracts`'s JSON-Schema
  * via the `definition` "IncidentMatch".
  */
 export interface IncidentMatch {
+  database?: Database;
   incident_id: IncidentId;
   matched_on?: MatchedOn;
   title: Title1;
   date: Date;
   url: Url2;
   similarity: Similarity;
+}
+/**
+ * A fact-checker's ClaimReview rating found through Google Fact Check Tools API, shown as context with a link.
+ *
+ * Never a citation, never counted towards strength, kept no longer than the API's cache headers allow.
+ *
+ * This interface was referenced by `MeritumContracts`'s JSON-Schema
+ * via the `definition` "ClaimReviewContext".
+ */
+export interface ClaimReviewContext {
+  publisher: Publisher1;
+  rating: Rating;
+  url: Url3;
+  reviewed_at?: ReviewedAt;
 }
 /**
  * Hand-off to the moderator queue. 'recommended' means nobody was notified yet.
@@ -364,6 +422,9 @@ export interface SourceStatusWarning {
 }
 /**
  * The answer every channel renders. The same normalised input within the result cache's lifetime gets the same substantive result on every channel.
+ *
+ * out_of_scope: an unsupported input type or a request that is not about information. needs_clarification: no claim
+ * could be extracted. Any factual claim gets a verdict, "insufficient_evidence" included.
  *
  * This interface was referenced by `MeritumContracts`'s JSON-Schema
  * via the `definition` "CheckResult".
@@ -478,7 +539,7 @@ export interface CheckRecord {
   retention_until: RetentionUntil;
 }
 /**
- * One unanswered claim in a case (its verdict was "insufficient_evidence") and the checks that asked it.
+ * One claim in a case and the checks that asked it: unanswered ("insufficient_evidence"), or disputed by a user.
  *
  * This interface was referenced by `MeritumContracts`'s JSON-Schema
  * via the `definition` "CaseClaim".
@@ -501,6 +562,7 @@ export interface ModeratorCase {
   high_risk_classified_by?: HighRiskClassifiedBy;
   summary: Summary;
   claims: Claims2;
+  distinct_askers?: DistinctAskers;
   first_seen: FirstSeen;
   last_seen: LastSeen;
   assignee_role?: AssigneeRole;
@@ -513,7 +575,7 @@ export interface ModeratorCase {
  */
 export interface CatalogEntry {
   domain: Domain1;
-  publisher: Publisher1;
+  publisher: Publisher2;
   publisher_id: PublisherId1;
   kind: Kind1;
   tier: Tier1;
@@ -523,6 +585,28 @@ export interface CatalogEntry {
   validity?: Validity2;
   max_age_hours?: MaxAgeHours1;
   qualified_because: QualifiedBecause;
+  tdm_reservation?: TdmReservation;
   excluded?: Excluded;
   exclusion_reason?: ExclusionReason;
+}
+/**
+ * An inbox entry, pushed live over SSE or WebSocket from DBOS events and shown as a toast.
+ *
+ * A toast the recipient did not act on stays in the inbox as unread. Addressed to one browser session or one
+ * signed-in user (staff included). Text comes from copy/pl.json by `kind`.
+ *
+ * This interface was referenced by `MeritumContracts`'s JSON-Schema
+ * via the `definition` "Notification".
+ */
+export interface Notification {
+  id: Id2;
+  kind: Kind2;
+  status?: Status4;
+  session_id?: SessionId1;
+  user_id?: UserId1;
+  check_id?: CheckId3;
+  case_id?: CaseId1;
+  link: Link;
+  created_at: CreatedAt;
+  retention_until: RetentionUntil1;
 }

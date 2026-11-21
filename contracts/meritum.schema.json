@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Meritum contracts",
-  "x-contract-version": 2,
+  "x-contract-version": 3,
   "$defs": {
     "CheckRequest": {
       "additionalProperties": false,
@@ -61,6 +61,21 @@
           "default": null,
           "description": "Extension only: the post the text came from.",
           "title": "Page Url"
+        },
+        "audio_id": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uploaded audio file or Discord voice message; transcribed in an EU region, then checked like text.",
+          "title": "Audio Id"
         }
       },
       "required": [
@@ -93,12 +108,13 @@
         },
         "validity": {
           "default": "expires",
-          "description": "Age rule for this piece of evidence: the catalogue entry's validity, or past_event set per evidence.",
+          "description": "Age rule for this piece of evidence: the catalogue entry's validity, or past_event / superseded set per evidence.",
           "enum": [
             "expires",
             "in_force",
             "updated_in_place",
-            "past_event"
+            "past_event",
+            "superseded"
           ],
           "title": "Validity",
           "type": "string"
@@ -247,6 +263,14 @@
             }
           ],
           "default": null
+        },
+        "claim_reviews": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClaimReviewContext"
+          },
+          "title": "Claim Reviews",
+          "type": "array"
         }
       },
       "required": [
@@ -255,6 +279,52 @@
         "explanation"
       ],
       "title": "ClaimResult",
+      "type": "object"
+    },
+    "ClaimReviewContext": {
+      "additionalProperties": false,
+      "description": "A fact-checker's ClaimReview rating found through Google Fact Check Tools API, shown as context with a link.\n\nNever a citation, never counted towards strength, kept no longer than the API's cache headers allow.",
+      "properties": {
+        "publisher": {
+          "maxLength": 120,
+          "minLength": 2,
+          "title": "Publisher",
+          "type": "string"
+        },
+        "rating": {
+          "description": "textualRating as published.",
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Rating",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "reviewed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reviewed At"
+        }
+      },
+      "required": [
+        "publisher",
+        "rating",
+        "url"
+      ],
+      "title": "ClaimReviewContext",
       "type": "object"
     },
     "Escalation": {
@@ -316,8 +386,17 @@
     },
     "IncidentMatch": {
       "additionalProperties": false,
-      "description": "Similarity to a known incident. Context only: never a basis for the verdict by itself, and never changes it.\n\n`domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists,\nand the incident's topic matches the claim.",
+      "description": "Similarity to a known incident (organiser's database or the local EUvsDisinfo copy). Context only.\n\nNever a basis for the verdict by itself, and never changes it. An EUvsDisinfo `fact` text is cited as a Citation,\nnot carried here.\n\n`domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists\n(for EUvsDisinfo: linksToDisinformation), and the incident's topic matches the claim.",
       "properties": {
+        "database": {
+          "default": "organiser",
+          "enum": [
+            "organiser",
+            "euvsdisinfo"
+          ],
+          "title": "Database",
+          "type": "string"
+        },
         "incident_id": {
           "maxLength": 80,
           "minLength": 1,
@@ -424,7 +503,8 @@
             "expires",
             "in_force",
             "updated_in_place",
-            "past_event"
+            "past_event",
+            "superseded"
           ],
           "title": "Validity",
           "type": "string"
@@ -535,7 +615,8 @@
           "enum": [
             "corpus",
             "rss",
-            "web_search"
+            "web_search",
+            "mcp"
           ],
           "title": "Via",
           "type": "string"
@@ -587,7 +668,7 @@
     },
     "CheckResult": {
       "additionalProperties": false,
-      "description": "The answer every channel renders. The same normalised input within the result cache's lifetime gets the same substantive result on every channel.",
+      "description": "The answer every channel renders. The same normalised input within the result cache's lifetime gets the same substantive result on every channel.\n\nout_of_scope: an unsupported input type or a request that is not about information. needs_clarification: no claim\ncould be extracted. Any factual claim gets a verdict, \"insufficient_evidence\" included.",
       "properties": {
         "check_id": {
           "maxLength": 40,
@@ -777,6 +858,7 @@
           "enum": [
             "receive",
             "fetch_url",
+            "transcribe_audio",
             "screen_injection",
             "extract_claims",
             "search_corpus",
@@ -949,7 +1031,7 @@
           "type": "string"
         },
         "session_id": {
-          "description": "Random id kept in the browser session.",
+          "description": "Web and extension: random id kept in the browser session. Discord, SMS, MCP: the salted hash of the channel user id (equal to channel_user_hash).",
           "maxLength": 64,
           "minLength": 8,
           "title": "Session Id",
@@ -992,7 +1074,7 @@
             }
           ],
           "default": null,
-          "description": "Discord and SMS only: salted SHA-256 of the user id or phone number, used to reply and count repeats; never shown to moderators.",
+          "description": "Discord, SMS and MCP only: salted SHA-256 of the user id, phone number or MCP client id, used to reply and count repeats; never shown to moderators.",
           "title": "Channel User Hash"
         },
         "received_at": {
@@ -1118,7 +1200,7 @@
     },
     "CaseClaim": {
       "additionalProperties": false,
-      "description": "One unanswered claim in a case (its verdict was \"insufficient_evidence\") and the checks that asked it.",
+      "description": "One claim in a case and the checks that asked it: unanswered (\"insufficient_evidence\"), or disputed by a user.",
       "properties": {
         "claim": {
           "maxLength": 500,
@@ -1165,7 +1247,8 @@
             "enum": [
               "insufficient_evidence",
               "high_risk",
-              "repeated_unanswered"
+              "repeated_unanswered",
+              "user_dispute"
             ],
             "type": "string"
           },
@@ -1217,6 +1300,13 @@
           "minItems": 1,
           "title": "Claims",
           "type": "array"
+        },
+        "distinct_askers": {
+          "default": 1,
+          "description": "Distinct sessions or users who asked; raises the case's priority only, never decides whether it exists.",
+          "minimum": 1,
+          "title": "Distinct Askers",
+          "type": "integer"
         },
         "first_seen": {
           "format": "date-time",
@@ -1297,11 +1387,14 @@
           "type": "string"
         },
         "ingest": {
+          "description": "mcp: the local EUvsDisinfo copy; api: Google Fact Check Tools, used only to discover URLs and show the rating as context.",
           "enum": [
             "static",
             "rss",
             "sitemap",
-            "web_search"
+            "web_search",
+            "mcp",
+            "api"
           ],
           "title": "Ingest",
           "type": "string"
@@ -1321,12 +1414,13 @@
         },
         "validity": {
           "default": "expires",
-          "description": "Age override for every document of this entry; past_event is set per evidence.",
+          "description": "Age override for every document of this entry; past_event and superseded are set per evidence.",
           "enum": [
             "expires",
             "in_force",
             "updated_in_place",
-            "past_event"
+            "past_event",
+            "superseded"
           ],
           "title": "Validity",
           "type": "string"
@@ -1349,6 +1443,17 @@
           "maxLength": 300,
           "minLength": 10,
           "title": "Qualified Because",
+          "type": "string"
+        },
+        "tdm_reservation": {
+          "default": "unknown",
+          "description": "Machine-readable text and data mining opt-out (robots.txt incl. Content-Signal, meta tags, tdmrep), checked per domain.",
+          "enum": [
+            "none",
+            "reserved",
+            "unknown"
+          ],
+          "title": "Tdm Reservation",
           "type": "string"
         },
         "excluded": {
@@ -1381,6 +1486,120 @@
         "qualified_because"
       ],
       "title": "CatalogEntry",
+      "type": "object"
+    },
+    "Notification": {
+      "additionalProperties": false,
+      "description": "An inbox entry, pushed live over SSE or WebSocket from DBOS events and shown as a toast.\n\nA toast the recipient did not act on stays in the inbox as unread. Addressed to one browser session or one\nsigned-in user (staff included). Text comes from copy/pl.json by `kind`.",
+      "properties": {
+        "id": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "check_progress",
+            "check_done",
+            "moderator_answer",
+            "new_evidence",
+            "case_assigned",
+            "system"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "default": "unread",
+          "enum": [
+            "unread",
+            "read"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "session_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Session Id"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "maxLength": 64,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Id"
+        },
+        "check_id": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Check Id"
+        },
+        "case_id": {
+          "anyOf": [
+            {
+              "pattern": "^#S-\\d+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Case Id"
+        },
+        "link": {
+          "description": "In-app path to open.",
+          "maxLength": 200,
+          "pattern": "^/\\S*$",
+          "title": "Link",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "retention_until": {
+          "format": "date-time",
+          "title": "Retention Until",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "link",
+        "created_at",
+        "retention_until"
+      ],
+      "title": "Notification",
       "type": "object"
     }
   }

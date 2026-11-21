@@ -118,6 +118,16 @@
   "CatalogEntry": {
     "domain": "isap.sejm.gov.pl", "publisher": "Kancelaria Sejmu", "publisher_id": "kancelaria-sejmu", "kind": "akt_prawny", "tier": "primary",
     "license": "dokument urzędowy, art. 4 ustawy o prawie autorskim", "ingest": "static", "validity": "in_force",
-    "qualified_because": "Oficjalna baza aktów prawnych publikowanych w Dzienniku Ustaw i Monitorze Polskim."
+    "qualified_because": "Oficjalna baza aktów prawnych publikowanych w Dzienniku Ustaw i Monitorze Polskim.",
+    "tdm_reservation": "none"
+  },
+  "CatalogEntry.euvsdisinfo": {
+    "domain": "euvsdisinfo.eu", "publisher": "EEAS East StratCom Task Force (EUvsDisinfo)", "publisher_id": "eeas-euvsdisinfo", "kind": "fact_check", "tier": "secondary",
+    "license": "brak licencji bazy; nota prawna EEAS: ponowne użycie z podaniem źródła", "ingest": "mcp", "refresh_hours": 24,
+    "qualified_because": "Baza przypadków prokremlowskiej dezinformacji prowadzona przez EEAS; tekst fact jest cytowalnym dowodem wtórnym."
+  },
+  "Notification": {
+    "id": "n_01", "kind": "check_done", "status": "unread", "session_id": "s_7f3a9c21", "check_id": "c_02",
+    "link": "/sprawdzenia/c_02", "created_at": "2026-11-21T14:02:24+01:00", "retention_until": "2026-12-21T14:02:24+01:00"
   }
 }

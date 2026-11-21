@@ -1,4 +1,4 @@
-# Copy of meritum-core src/meritum_core/checks/contracts.py at d790abc66171d3774b2cef5fcdbae659a57a3035.
+# Copy of meritum-core src/meritum_core/checks/contracts.py at d77224b4dcb068c58b7ff4969a189ba50a81c968.
 # Do not edit: change it in meritum-core and run contracts/sync.sh.
 """Meritum contracts: the data every Meritum surface renders (MSZ "Prawdowid").
 
@@ -11,13 +11,19 @@ Rules from the MSZ brief that the models enforce:
   only such a verdict has a strength;
 - the strength of a verdict follows from the premises by a fixed rule, never from the model's say-so;
 - agreement follows from the citation stances; conflicting credible sources give "insufficient_evidence" with both sides cited and no strength;
+- conflict is computed only between evidence valid at the claim date: evidence that newer evidence replaced (superseded) is shown
+  on the timeline but neither conflicts nor counts towards strength;
 - independence is counted per catalogue publisher (publisher_id), not per page or domain, and only among citations whose
   stance agrees with the verdict;
 - evidence age is measured against the date the claim refers to (claim_date), with a per-catalogue-entry threshold; evidence
   that does not expire (a legal act in force, an official page updated in place, evidence about a past event) is never archival;
 - insufficient evidence says what could not be established;
 - technical failure, a request for clarification and out-of-scope input are not verdicts and carry no claims;
+- every factual claim gets a verdict: "out_of_scope" is only for an unsupported input type or a request that is not about
+  information, "needs_clarification" only when no claim can be extracted;
 - recommending a hand-off to a moderator is distinct from creating a case;
+- an incident match (organiser's database or EUvsDisinfo) and the domain warning are context and never change the verdict;
+- Discord, SMS and MCP have no browser session: their session_id is the salted hash of the channel user id;
 - the result cache keeps only the substantive part of a result and never a technical failure; escalation is computed per request.
 """
 
@@ -33,7 +39,7 @@ Channel = Literal["web", "extension", "discord", "sms", "mcp"]
 # Version of these contracts (CheckRequest, CheckResult, ...); independent of the
 # job contract version in meritum_core.jobs.contracts. Raise it on any change that
 # breaks a consumer, and regenerate (scripts/generate-contracts.sh).
-CONTRACT_VERSION = 2
+CONTRACT_VERSION = 3
 
 MIN_TEXT_CHARS = 3
 STRONG_MIN_SOURCES = 2
@@ -55,8 +61,8 @@ SourceTier = Literal[
     "primary", "secondary"
 ]  # primary: official documents and public data; secondary: fact-checkers (media only if the catalogue admits them)
 SourceVia = Literal[
-    "corpus", "rss", "web_search"
-]  # how the document reached the corpus
+    "corpus", "rss", "web_search", "mcp"
+]  # how the document reached the corpus; mcp: the local EUvsDisinfo copy synced through its MCP server
 Stance = Literal["supports", "refutes", "context"]
 # The stance that agrees with each settling verdict; only those citations count towards strength.
 AGREEING_STANCE: dict[Verdict, Stance] = {
@@ -66,10 +72,15 @@ AGREEING_STANCE: dict[Verdict, Stance] = {
 }
 Agreement = Literal["consistent", "conflicting"]
 # Overrides of the age rule. expires: age counts; in_force: e.g. a legal act in force; updated_in_place: standing official
-# guidance edited in place (passenger rights, contact pages); past_event: evidence explicitly about a past event.
-Validity = Literal["expires", "in_force", "updated_in_place", "past_event"]
+# guidance edited in place (passenger rights, contact pages); past_event: evidence explicitly about a past event;
+# superseded: newer evidence replaced it by the claim date, so it neither conflicts nor counts towards strength.
+Validity = Literal[
+    "expires", "in_force", "updated_in_place", "past_event", "superseded"
+]
+PER_EVIDENCE_VALIDITY: frozenset[Validity] = frozenset({"past_event", "superseded"})
 DEFAULT_MAX_AGE_HOURS = 365 * 24
 Strength = Literal["strong", "moderate", "weak"]
+SESSIONLESS_CHANNELS: frozenset[Channel] = frozenset({"discord", "sms", "mcp"})
 # Where the claim date comes from: a date in the checked text, the publication date of the input (e.g. the post), or today.
 ClaimDateSource = Literal["text", "input_published_at", "today"]
 PublisherId = Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]{1,79}$")]
@@ -103,13 +114,23 @@ class CheckRequest(_Model):
         HttpUrl | None,
         Field(description="Extension only: the post the text came from."),
     ] = None
+    audio_id: Annotated[
+        str | None,
+        Field(
+            min_length=1,
+            max_length=80,
+            description="Uploaded audio file or Discord voice message; transcribed in an EU region, then checked like text.",
+        ),
+    ] = None
 
     @model_validator(mode="after")
-    def _text_or_url(self) -> CheckRequest:
-        if self.url is None and (
-            self.text is None or len(self.text.strip()) < MIN_TEXT_CHARS
+    def _text_url_or_audio(self) -> CheckRequest:
+        if (
+            self.url is None
+            and self.audio_id is None
+            and (self.text is None or len(self.text.strip()) < MIN_TEXT_CHARS)
         ):
-            raise ValueError("send text (3+ characters) or a URL")
+            raise ValueError("send text (3+ characters), a URL or an audio file")
         return self
 
 
@@ -147,7 +168,7 @@ class Citation(_Model):
     validity: Annotated[
         Validity,
         Field(
-            description="Age rule for this piece of evidence: the catalogue entry's validity, or past_event set per evidence."
+            description="Age rule for this piece of evidence: the catalogue entry's validity, or past_event / superseded set per evidence."
         ),
     ] = "expires"
     fragment_found_verbatim: Literal[True] = True
@@ -162,12 +183,17 @@ class CatalogEntry(_Model):
     kind: SourceKind
     tier: SourceTier
     license: Annotated[str, Field(min_length=2, max_length=120)]
-    ingest: Literal["static", "rss", "sitemap", "web_search"]
+    ingest: Annotated[
+        Literal["static", "rss", "sitemap", "web_search", "mcp", "api"],
+        Field(
+            description="mcp: the local EUvsDisinfo copy; api: Google Fact Check Tools, used only to discover URLs and show the rating as context."
+        ),
+    ]
     refresh_hours: Annotated[int | None, Field(ge=1)] = None
     validity: Annotated[
         Validity,
         Field(
-            description="Age override for every document of this entry; past_event is set per evidence."
+            description="Age override for every document of this entry; past_event and superseded are set per evidence."
         ),
     ] = "expires"
     max_age_hours: Annotated[
@@ -178,6 +204,12 @@ class CatalogEntry(_Model):
         ),
     ] = None
     qualified_because: Annotated[str, Field(min_length=10, max_length=300)]
+    tdm_reservation: Annotated[
+        Literal["none", "reserved", "unknown"],
+        Field(
+            description="Machine-readable text and data mining opt-out (robots.txt incl. Content-Signal, meta tags, tdmrep), checked per domain."
+        ),
+    ] = "unknown"
     excluded: bool = False
     exclusion_reason: Annotated[str | None, Field(max_length=300)] = None
 
@@ -187,9 +219,17 @@ class CatalogEntry(_Model):
             self.exclusion_reason is None or not self.exclusion_reason
         ):
             raise ValueError("an excluded source needs a reason")
-        if self.validity == "past_event":
+        if self.validity in PER_EVIDENCE_VALIDITY:
             raise ValueError(
-                "'past_event' describes one piece of evidence, not a whole catalogue entry"
+                f"{self.validity!r} describes one piece of evidence, not a whole catalogue entry"
+            )
+        if (
+            self.tier == "secondary"
+            and self.tdm_reservation == "reserved"
+            and not self.excluded
+        ):
+            raise ValueError(
+                "a secondary source whose owner reserved text and data mining is excluded"
             )
         if self.validity != "expires" and self.max_age_hours is not None:
             raise ValueError("a source that does not expire has no maximum age")
@@ -287,18 +327,37 @@ class EvidenceStrength(_Model):
 
 
 class IncidentMatch(_Model):
-    """Similarity to a known incident. Context only: never a basis for the verdict by itself, and never changes it.
+    """Similarity to a known incident (organiser's database or the local EUvsDisinfo copy). Context only.
 
-    `domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists,
-    and the incident's topic matches the claim.
+    Never a basis for the verdict by itself, and never changes it. An EUvsDisinfo `fact` text is cited as a Citation,
+    not carried here.
+
+    `domain` is the one explicitly defined warning case: the checked URL is on a domain the incident database lists
+    (for EUvsDisinfo: linksToDisinformation), and the incident's topic matches the claim.
     """
 
+    database: Literal["organiser", "euvsdisinfo"] = "organiser"
     incident_id: Annotated[str, Field(min_length=1, max_length=80)]
     matched_on: Literal["content", "domain"] = "content"
     title: Annotated[str, Field(max_length=200)]
     date: datetime
     url: HttpUrl
     similarity: Annotated[float, Field(ge=0, le=1)]
+
+
+class ClaimReviewContext(_Model):
+    """A fact-checker's ClaimReview rating found through Google Fact Check Tools API, shown as context with a link.
+
+    Never a citation, never counted towards strength, kept no longer than the API's cache headers allow.
+    """
+
+    publisher: Annotated[str, Field(min_length=2, max_length=120)]
+    rating: Annotated[
+        str,
+        Field(min_length=1, max_length=120, description="textualRating as published."),
+    ]
+    url: HttpUrl
+    reviewed_at: datetime | None = None
 
 
 class SourceStatusWarning(_Model):
@@ -333,10 +392,21 @@ class ClaimResult(_Model):
     ] = False
     technique: TechniqueCode | None = None
     incident: IncidentMatch | None = None
+    claim_reviews: list[ClaimReviewContext] = []
 
     @model_validator(mode="after")
     def _verdict_rules(self) -> ClaimResult:
-        stances = {c.stance for c in self.citations}
+        current = [c for c in self.citations if c.validity != "superseded"]
+        for old in (c for c in self.citations if c.validity == "superseded"):
+            if old.source.published_at is None or not any(
+                n.source.published_at is not None
+                and n.source.published_at > old.source.published_at
+                for n in current
+            ):
+                raise ValueError(
+                    "superseded evidence is shown only next to newer evidence that replaced it"
+                )
+        stances = {c.stance for c in current}
         conflicting = {"supports", "refutes"} <= stances
         if conflicting and (
             self.verdict != "insufficient_evidence" or self.strength is not None
@@ -375,9 +445,7 @@ class ClaimResult(_Model):
                 )
         if self.strength is not None and self.verdict in SETTLING:
             p = self.strength.premises
-            agreeing = [
-                c for c in self.citations if c.stance == AGREEING_STANCE[self.verdict]
-            ]
+            agreeing = [c for c in current if c.stance == AGREEING_STANCE[self.verdict]]
             publishers = {c.source.publisher_id for c in agreeing}
             primary = {
                 c.source.publisher_id for c in agreeing if c.source.tier == "primary"
@@ -437,7 +505,11 @@ class Escalation(_Model):
 
 
 class CheckResult(_Model):
-    """The answer every channel renders. The same normalised input within the result cache's lifetime gets the same substantive result on every channel."""
+    """The answer every channel renders. The same normalised input within the result cache's lifetime gets the same substantive result on every channel.
+
+    out_of_scope: an unsupported input type or a request that is not about information. needs_clarification: no claim
+    could be extracted. Any factual claim gets a verdict, "insufficient_evidence" included.
+    """
 
     check_id: Annotated[str, Field(min_length=1, max_length=40)]
     status: CheckStatus
@@ -515,6 +587,7 @@ class AnalysisStep(_Model):
     code: Literal[
         "receive",
         "fetch_url",
+        "transcribe_audio",
         "screen_injection",
         "extract_claims",
         "search_corpus",
@@ -589,7 +662,7 @@ class CheckRecord(_Model):
         Field(
             min_length=8,
             max_length=64,
-            description="Random id kept in the browser session.",
+            description="Web and extension: random id kept in the browser session. Discord, SMS, MCP: the salted hash of the channel user id (equal to channel_user_hash).",
         ),
     ]
     user_id: Annotated[
@@ -605,7 +678,7 @@ class CheckRecord(_Model):
         str | None,
         Field(
             pattern=r"^[0-9a-f]{64}$",
-            description="Discord and SMS only: salted SHA-256 of the user id or phone number, used to reply and count repeats; never shown to moderators.",
+            description="Discord, SMS and MCP only: salted SHA-256 of the user id, phone number or MCP client id, used to reply and count repeats; never shown to moderators.",
         ),
     ] = None
     received_at: datetime
@@ -633,9 +706,18 @@ class CheckRecord(_Model):
 
     @model_validator(mode="after")
     def _channel_identity(self) -> CheckRecord:
-        if (self.channel in {"discord", "sms"}) != (self.channel_user_hash is not None):
+        if (self.channel in SESSIONLESS_CHANNELS) != (
+            self.channel_user_hash is not None
+        ):
             raise ValueError(
-                "only Discord and SMS checks carry a hashed channel user id, and they always do"
+                "only Discord, SMS and MCP checks carry a hashed channel user id, and they always do"
+            )
+        if (
+            self.channel_user_hash is not None
+            and self.session_id != self.channel_user_hash
+        ):
+            raise ValueError(
+                "on Discord, SMS and MCP the session id is the hashed channel user id"
             )
         return self
 
@@ -657,14 +739,17 @@ class CheckRecord(_Model):
         )
 
 
-CaseReason = Literal["insufficient_evidence", "high_risk", "repeated_unanswered"]
+# repeated_unanswered: the second similar unanswered claim from anyone, in any channel. user_dispute: „Zgłoś błąd”.
+CaseReason = Literal[
+    "insufficient_evidence", "high_risk", "repeated_unanswered", "user_dispute"
+]
 StaffRole = Literal[
     "moderator", "analyst", "admin"
 ]  # admin manages staff accounts and the high-risk topic list
 
 
 class CaseClaim(_Model):
-    """One unanswered claim in a case (its verdict was "insufficient_evidence") and the checks that asked it."""
+    """One claim in a case and the checks that asked it: unanswered ("insufficient_evidence"), or disputed by a user."""
 
     claim: Annotated[str, Field(min_length=5, max_length=500)]
     check_ids: Annotated[list[str], Field(min_length=1)]
@@ -691,6 +776,13 @@ class ModeratorCase(_Model):
     ] = None
     summary: Annotated[str, Field(min_length=5, max_length=300)]
     claims: Annotated[list[CaseClaim], Field(min_length=1)]
+    distinct_askers: Annotated[
+        int,
+        Field(
+            ge=1,
+            description="Distinct sessions or users who asked; raises the case's priority only, never decides whether it exists.",
+        ),
+    ] = 1
     first_seen: datetime
     last_seen: datetime
     assignee_role: Literal["moderator", "analyst"] = "moderator"
@@ -717,3 +809,55 @@ class ModeratorCase(_Model):
     def similar_count(self) -> int:
         """How many checks the case groups."""
         return len(self.check_ids)
+
+
+# ---------------------------------------------------------------- notifications
+
+NotificationKind = Literal[
+    "check_progress",  # a long check moved on (audio, queue)
+    "check_done",
+    "moderator_answer",  # a moderator answered a case the recipient's check joined
+    "new_evidence",  # new evidence for an earlier question
+    "case_assigned",  # staff: a case was created or updated for the moderator
+    "system",
+]
+CHECK_KINDS: frozenset[NotificationKind] = frozenset(
+    {"check_progress", "check_done", "new_evidence"}
+)
+CASE_KINDS: frozenset[NotificationKind] = frozenset(
+    {"moderator_answer", "case_assigned"}
+)
+
+
+class Notification(_Model):
+    """An inbox entry, pushed live over SSE or WebSocket from DBOS events and shown as a toast.
+
+    A toast the recipient did not act on stays in the inbox as unread. Addressed to one browser session or one
+    signed-in user (staff included). Text comes from copy/pl.json by `kind`.
+    """
+
+    id: Annotated[str, Field(min_length=1, max_length=40)]
+    kind: NotificationKind
+    status: Literal["unread", "read"] = "unread"
+    session_id: Annotated[str | None, Field(min_length=8, max_length=64)] = None
+    user_id: Annotated[str | None, Field(min_length=8, max_length=64)] = None
+    check_id: Annotated[str | None, Field(min_length=1, max_length=40)] = None
+    case_id: Annotated[str | None, Field(pattern=r"^#S-\d+$")] = None
+    link: Annotated[
+        str,
+        Field(pattern=r"^/\S*$", max_length=200, description="In-app path to open."),
+    ]
+    created_at: datetime
+    retention_until: datetime
+
+    @model_validator(mode="after")
+    def _notification_rules(self) -> Notification:
+        if (self.session_id is None) == (self.user_id is None):
+            raise ValueError("a notification goes to one session or one signed-in user")
+        if self.kind in CHECK_KINDS and self.check_id is None:
+            raise ValueError(f"{self.kind!r} names the check")
+        if self.kind in CASE_KINDS and self.case_id is None:
+            raise ValueError(f"{self.kind!r} names the case")
+        if self.retention_until <= self.created_at:
+            raise ValueError("retention ends after the notification was created")
+        return self
