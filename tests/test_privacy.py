@@ -104,7 +104,8 @@ class Policies(unittest.TestCase):
         self.assertIn("HackNation 2026", controller["name"])
         self.assertIn("nie ma partnerstwa z MSZ", controller["no_partnership"])
         self.assertIn("podmiot wdrażający", controller["deployment"])
-        self.assertIn("{contact}", controller["contact"])
+        self.assertIn("cyprian@gburek.dev", controller["contact"])
+        self.assertNotIn("{", controller["contact"])
 
     def test_ip_logs_kept_14_days_and_rate_limits_in_memory(self) -> None:
         for channel in CHANNELS:
@@ -161,6 +162,7 @@ class Processors(unittest.TestCase):
             with self.subTest(processor=processor):
                 self.assertIn("poza gwarancją EOG", ACTIVE[processor]["region"])
         self.assertIn("europe-central2", ACTIVE["vertex_ai_embeddings"]["region"])
+        self.assertEqual("GCP europe-central2 (Warszawa, Polska)", ACTIVE["team_server"]["region"])
         self.assertIn("bez danych osobowych", ACTIVE["jasnopis"]["data"])
 
     def test_columns_have_headers(self) -> None:
