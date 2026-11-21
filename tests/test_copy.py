@@ -1,6 +1,6 @@
 """Checks copy/pl.json: required screen keys and the tone of DESIGN_SYSTEM.md section 8.
 
-Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39, US-ZRD-12, F-29
+Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39, US-ZRD-12, F-29, US-SPR-01, US-BEZ-07, F-01, F-21, design-system#49
 Run: python3 -m unittest discover -s tests
 """
 
@@ -87,6 +87,8 @@ REQUIRED_KEYS = (
     "discord.claims.other",
     # daily recording upload limit, apart from the per-minute one (design-system#43)
     "errors.rate_limited_daily",
+    # result page when GET /api/v1/checks/{id} returns 404 (design-system#49)
+    "errors.check_not_found",
     # page „Jak działa Meritum” (meritum-frontend#20)
     "method.lead",
     "method.sources.title",
@@ -210,6 +212,15 @@ class Tone(unittest.TestCase):
     def test_discord_skin_in_platform_skins(self) -> None:
         tokens = (Path(__file__).parent.parent / "tokens" / "meritum.css").read_text(encoding="utf-8")
         self.assertIn('[data-host="discord"]', tokens)
+
+    def test_unknown_check_page_is_not_technical_failure_hint(self) -> None:
+        # Gherkin "nieznany adres sprawdzenia" from design-system#49
+        text = lookup("errors.check_not_found")
+        self.assertIsInstance(text, str)
+        self.assertIn("To nie jest ocena treści", text)
+        self.assertIn("Wklej", text)
+        self.assertNotIn("Spróbuj za kilka minut", text)
+        self.assertNotIn(str(lookup("status_hint.technical_failure")), text)
 
 
 if __name__ == "__main__":
