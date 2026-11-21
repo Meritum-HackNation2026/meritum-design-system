@@ -1,0 +1,27 @@
+name: Contracts copy
+
+# contracts/ is a copy of meritum-core (the single source of truth). This fails
+# when someone edits the copy by hand instead of changing meritum-core and running
+# contracts/sync.sh, which rewrites contracts/SHA256SUMS. Runs on the GCP runners.
+on:
+  push:
+    branches: ["**"]
+    paths: ["contracts/**", ".github/workflows/contracts.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  checksum:
+    runs-on: [self-hosted, meritum]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Copy matches meritum-core
+        working-directory: contracts
+        run: |
+          echo "source: $(cat SOURCE)"
+          sha256sum -c SHA256SUMS || {
+            echo "::error file=contracts/SHA256SUMS::contracts/ differs from the meritum-core copy; change meritum-core and run contracts/sync.sh"
+            exit 1
+          }

@@ -42,10 +42,14 @@ python3 -m http.server 52990 --bind 127.0.0.1
 
 Potem otwórz http://localhost:52990/demo/live/ (makiety na pokaz) albo http://localhost:52990/demo/x/. Skróty: R reset, T motyw, Esc zamyka okno.
 
-Kontrakty i typy po zmianie w `contracts/meritum_contracts.py`:
+Wdrożone makiety platform (te same strony co `demo/platforms/`, z repo [meritum-mocks](https://github.com/Meritum-HackNation2026/meritum-mocks)) są pod https://meritum-x.gburek.app, https://meritum-facebook.gburek.app, https://meritum-instagram.gburek.app, https://meritum-reddit.gburek.app i https://meritum-tiktok.gburek.app; wersje dev mają sufiks `-dev`.
+
+Kontrakty zmienia się w [meritum-core](https://github.com/Meritum-HackNation2026/meritum-core) (`src/meritum_core/checks/contracts.py`), nie tutaj. Kopię w `contracts/` odświeża:
 
 ```bash
-contracts/generate.sh
+contracts/sync.sh
 ```
+
+Skrypt zapisuje commit core w `contracts/SOURCE` i sumy w `contracts/SHA256SUMS`; CI (`.github/workflows/contracts.yml`) odrzuca ręczne zmiany kopii.
 
 Wszystkie liczby, konta i osoby w makietach są fikcyjne i oznaczone jako dane przykładowe.

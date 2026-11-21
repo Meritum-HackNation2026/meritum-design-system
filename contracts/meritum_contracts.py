@@ -1,7 +1,9 @@
+# Copy of meritum-core src/meritum_core/checks/contracts.py at 45e74f77696fbf69fcb84d121b73a8223405775b.
+# Do not edit: change it in meritum-core and run contracts/sync.sh.
 """Meritum contracts: the data every Meritum surface renders (MSZ "Prawdowid").
 
-Decided target: the single source of truth is the meritum-core repository; the design system consumes the generated
-JSON Schema and TypeScript types. Until the move, this file is the working copy (`contracts/generate.sh`).
+This module is the single source of truth. `scripts/export_contracts.py` writes `contracts/meritum.schema.json`
+and `contracts/meritum.ts`; the design system and the TypeScript apps consume those generated files.
 User-facing strings live in `copy/pl.json`; this file carries codes, not copy.
 
 Rules from the MSZ brief that the models enforce:
@@ -25,15 +27,33 @@ from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
 Channel = Literal["web", "extension", "discord", "sms", "mcp"]
 
-Verdict = Literal["confirmed", "false", "misleading", "insufficient_evidence", "not_verifiable"]
+# Version of these contracts (CheckRequest, CheckResult, ...); independent of the
+# job contract version in meritum_core.jobs.contracts. Raise it on any change that
+# breaks a consumer, and regenerate (scripts/generate-contracts.sh).
+CONTRACT_VERSION = 1
+
+MIN_TEXT_CHARS = 3
+STRONG_MIN_SOURCES = 2
+
+Verdict = Literal[
+    "confirmed", "false", "misleading", "insufficient_evidence", "not_verifiable"
+]
 SETTLING: frozenset[Verdict] = frozenset({"confirmed", "false", "misleading"})
 
 # Outcomes that are not verdicts and must be shown separately (MSZ section 2 and 5).
-CheckStatus = Literal["done", "needs_clarification", "out_of_scope", "technical_failure"]
+CheckStatus = Literal[
+    "done", "needs_clarification", "out_of_scope", "technical_failure"
+]
 
-SourceKind = Literal["akt_prawny", "dane_publiczne", "instytucja", "fact_check", "media", "encyklopedia"]
-SourceTier = Literal["primary", "secondary"]  # primary: official documents and public data; secondary: fact-checkers, media
-SourceVia = Literal["corpus", "rss", "web_search"]  # how the document reached the corpus
+SourceKind = Literal[
+    "akt_prawny", "dane_publiczne", "instytucja", "fact_check", "media", "encyklopedia"
+]
+SourceTier = Literal[
+    "primary", "secondary"
+]  # primary: official documents and public data; secondary: fact-checkers, media
+SourceVia = Literal[
+    "corpus", "rss", "web_search"
+]  # how the document reached the corpus
 Stance = Literal["supports", "refutes", "context"]
 Agreement = Literal["consistent", "conflicting"]
 # Overrides of the age rule. expires: age counts; in_force: e.g. a legal act in force; updated_in_place: standing official
@@ -67,11 +87,16 @@ class CheckRequest(_Model):
     channel: Channel
     text: Annotated[str | None, Field(max_length=4000)] = None
     url: HttpUrl | None = None
-    page_url: Annotated[HttpUrl | None, Field(description="Extension only: the post the text came from.")] = None
+    page_url: Annotated[
+        HttpUrl | None,
+        Field(description="Extension only: the post the text came from."),
+    ] = None
 
     @model_validator(mode="after")
     def _text_or_url(self) -> CheckRequest:
-        if self.url is None and (self.text is None or len(self.text.strip()) < 3):
+        if self.url is None and (
+            self.text is None or len(self.text.strip()) < MIN_TEXT_CHARS
+        ):
             raise ValueError("send text (3+ characters) or a URL")
         return self
 
@@ -114,9 +139,18 @@ class CatalogEntry(_Model):
     license: Annotated[str, Field(min_length=2, max_length=120)]
     ingest: Literal["static", "rss", "sitemap", "web_search"]
     refresh_hours: Annotated[int | None, Field(ge=1)] = None
-    validity: Annotated[Validity, Field(description="Age override for every document of this entry; past_event is set per evidence.")] = "expires"
+    validity: Annotated[
+        Validity,
+        Field(
+            description="Age override for every document of this entry; past_event is set per evidence."
+        ),
+    ] = "expires"
     max_age_hours: Annotated[
-        int | None, Field(ge=1, description="Shorter threshold for short-lived sources (warnings, roads, weather: hours or days).")
+        int | None,
+        Field(
+            ge=1,
+            description="Shorter threshold for short-lived sources (warnings, roads, weather: hours or days).",
+        ),
     ] = None
     qualified_because: Annotated[str, Field(min_length=10, max_length=300)]
     excluded: bool = False
@@ -124,10 +158,14 @@ class CatalogEntry(_Model):
 
     @model_validator(mode="after")
     def _exclusion_has_reason(self) -> CatalogEntry:
-        if self.excluded and not self.exclusion_reason:
+        if self.excluded and (
+            self.exclusion_reason is None or not self.exclusion_reason
+        ):
             raise ValueError("an excluded source needs a reason")
         if self.validity == "past_event":
-            raise ValueError("'past_event' describes one piece of evidence, not a whole catalogue entry")
+            raise ValueError(
+                "'past_event' describes one piece of evidence, not a whole catalogue entry"
+            )
         if self.validity != "expires" and self.max_age_hours is not None:
             raise ValueError("a source that does not expire has no maximum age")
         return self
@@ -139,23 +177,60 @@ class CatalogEntry(_Model):
 class Premises(_Model):
     """Explicit premises behind a verdict (MSZ: strength must follow from quality, recency, agreement, independence)."""
 
-    independent_sources: Annotated[int, Field(ge=0, description="Distinct publishers (institutions) among the citations.")]
-    primary_sources: Annotated[int, Field(ge=0, description="Distinct primary-tier publishers among the citations.")]
+    independent_sources: Annotated[
+        int,
+        Field(
+            ge=0, description="Distinct publishers (institutions) among the citations."
+        ),
+    ]
+    primary_sources: Annotated[
+        int,
+        Field(
+            ge=0, description="Distinct primary-tier publishers among the citations."
+        ),
+    ]
     newest_source_age_hours: Annotated[
-        int | None, Field(ge=0, description="Hours between the newest source and the date the claim refers to, not now.")
+        int | None,
+        Field(
+            ge=0,
+            description="Hours between the newest source and the date the claim refers to, not now.",
+        ),
     ] = None
-    max_age_hours: Annotated[int, Field(ge=1, description="Threshold from the catalogue entry of the newest source.")] = DEFAULT_MAX_AGE_HOURS
+    max_age_hours: Annotated[
+        int,
+        Field(
+            ge=1, description="Threshold from the catalogue entry of the newest source."
+        ),
+    ] = DEFAULT_MAX_AGE_HOURS
     validity: Validity = "expires"
     agreement: Agreement
 
 
 def is_stale(p: Premises) -> bool:
-    return p.validity == "expires" and p.newest_source_age_hours is not None and p.newest_source_age_hours > p.max_age_hours
+    """Whether expiring evidence is older than its catalogue threshold.
+
+    Returns:
+        True when the newest source is past `max_age_hours`.
+    """
+    return (
+        p.validity == "expires"
+        and p.newest_source_age_hours is not None
+        and p.newest_source_age_hours > p.max_age_hours
+    )
 
 
 def strength_for(p: Premises) -> Strength:
-    """The one rule that turns premises into strength. Shown to the user next to the premises."""
-    if p.agreement == "consistent" and p.independent_sources >= 2 and p.primary_sources >= 1 and not is_stale(p):
+    """The one rule that turns premises into strength. Shown to the user next to the premises.
+
+    Returns:
+        "strong", "moderate" or "weak".
+    """
+    if (
+        p.agreement == "consistent"
+        and p.independent_sources >= STRONG_MIN_SOURCES
+        and p.primary_sources >= 1
+        and not is_stale(p)
+    ):
         return "strong"
     if p.agreement == "consistent" and p.independent_sources >= 1:
         return "moderate"
@@ -163,13 +238,17 @@ def strength_for(p: Premises) -> Strength:
 
 
 class EvidenceStrength(_Model):
+    """Strength level together with the premises it follows from."""
+
     level: Strength
     premises: Premises
 
     @model_validator(mode="after")
     def _level_follows_premises(self) -> EvidenceStrength:
         if self.level != strength_for(self.premises):
-            raise ValueError(f"strength must be {strength_for(self.premises)!r} for these premises")
+            raise ValueError(
+                f"strength must be {strength_for(self.premises)!r} for these premises"
+            )
         return self
 
 
@@ -199,8 +278,13 @@ class ClaimResult(_Model):
     strength: EvidenceStrength | None = None
     citations: list[Citation] = []
     explanation: Annotated[str, Field(min_length=10, max_length=800)]
-    unresolved: Annotated[str | None, Field(max_length=500, description="What could not be established.")] = None
-    archival: Annotated[bool, Field(description="Newest evidence is older than the claim's context needs.")] = False
+    unresolved: Annotated[
+        str | None, Field(max_length=500, description="What could not be established.")
+    ] = None
+    archival: Annotated[
+        bool,
+        Field(description="Newest evidence is older than the claim's context needs."),
+    ] = False
     technique: TechniqueCode | None = None
     incident: IncidentMatch | None = None
 
@@ -208,33 +292,68 @@ class ClaimResult(_Model):
     def _verdict_rules(self) -> ClaimResult:
         stances = {c.stance for c in self.citations}
         conflicting = {"supports", "refutes"} <= stances
-        if conflicting and (self.verdict != "insufficient_evidence" or self.strength is not None):
-            raise ValueError("conflicting sources give 'insufficient_evidence' with both sides cited and no strength")
-        if self.verdict == "insufficient_evidence" and self.citations and not conflicting:
-            raise ValueError("'insufficient_evidence' carries citations only when credible sources conflict")
+        if conflicting and (
+            self.verdict != "insufficient_evidence" or self.strength is not None
+        ):
+            raise ValueError(
+                "conflicting sources give 'insufficient_evidence' with both sides cited and no strength"
+            )
+        if (
+            self.verdict == "insufficient_evidence"
+            and self.citations
+            and not conflicting
+        ):
+            raise ValueError(
+                "'insufficient_evidence' carries citations only when credible sources conflict"
+            )
         if self.strength:
             p = self.strength.premises
             publishers = {c.source.publisher for c in self.citations}
-            primary = {c.source.publisher for c in self.citations if c.source.tier == "primary"}
+            primary = {
+                c.source.publisher for c in self.citations if c.source.tier == "primary"
+            }
             if p.agreement != ("conflicting" if conflicting else "consistent"):
                 raise ValueError("agreement must follow from the citation stances")
-            if (p.independent_sources, p.primary_sources) != (len(publishers), len(primary)):
-                raise ValueError("independent and primary sources are counted per publisher among the citations")
+            if (p.independent_sources, p.primary_sources) != (
+                len(publishers),
+                len(primary),
+            ):
+                raise ValueError(
+                    "independent and primary sources are counted per publisher among the citations"
+                )
         if self.verdict in SETTLING:
             if not self.citations or self.strength is None:
-                raise ValueError(f"verdict {self.verdict!r} needs citations and premises")
+                raise ValueError(
+                    f"verdict {self.verdict!r} needs citations and premises"
+                )
             if self.verdict == "confirmed" and "supports" not in stances:
                 raise ValueError("'confirmed' needs a supporting citation")
             if self.verdict == "false" and "refutes" not in stances:
                 raise ValueError("'false' needs a refuting citation")
-            if self.verdict == "misleading" and ("context" not in stances or self.technique is None):
-                raise ValueError("'misleading' needs a context citation and the technique it uses")
-        if self.verdict == "insufficient_evidence" and not self.unresolved:
-            raise ValueError("'insufficient_evidence' must say what could not be established")
+            if self.verdict == "misleading" and (
+                "context" not in stances or self.technique is None
+            ):
+                raise ValueError(
+                    "'misleading' needs a context citation and the technique it uses"
+                )
+        if self.verdict == "insufficient_evidence" and (
+            self.unresolved is None or not self.unresolved
+        ):
+            raise ValueError(
+                "'insufficient_evidence' must say what could not be established"
+            )
         if self.strength and is_stale(self.strength.premises) and not self.archival:
-            raise ValueError("evidence older than the catalogue threshold must be marked archival")
-        if self.archival and self.strength and self.strength.premises.validity != "expires":
-            raise ValueError("evidence that does not expire (law in force, page updated in place, past event) is never archival")
+            raise ValueError(
+                "evidence older than the catalogue threshold must be marked archival"
+            )
+        if (
+            self.archival
+            and self.strength
+            and self.strength.premises.validity != "expires"
+        ):
+            raise ValueError(
+                "evidence that does not expire (law in force, page updated in place, past event) is never archival"
+            )
         return self
 
 
@@ -247,7 +366,9 @@ class Escalation(_Model):
     @model_validator(mode="after")
     def _case_only_when_handed_off(self) -> Escalation:
         if (self.state == "recommended") != (self.case_id is None):
-            raise ValueError("a case id exists only after the case was created or updated")
+            raise ValueError(
+                "a case id exists only after the case was created or updated"
+            )
         return self
 
 
@@ -257,11 +378,21 @@ class CheckResult(_Model):
     check_id: Annotated[str, Field(min_length=1, max_length=40)]
     status: CheckStatus
     claims: list[ClaimResult] = []
-    message: Annotated[str | None, Field(max_length=400, description="For non-verdict statuses: what to do next.")] = None
+    message: Annotated[
+        str | None,
+        Field(max_length=400, description="For non-verdict statuses: what to do next."),
+    ] = None
     limitations: list[Annotated[str, Field(max_length=300)]] = []
     source_warning: SourceStatusWarning | None = None
     escalation: Escalation | None = None
-    corpus_version: Annotated[str, Field(min_length=1, max_length=40, description="Id of the scheduled corpus snapshot.")]
+    corpus_version: Annotated[
+        str,
+        Field(
+            min_length=1,
+            max_length=40,
+            description="Id of the scheduled corpus snapshot.",
+        ),
+    ]
     ai_disclosure: Literal[True] = True
 
     @model_validator(mode="after")
@@ -271,8 +402,10 @@ class CheckResult(_Model):
                 raise ValueError("a finished check has at least one claim")
             if not self.limitations:
                 raise ValueError("a finished check states its limitations")
-        elif self.claims or not self.message:
-            raise ValueError(f"{self.status!r} is not a verdict: no claims, and a message instead")
+        elif self.claims or self.message is None or not self.message:
+            raise ValueError(
+                f"{self.status!r} is not a verdict: no claims, and a message instead"
+            )
         return self
 
 
@@ -280,6 +413,8 @@ class CheckResult(_Model):
 
 
 class AnalysisStep(_Model):
+    """One step of the processing strip shown between „Sprawdź” and the result."""
+
     code: Literal[
         "receive",
         "extract_claims",
@@ -305,9 +440,13 @@ class AnalysisStatus(_Model):
 
 
 class ModelUsage(_Model):
+    """One model call: provider, model, region of processing, tokens and cost."""
+
     provider: Annotated[str, Field(max_length=60)]
     model: Annotated[str, Field(max_length=80)]
-    region: Annotated[str, Field(max_length=40, description="Where the data was processed.")]
+    region: Annotated[
+        str, Field(max_length=40, description="Where the data was processed.")
+    ]
     input_tokens: Annotated[int, Field(ge=0)]
     output_tokens: Annotated[int, Field(ge=0)]
     cost_usd: Annotated[float, Field(ge=0)]
@@ -325,15 +464,29 @@ class CheckRecord(_Model):
     """Audit log of one check (MSZ MVP: question, time, sources, result; plus observability)."""
 
     check_id: str
-    session_id: Annotated[str, Field(min_length=8, max_length=64, description="Random id kept in the browser session.")]
+    session_id: Annotated[
+        str,
+        Field(
+            min_length=8,
+            max_length=64,
+            description="Random id kept in the browser session.",
+        ),
+    ]
     user_id: Annotated[
         str | None,
-        Field(min_length=8, max_length=64, description="Signed-in users only (Google or Microsoft account); None for anonymous checks."),
+        Field(
+            min_length=8,
+            max_length=64,
+            description="Signed-in users only (Google or Microsoft account); None for anonymous checks.",
+        ),
     ] = None
     channel: Channel
     received_at: datetime
     answered_at: datetime
-    question_masked: Annotated[str, Field(max_length=4000, description="Input with obvious personal data masked.")]
+    question_masked: Annotated[
+        str,
+        Field(max_length=4000, description="Input with obvious personal data masked."),
+    ]
     status: CheckStatus
     verdicts: list[Verdict]
     source_ids: list[str]
@@ -347,15 +500,20 @@ class CheckRecord(_Model):
 
     @property
     def latency_ms(self) -> int:
+        """Time from receiving the question to answering it, in milliseconds."""
         return int((self.answered_at - self.received_at).total_seconds() * 1000)
 
     @property
     def cost_usd(self) -> float:
+        """Total model cost of the check."""
         return sum(m.cost_usd for m in self.models)
 
     @property
     def abstained(self) -> bool:
-        return self.status == "done" and all(v in ("insufficient_evidence", "not_verifiable") for v in self.verdicts)
+        """Whether a finished check settled no claim."""
+        return self.status == "done" and all(
+            v in {"insufficient_evidence", "not_verifiable"} for v in self.verdicts
+        )
 
 
 class ModeratorCase(_Model):
@@ -372,4 +530,5 @@ class ModeratorCase(_Model):
 
     @property
     def similar_count(self) -> int:
+        """How many checks the case groups."""
         return len(self.check_ids)
