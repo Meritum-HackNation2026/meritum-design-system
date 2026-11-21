@@ -8,6 +8,10 @@ import { MeritumMark } from "./meritum-mark"
  * Processing strip between "Sprawdź" and the result (DESIGN_SYSTEM.md 6.3). Drive it from `AnalysisStatus.steps`;
  * research steps run in parallel, so several circles may spin at once. `draft` marks a streamed answer
  * whose citations are not verified yet: it shows no verdict.
+ *
+ * @param props - Workflow steps, optional draft state and optional CSS class.
+ * @returns The workflow progress strip.
+ * @feature US-SPR-02, F-09
  */
 export function AnalysisSteps({ steps, draft = false, className }: { steps: AnalysisStep[]; draft?: boolean; className?: string }) {
   return (
@@ -23,12 +27,27 @@ export function AnalysisSteps({ steps, draft = false, className }: { steps: Anal
             className={cn(
               "flex items-center gap-2.5 text-small transition-colors",
               s.status === "pending" || s.status === "skipped" ? "text-muted-foreground" : "text-foreground",
-              s.status === "skipped" && "line-through decoration-muted-foreground/60",
             )}
           >
             <StepMark status={s.status} />
-            {t.analysis.steps[s.code]}
-            <span className="sr-only">, {t.analysis.step_status[s.status]}</span>
+            <span className={cn("min-w-0 flex-1", s.status === "skipped" && "line-through decoration-muted-foreground/60")}>
+              {t.analysis.steps[s.code]}
+            </span>
+            <span
+              className={cn(
+                "shrink-0 text-meta font-semibold text-muted-foreground",
+                !(s.status === "skipped" || s.status === "failed") && "sr-only",
+              )}
+            >
+              {s.status === "skipped" || s.status === "failed" ? (
+                <>
+                  <span className="sr-only">, </span>
+                  {t.analysis.step_status[s.status]}
+                </>
+              ) : (
+                `, ${t.analysis.step_status[s.status]}`
+              )}
+            </span>
           </li>
         ))}
       </ol>

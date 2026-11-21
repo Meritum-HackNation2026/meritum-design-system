@@ -57,9 +57,12 @@
       <footer class="m-foot">${esc8n}${lim}<p>${esc(T.result.ai_disclosure)}</p></footer></section>`;
   }
 
-  const SR = { pending: 'czeka', active: 'w toku', done: 'gotowe', skipped: 'pominięte', failed: 'nieudane' };
   const steps = status => `<div class="m-proc-h">${mark(14)}${esc(T.analysis.title)}</div><ol>${status.steps
-    .map(s => `<li class="${s.status}"><i></i>${esc(T.analysis.steps[s.code])}<span class="m-sr">, ${SR[s.status]}</span></li>`)
+    .map(s => {
+      const stateIsVisible = s.status === 'skipped' || s.status === 'failed';
+      const stateSeparator = stateIsVisible ? '<span class="m-sr">, </span>' : ', ';
+      return `<li class="${s.status}"><i></i><span class="m-step-label">${esc(T.analysis.steps[s.code])}</span><span class="${stateIsVisible ? 'm-step-status' : 'm-sr'}">${stateSeparator}${esc(T.analysis.step_status[s.status])}</span></li>`;
+    })
     .join('')}</ol>${status.draft ? `<p class="m-draft">${esc(T.analysis.draft)}</p>` : ''}`;
 
   globalThis.MeritumCard = {
