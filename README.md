@@ -1,6 +1,6 @@
 # Meritum Design System
 
-**Meritum — obywatelski radar dezinformacji.** Design system, kontrakty danych, makiety i demo na HackNation 2026 w konkursie MSZ „Prawdowid”: obywatel wkleja tekst albo link (formularz WWW) lub klika „Sprawdź” pod postem (wtyczka) i dostaje werdykt dla każdego twierdzenia z dosłownymi cytatami ze źródeł.
+**Meritum — obywatelski radar dezinformacji.** Design system, kontrakty danych, makiety i demo na HackNation 2026 w konkursie MSZ „Prawdowid”: obywatel wkleja tekst albo link (formularz WWW), wysyła go botowi na Discordzie albo klika „Sprawdź” pod postem (wtyczka) i dostaje werdykt dla każdego twierdzenia z dosłownymi cytatami ze źródeł.
 
 ## Od czego zacząć
 
@@ -18,8 +18,8 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
 | `components/meritum/` | komponenty React (shadcn/ui): karta wyniku (`ContextCard`), pasek postępu sprawdzenia (`AnalysisSteps`), znak. Z poprzedniego zakresu (NASK, konsensus) zostały `QuickReportPopover`, `BotDefenseTelemetry` i `CampaignRotation`: nie są częścią produktu dla MSZ |
 | `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
-| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie, SMS, błędy |
-| `extension/` | zestaw wtyczki Chrome (drugi kanał): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
+| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie, SMS, prywatność kanałów, panel moderatora, błędy |
+| `extension/` | zestaw wtyczki Chrome (kanał dodatkowy; drugim kanałem jest bot na Discordzie): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
 | `brand/` | logo (SVG, PNG, logotyp) |
 | `presentation/` | szablon PPTX, slajdy HTML, zrzuty demo, grafiki social |
 | `demo/live/` | makiety platform z przepływem Meritum na pokaz |

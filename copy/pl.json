@@ -1,5 +1,5 @@
 {
-  "$comment": "Meritum UI copy (pl). Keys mirror codes in contracts/meritum_contracts.py. Tone: DESIGN_SYSTEM.md section 8. Plain language for people without technical knowledge.",
+  "$comment": "Meritum UI copy (pl). Keys mirror codes in the meritum-core contracts (src/meritum_core/checks/contracts.py; read-only copy in contracts/). Tone: DESIGN_SYSTEM.md section 8. Plain language for people without technical knowledge.",
   "brand": {
     "name": "Meritum",
     "subtitle": "obywatelski radar dezinformacji",
@@ -31,15 +31,18 @@
     "stored": "Zapisujemy tylko identyfikator konta od Google albo Microsoft i historię sprawdzeń z ukrytymi danymi osobowymi."
   },
   "sms": {
-    "$comment": "Polish characters force UCS-2: one SMS holds 70 characters. reply and failure must fit; fees is shown on the website and in README too.",
+    "$comment": "Polish characters force UCS-2: one SMS holds 70 characters. reply carries only the main claim's verdict and a link; transliteration to GSM-7 (160 characters) is an option. reply and failure must fit; fees is shown on the website and in README too.",
     "fees": "Usługa jest bezpłatna. Operator może pobrać standardową opłatę za SMS według twojej taryfy.",
     "reply": "{verdict}. Wynik: {link}",
     "too_long": "Za długi tekst. Wyślij krótszy albo sam link.",
-    "failure": "Nie udało się sprawdzić. To nie jest ocena. Spróbuj później."
+    "failure": "Nie udało się sprawdzić. To nie jest ocena. Spróbuj później.",
+    "delete_hint": "Wyślij USUN, a usuniemy zapisy sprawdzeń z tego numeru."
   },
   "channel_privacy": {
     "title": "Polityka prywatności kanału",
-    "summary": "Liczymy tylko zbiorcze statystyki użycia. Nie przetwarzamy imion, nazwisk ani adresów e-mail. Adres IP i region mogą służyć do ochrony przed atakami."
+    "summary": "Liczymy tylko zbiorcze statystyki użycia. Twój identyfikator z Discorda albo numer telefonu służy tylko do odpowiedzi i liczenia powtórzeń. Przechowujemy go jako skrót przez {days} dni i nie pokazujemy moderatorom. Adres IP i region mogą służyć do ochrony przed atakami.",
+    "delete_discord": "Napisz /usun-moje-dane, a usuniemy zapisy twoich sprawdzeń.",
+    "deleted": "Usunęliśmy zapisy twoich sprawdzeń."
   },
   "extension": {
     "check": "Sprawdź",
@@ -61,11 +64,13 @@
     "premises": "Niezależne źródła: {independent}, w tym urzędowe lub pierwotne: {primary}. {agreement}",
     "agreement": { "consistent": "Źródła są zgodne.", "conflicting": "Źródła podają różne informacje." },
     "conflict": "Wiarygodne źródła są tu sprzeczne, więc nie rozstrzygamy. Obie strony są poniżej. Różnica: {difference}",
-    "newest": "Najnowsze źródło ma {days} dni.",
+    "newest": "Najnowsze źródło jest z {source_date}, a twierdzenie dotyczy {claim_date} ({claim_date_source}).",
+    "claim_date_source": { "text": "data z tekstu", "input_published_at": "data publikacji sprawdzanej treści", "today": "dzisiejsza data" },
     "unresolved": "Czego nie udało się ustalić",
     "archival": "Uwaga: najnowsze źródło jest starsze, niż wymaga sprawa. Informacja mogła się zmienić.",
     "limitations": "Ograniczenia",
     "incident": "Podobne do znanego przypadku dezinformacji: {title} ({date}). To kontekst, a nie podstawa oceny.",
+    "incident_domain": "Ten link prowadzi do serwisu z bazy znanych przypadków dezinformacji ({title}). To informacja o serwisie, a nie ocena tej treści.",
     "ai_disclosure": "Odpowiedź przygotował system z użyciem AI. Sprawdź źródła sam: linki prowadzą do oryginałów.",
     "via_web": "znalezione w wyszukiwaniu w zatwierdzonych serwisach"
   },
@@ -92,25 +97,28 @@
   "status_hint": {
     "needs_clarification": "Nie wiemy, które twierdzenie sprawdzić. Napisz je jednym zdaniem.",
     "out_of_scope": "Sprawdzamy twierdzenia o faktach z życia publicznego. Tego pytania nie obsługujemy.",
-    "technical_failure": "Nie udało się sprawdzić. To nie jest ocena treści. Spróbuj za kilka minut."
+    "technical_failure": "Nie udało się sprawdzić. To nie jest ocena treści. Spróbuj za kilka minut.",
+    "out_of_scope_image": "Na razie nie sprawdzamy obrazów. Przepisz tekst z obrazka albo wklej link do źródła."
   },
   "escalation": {
     "recommended": "Ta sprawa nadaje się do sprawdzenia przez moderatora. Nie została jeszcze przekazana.",
     "created": "Przekazaliśmy sprawę moderatorom (sprawa {case}).",
-    "updated": "Ktoś już pytał o podobną rzecz. Dołączyliśmy twoje pytanie do sprawy {case}."
+    "updated": "Dołączyliśmy twoje pytanie do istniejącej sprawy {case}."
   },
   "source_warning": {
-    "eu_sanctioned_entity": "Ta treść pochodzi od podmiotu objętego sankcjami UE ({entity}). To informacja o źródle, a nie ocena samej treści.",
-    "state_controlled_media": "Ta treść pochodzi z mediów kontrolowanych przez państwo ({entity}). To informacja o źródle, a nie ocena samej treści."
+    "eu_sanctioned_entity": "Ta treść pochodzi od podmiotu z listy sankcji UE ({entity}). To informacja o źródle, a nie ocena samej treści."
   },
   "analysis": {
     "title": "Meritum sprawdza",
     "draft": "Wersja wstępna. Werdykt pokażemy po sprawdzeniu cytatów.",
     "steps": {
       "receive": "Przyjmujemy pytanie",
+      "fetch_url": "Pobieramy stronę z linku",
+      "screen_injection": "Sprawdzamy, czy treść nie zawiera ukrytych poleceń",
       "extract_claims": "Wyodrębniamy twierdzenia do sprawdzenia",
       "search_corpus": "Szukamy w bazie źródeł",
       "search_web": "Szukamy świeżych publikacji w zatwierdzonych serwisach",
+      "search_fact_checks": "Szukamy ustaleń fact-checkerów",
       "assess_evidence": "Porównujemy źródła z twierdzeniami",
       "verify_citations": "Sprawdzamy, czy cytaty są dosłowne",
       "write_answer": "Piszemy odpowiedź prostym językiem",
@@ -132,8 +140,7 @@
     "dane_publiczne": "dane publiczne",
     "instytucja": "instytucja",
     "fact_check": "fact-checking",
-    "media": "media",
-    "encyklopedia": "encyklopedia"
+    "media": "media"
   },
   "source_tier": { "primary": "źródło urzędowe lub pierwotne", "secondary": "źródło wtórne" },
   "moderation": {
@@ -144,11 +151,13 @@
       "repeated_unanswered": "powtarzające się pytanie bez odpowiedzi"
     },
     "similar": "{count} podobnych pytań",
+    "high_risk_by": { "model": "temat rozpoznał model według listy administratora", "keywords": "temat rozpoznany po słowach kluczowych" },
+    "role": { "moderator": "moderator", "analyst": "analityk", "admin": "administrator" },
     "state": { "open": "otwarta", "answered": "z odpowiedzią", "closed": "zamknięta" }
   },
   "errors": {
     "empty": "Wklej tekst (co najmniej 3 znaki) albo link.",
-    "invalid_url": "To nie wygląda na adres strony. Wklej pełny link zaczynający się od https://.",
+    "invalid_url": "To nie wygląda na adres strony. Wklej pełny link zaczynający się od http:// albo https://.",
     "too_long": "Tekst jest za długi. Wklej najwyżej 4000 znaków albo sam link.",
     "rate_limited": "Za dużo sprawdzeń w krótkim czasie. Spróbuj za minutę.",
     "busy": "Mamy teraz bardzo dużo pytań. Spróbuj za kilka minut. To nie jest ocena treści.",
