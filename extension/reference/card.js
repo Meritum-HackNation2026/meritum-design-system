@@ -46,13 +46,18 @@
       ${sources}${strength}${notes}</article>`;
   }
 
+  // `message` is never shown: the status line and the limitations come from contract codes through copy (the API's limitation texts only when it sent no codes)
+  const statusText = r => (r.status === 'technical_failure' && r.failure_code ? T.failure_code[r.failure_code] : T.status_hint[r.status]);
+  const limitationTexts = r => (r.limitation_codes?.length ? r.limitation_codes.map(c => T.limitation_code[c]) : r.limitations || []);
+
   function resultCard(r) {
     const body = r.status === 'done'
       ? (r.source_warning ? `<p class="m-note" style="margin:10px 14px 0">${esc(fill(T.source_warning.eu_sanctioned_entity, { entity: r.source_warning.entity }))} <a href="${safeUrl(r.source_warning.basis_url)}" target="_blank" rel="noopener noreferrer">podstawa</a></p>` : '') + (r.claims || []).map(claimBlock).join('')
-      : `<div class="m-status"><svg class="m-ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.6v4.3M8 11.2v.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><div><b>${esc(T.status[r.status])}</b><p>${esc(r.message || T.status_hint[r.status])}</p></div></div>`;
+      : `<div class="m-status"><svg class="m-ic" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.6v4.3M8 11.2v.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg><div><b>${esc(T.status[r.status])}</b><p>${esc(statusText(r))}</p></div></div>`;
     const e = r.escalation;
     const esc8n = e ? `<p class="esc">${esc(e.state === 'recommended' ? T.escalation.recommended : fill(T.escalation[e.state], { case: e.case_id || '' }))}</p>` : '';
-    const lim = r.limitations?.length ? `<div><b>${esc(T.result.limitations)}</b><ul>${r.limitations.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>` : '';
+    const lims = limitationTexts(r);
+    const lim = lims.length ? `<div><b>${esc(T.result.limitations)}</b><ul>${lims.map(l => `<li>${esc(l)}</li>`).join('')}</ul></div>` : '';
     return `<section class="m-card" aria-label="Meritum: wynik sprawdzenia"><div class="m-top">${mark(14)}Meritum</div>${body}
       <footer class="m-foot">${esc8n}${lim}<p>${esc(T.result.ai_disclosure)}</p></footer></section>`;
   }
