@@ -2,7 +2,7 @@
 
 Ten folder jest dla osób, które robią slajdy, posty i grafiki o Meritum, a nie piszą kodu. Wszystko tutaj wygląda tak samo jak produkt: te same kolory, kroje pisma i logo. Zasady, z których to wynika, są w `../DESIGN_SYSTEM.md`, a treść pitchu w `../KEY_SELLING_POINTS.md`.
 
-**Uwaga: Meritum startuje teraz tylko w konkursie MSZ „Prawdowid”.** Szablon `meritum-template.pptx`, `slides/index.html`, zrzuty w `screenshots/`, grafiki w `social/` i logotypy z podtytułem w `../brand/exports/` pokazują jeszcze stary produkt na dwa konkursy (zgłoszenia, kampanie, atak botów, podtytuł „oraz scamu”). Trzeba je wygenerować od nowa według sekcji „Deck na konkurs MSZ” poniżej. Do tego czasu nie wysyłaj ich jury.
+Uwaga: Meritum startuje teraz tylko w konkursie MSZ „Prawdowid”. Grafiki w `social/` i logotypy z podtytułem w `../brand/exports/` są już aktualne: hasło i opis z `KEY_SELLING_POINTS.md`, trzy kroki z `PRODUCT.md`, podtytuł „obywatelski radar dezinformacji”. Nie mają jeszcze zrzutu karty wyniku, bo ta karta dopiero powstaje. Szablon `meritum-template.pptx`, `slides/index.html` i zrzuty w `screenshots/` pokazują jeszcze stary produkt na dwa konkursy (zgłoszenia, kampanie, atak botów). Trzeba je wygenerować od nowa według sekcji „Deck na konkurs MSZ” poniżej i do tego czasu nie wysyłać ich jury.
 
 ## Co jest w zestawie
 
@@ -110,7 +110,7 @@ uv run --with python-pptx python presentation/build_pptx.py     # szablon PPTX
 | Prawdziwe zrzuty działającego Meritum | Zdjęcia stockowe, ludzie przy laptopach, kłódki i tarcze |
 | Wyniki testów z raportu, z linkiem do danych; liczby z makiet z dopiskiem „dane symulowane” | „Trafność 98%” albo każda liczba, której nie zmierzyliśmy |
 | Przykłady z prawdziwymi, sprawdzalnymi źródłami z korpusu | Wymyślone źródła, cytaty albo daty |
-| „Gotowe do integracji z OpenCTI” | „Współpracujemy z MSZ”, dopóki to nieprawda |
+| „Eksport do JSON i CSV z kodami technik DISARM” | „Współpracujemy z MSZ”, dopóki to nieprawda |
 | „Fałszywe. Konstytucja pozwala na dwie kadencje prezydenta, nie trzy.” | „FAŁSZ! Ten post kłamie!” |
 | Nagłówki zdaniowe: „Każde ustalenie ma źródło” | NAPISY WERSALIKAMI nad nagłówkami, emoji, wykrzykniki |
 | Wykres z etykietą przy linii i progiem z treści zadania (np. macro-F1 ≥ 0,75) | Kafelki z ikoną i dużą liczbą, legenda daleko od linii |
@@ -121,7 +121,7 @@ uv run --with python-pptx python presentation/build_pptx.py     # szablon PPTX
 Wklej to do ChatGPT, Claude albo Gemini, a pod spodem napisz, jakiego slajdu potrzebujesz.
 
 ```
-Robisz slajd (16:9, 1920×1080) dla Meritum — obywatelskiego radaru dezinformacji
+Robisz slajd (16:9, 1920×1080) dla Meritum, obywatelskiego radaru dezinformacji
 (strona WWW do sprawdzania informacji + wtyczka do przeglądarki jako drugi kanał + panel
 moderatora), zgłoszonego w konkursie MSZ „Prawdowid”. Język: polski.
 

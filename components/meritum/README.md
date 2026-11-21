@@ -40,7 +40,7 @@ Set `data-host="x|facebook|instagram|reddit|tiktok"` on the root to pick the pla
 
 ## Contracts
 
-Props should mirror the API contracts in `../../contracts/` (Pydantic source of truth, generated `meritum.ts` types and JSON Schema): `CheckResult`, `ClaimResult`, `Citation`, `Source`, `EvidenceStrength`, `AnalysisStatus`, `ModeratorCase`. The components still declare their own older types; switch them to `meritum.ts` during the rework. UI strings come from `../../copy/pl.json`.
+Props should mirror the API contracts. Their single source of truth is the meritum-core repository; `../../contracts/` holds a synced copy (refreshed with `contracts/sync.sh`, never edited by hand) (Pydantic models, generated `meritum.ts` types and JSON Schema): `CheckResult`, `ClaimResult`, `Citation`, `Source`, `EvidenceStrength`, `AnalysisStatus`, `ModeratorCase`. The components still declare their own older types; switch them to `meritum.ts` during the rework. UI strings come from `../../copy/pl.json`.
 
 ## Checked
 

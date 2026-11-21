@@ -24,7 +24,7 @@ Zasady wspólne dla wszystkich serwisów:
 | Pasek akcji | `[role="group"]` w poście; dzieci: `[data-testid="reply"]`, `"retweet"`, `"like"`, link statystyk `a[href$="/analytics"]`, `"bookmark"`, Udostępnij (bez testid) |
 | Reklama | `[data-testid="placementTracking"]` obejmuje `article`; etykieta „Reklama” to `span` poza `User-Name`, obok `[data-testid="caret"]`; reklama nie ma `time` |
 
-Miejsce na „Zgłoś”: dopisz `div` jako dziecko `[role="group"]` przed slotem zakładki (pasek to flex: 4 równe sloty po ok. 113 px, potem zakładka i udostępnij). Bezpieczniej: wstaw osobny wiersz zaraz po `[role="group"]`, bo React może przerysować grupę.
+Miejsce na „Sprawdź”: dopisz `div` jako dziecko `[role="group"]` przed slotem zakładki (pasek to flex: 4 równe sloty po ok. 113 px, potem zakładka i udostępnij). Bezpieczniej: wstaw osobny wiersz zaraz po `[role="group"]`, bo React może przerysować grupę.
 
 Pułapki:
 - Lista jest wirtualizowana: `cellInnerDiv` ma `position:absolute; transform:translateY(...)`, kontener ma `min-height` całej listy. Komórki poza ekranem są usuwane, a węzły bywają używane ponownie dla innego posta. Makieta renderuje komórki w normalnym przepływie, bez recyklingu.
@@ -46,12 +46,12 @@ Pułapki:
 | Menu posta | `div[role="button"][aria-label="Działania dotyczące tego posta"]`, `a[aria-label^="Ukryj post"]` |
 | Reklama | „Sponsorowane” w miejscu czasu w linii meta (wzorzec znany, nie zmierzony; reklamy ukrył bloker). Historycznie FB rozbija ten tekst na litery w ukrytych spanach, więc sprawdzaj `aria-label`/`aria-labelledby` linku, a nie `textContent` |
 
-Miejsce na „Zgłoś”: dopisz przycisk do rodzica `div[role="button"]`, który zawiera `share_button` (pasek to rząd kompaktowych przycisków ikona+liczba, 44x32, wyrównany do lewej).
+Miejsce na „Sprawdź”: dopisz przycisk do rodzica `div[role="button"]`, który zawiera `share_button` (pasek to rząd kompaktowych przycisków ikona+liczba, 44x32, wyrównany do lewej).
 
 Pułapki:
 - Wirtualizacja: jednostki daleko od ekranu dostają `data-virtualized="true"` i tracą treść (zostaje pusty kontener o tej samej wysokości). Gdy wracają, treść jest renderowana od nowa, więc wstrzyknięty przycisk znika.
 - `role="article"` występuje dziesiątki razy (komentarze, zagnieżdżone treści) i nie oznacza posta.
-- W feedzie są też jednostki bez autora (Rolki, propozycje) — pomijaj kontenery bez `profile_name`.
+- W feedzie są też jednostki bez autora (Rolki, propozycje): pomijaj kontenery bez `profile_name`.
 - Motyw: klasa `__fb-dark-mode` / `__fb-light-mode` na `html`. Dark: strona `#1C1C1D`, karta `#252728`, tekst drugorzędny `#B0B3B8`. Karty: promień 12, cień `0 1px 2px rgba(0,0,0,.2)`, odstęp 12. Kolumny: lewa 360, feed 680, prawa 360, górny pasek 56.
 
 ## Instagram (instagram.com)
@@ -68,7 +68,7 @@ Pułapki:
 | Menu | `svg[aria-label="Więcej opcji"]` |
 | Reklama | tekst „Sponsorowane” w drugiej linii nagłówka (był w DOM, ukryty przez bloker); pod mediami pasek CTA „Dowiedz się więcej” |
 
-Miejsce na „Zgłoś”: dopisz `div[role="button"]` do lewej grupy w `section` paska akcji (obok Udostępnij), przed grupą Zapisz.
+Miejsce na „Sprawdź”: dopisz `div[role="button"]` do lewej grupy w `section` paska akcji (obok Udostępnij), przed grupą Zapisz.
 
 Pułapki:
 - W DOM były tylko 4 `article` naraz; starsze posty są usuwane przy przewijaniu.
@@ -94,7 +94,7 @@ Nie zmierzone: narzędzie przeglądarki blokuje reddit.com. Makieta jest zbudowa
 | Reklama | `shreddit-ad-post`, etykieta „Promowane” w `[slot="credit-bar"]` |
 | Dalsze strony | `faceplate-partial[loading="lazy"]` w feedzie |
 
-Miejsce na „Zgłoś”: wstaw element w light DOM jako rodzeństwo zaraz po `shreddit-post` w jego `article`. Wstawienie do `shadowRoot` jest możliwe (root jest otwarty), ale komponent może go przerysować; w makiecie rząd akcji to `shadowRoot.querySelector('[data-post-click-location="vote"]')`.
+Miejsce na „Sprawdź”: wstaw element w light DOM jako rodzeństwo zaraz po `shreddit-post` w jego `article`. Wstawienie do `shadowRoot` jest możliwe (root jest otwarty), ale komponent może go przerysować; w makiecie rząd akcji to `shadowRoot.querySelector('[data-post-click-location="vote"]')`.
 
 Pułapki:
 - Pasek akcji jest w shadow DOM, więc `document.querySelector` go nie widzi.
@@ -114,7 +114,7 @@ Pułapki:
 | Nawigacja | `[data-e2e="feed-navigation-prev"]`, `"feed-navigation-next"` |
 | Reklama | etykieta „Sponsorowane” przy autorze i przycisk CTA w nakładce (nie zaobserwowane w sesji; brak znanego `data-e2e`, szukaj tekstu w nakładce) |
 
-Miejsce na „Zgłoś”: dopisz element na końcu `section` z akcjami (po `share-icon`), w tym samym formacie co inne akcje (okrągły przycisk 48 px + podpis).
+Miejsce na „Sprawdź”: dopisz element na końcu `section` z akcjami (po `share-icon`), w tym samym formacie co inne akcje (okrągły przycisk 48 px + podpis).
 
 Pułapki:
 - Przewijanie dzieje się w `#column-list-container`, więc nasłuchuj `scroll` na nim, a nie na `window`.

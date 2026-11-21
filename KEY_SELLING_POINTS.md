@@ -113,7 +113,7 @@ Punkty za funkcje premiowane liczą się tylko wtedy, gdy rozwiązanie spełnia 
 ## 3. Wyróżniki
 
 ### 3.1 Uczciwość wbudowana w kontrakt
-Reguły z treści zadania sprawdza walidacja danych, a nie prompt: werdykt bez cytatu, siła niezgodna z przesłankami, „potwierdzone” przy sprzecznych źródłach i awaria pokazana jako werdykt nie przejdą. Każdą regułę sprawdza test (`contracts/export_schema.py`).
+Reguły z treści zadania sprawdza walidacja danych, a nie prompt: werdykt bez cytatu, siła niezgodna z przesłankami, „potwierdzone” przy sprzecznych źródłach i awaria pokazana jako werdykt nie przejdą. Każdą regułę sprawdza test pytest w meritum-core (`tests/test_checks_contracts.py`).
 
 ### 3.2 Cytat sprawdzany dosłownie
 Model może się pomylić w cytacie. Dlatego zanim cytat trafi do odpowiedzi, sprawdzamy w kodzie, czy fragment naprawdę jest w źródle. To podnosi oba mierniki: pokrycie i poprawność cytowań.

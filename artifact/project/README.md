@@ -120,7 +120,7 @@ Nic poniżej 12 px. Nagłówki zdaniowe (wielka litera tylko na początku), bez 
 
 ## 6. Komponenty
 
-Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Shadow DOM wtyczki w `extension/widget.css`, dane opisują kontrakty (źródłem prawdy jest repozytorium meritum-core, tu leży robocza kopia w `contracts/`), teksty `copy/pl.json`. Bot na Discordzie i SMS nie mają własnego wyglądu: korzystają z tych samych tekstów, a odpowiedź SMS mieści się w 70 znakach (polskie znaki wymuszają kodowanie UCS-2) i kończy się linkiem do pełnej karty wyniku (`sms`). Interaktywne makiety: `demo/widgets/`, przepływ na makiecie X: `demo/x/`. Makiety i komponenty pokazują jeszcze stary przepływ zgłoszenia i trzeba je przerobić według tej sekcji.
+Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Shadow DOM wtyczki w `extension/widget.css`, dane opisują kontrakty (źródłem prawdy jest repozytorium meritum-core, a w `contracts/` leży kopia pobierana skryptem `contracts/sync.sh`, której nie edytuje się ręcznie), teksty `copy/pl.json`. Bot na Discordzie i SMS nie mają własnego wyglądu: korzystają z tych samych tekstów, a odpowiedź SMS mieści się w 70 znakach (polskie znaki wymuszają kodowanie UCS-2) i kończy się linkiem do pełnej karty wyniku (`sms`). Interaktywne makiety: `demo/widgets/`, przepływ na makiecie X: `demo/x/`. Makiety i komponenty pokazują jeszcze stary przepływ zgłoszenia i trzeba je przerobić według tej sekcji.
 
 ### 6.1 Formularz „Sprawdź informację” (strona WWW, kanał podstawowy)
 Jedna kolumna, działa od 320 px szerokości.
@@ -264,7 +264,7 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 - `extension/popup/`, `extension/onboarding/`, `extension/icons/`. Opis techniczny po angielsku: `extension/README.md`.
 
 ### Backend (FastAPI)
-- `contracts/meritum_contracts.py`: robocza kopia kontraktów; jedynym źródłem prawdy jest repozytorium meritum-core, a design system korzysta z wygenerowanych JSON Schema i typów TS. Modele Pydantic v2 dla API, strony, wtyczki i panelu (zapytanie, wynik sprawdzenia, twierdzenie, cytat, źródło, przesłanki, status analizy, zapis przebiegu, sprawa moderatora, wpis katalogu źródeł). Reguły z treści zadania MSZ są w modelach:
+- `contracts/meritum_contracts.py`: kopia kontraktów z meritum-core (`src/meritum_core/checks/contracts.py`), oznaczona jako „nie edytować”; design system korzysta z wygenerowanych w core JSON Schema i typów TS. Modele Pydantic v2 dla API, strony, wtyczki i panelu (zapytanie, wynik sprawdzenia, twierdzenie, cytat, źródło, przesłanki, status analizy, zapis przebiegu, sprawa moderatora, wpis katalogu źródeł). Reguły z treści zadania MSZ są w modelach:
   - werdykt rozstrzygający (potwierdzone, fałszywe, wprowadzające w błąd) wymaga cytatu i jawnych przesłanek;
   - siła podstawy wynika z przesłanek według jednej stałej reguły, nie z deklaracji modelu;
   - zgodność wynika z wymowy cytatów; sprzeczne wiarygodne źródła dają „brak wystarczających dowodów” z cytatami obu stron i bez siły;
@@ -292,7 +292,7 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 | `DESIGN_SYSTEM.md` | ta specyfikacja |
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
 | `components/meritum/` | komponenty React: `ContextCard`, `AnalysisSteps`, `MeritumMark` oraz nieużywane w MSZ `QuickReportPopover`, `BotDefenseTelemetry`, `CampaignRotation` |
-| `contracts/` | robocza kopia kontraktów (źródłem prawdy jest meritum-core): Pydantic, JSON Schema, typy TS, przykłady |
+| `contracts/` | kopia kontraktów z meritum-core, odświeżana skryptem `sync.sh`, nie do ręcznej edycji: Pydantic, JSON Schema, typy TS, przykłady |
 | `copy/pl.json` | teksty interfejsu |
 | `extension/` | zestaw wtyczki Chrome: style Shadow DOM, skrypt referencyjny, popup, onboarding, ikony |
 | `brand/` | logo w SVG, `brand/exports/` w PNG i logotyp |

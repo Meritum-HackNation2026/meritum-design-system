@@ -43,7 +43,7 @@ Honest by construction: the language model reads, searches and writes, but a ver
 
 - Primary channel: a responsive web form. Conversation history stays in the browser's sessionStorage. Signing in with a Google or Microsoft account is optional; signed-in users keep their history on the server and can delete it. Second channel: the Chrome extension (button under posts plus the popup paste box). Both use the same verification core and must give the same result for the same input and corpus version. We confirm with the MSZ mentors that the extension counts as an equivalent channel. A Discord bot on the same API is built from the start, so the two-channel requirement holds either way. If time allows, an SMS demo adapter: an SMS gateway webhook on the same API, operator fees stated plainly, answers cut to 70 characters (Polish text forces UCS-2) with a link to the full result. Consistency: the corpus is versioned as scheduled snapshots (for example hourly) and results are cached by (normalised input, snapshot id), so the same input within one snapshot gives the same result in every channel.
 - The extension injects UI into third-party feeds in light and dark themes. Per-platform skins (X, Facebook, Instagram, Reddit, TikTok) adapt font, radius, surface, borders and links; the Meritum mark, the verdict word and colour, and the sources block never change. It sends content only after the user clicks.
-- Demo for the jury: the same question asked in the web form and on an X mock through the extension, a sourced verdict, an honest abstention with a moderator case, an ignored prompt-injection attempt, and the evaluation results on the reference set. Film under 3 minutes, deck under 12 slides.
+- Demo for the jury: the same question asked in the web form and on an X mock through the extension, a sourced verdict, an honest abstention with a moderator case, an ignored prompt-injection attempt, and the evaluation results on our own test set (the jury's reference set from MSZ is hidden). Film under 3 minutes, deck under 12 slides.
 - The jury runs it from our instructions, end to end, with no manual help. Nothing in the answer may depend on hard-coded examples.
 
 ## Capabilities and Constraints
@@ -64,7 +64,7 @@ Honest by construction: the language model reads, searches and writes, but a ver
 
 ## Brand Commitments
 
-- Working name: **Meritum** — „obywatelski radar dezinformacji”. Logo: mark B „Dwa łuki” (brand/meritum-mark.svg), chosen 2026-11-21. Brand exports with the old subtitle („…oraz scamu”) must be regenerated.
+- Working name: **Meritum** — „obywatelski radar dezinformacji”. Logo: mark B „Dwa łuki” (brand/meritum-mark.svg), chosen 2026-11-21. Lockups with the subtitle in brand/exports/ already carry „obywatelski radar dezinformacji”.
 - Visual direction (chosen 2026-11-21): „Biuletyn synoptyczny” palette on clean white bordered surfaces; spec in DESIGN_SYSTEM.md.
 - Binding visual constraints: "Civic-Tech Intelligence / Modern Editorial" (precision of developer tools such as Linear and Vercel with the gravity and legibility of investigative journalism such as The Economist and Bellingcat). Never: hacker green-on-black, purple-blue AI gradients, heavy governmental/official styling, gratuitous animation. Light and dark modes required.
 

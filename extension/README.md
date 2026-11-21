@@ -1,8 +1,8 @@
 # Meritum Chrome extension kit
 
-The extension is Meritum's **second channel** for the MSZ "Prawdowid" challenge. The primary channel is the web form, where a citizen pastes text or a link. The extension adds the same check where people meet the content: a „Sprawdź” (Check) button under posts on X, Facebook, Instagram, Reddit and TikTok, and the same paste box in the toolbar popup.
+The extension is Meritum's second channel for the MSZ "Prawdowid" challenge. The primary channel is the web form, where a citizen pastes text or a link. The extension adds the same check where people meet the content: a „Sprawdź” (Check) button under posts on X, Facebook, Instagram, Reddit and TikTok, and the same paste box in the toolbar popup.
 
-Both channels call the same verification API with the same `CheckRequest` (`../contracts/meritum_contracts.py`) and render the same `CheckResult`. The extension holds no verification logic of its own, so the same request with the same corpus version gives the same verdicts and citations on both channels (MSZ scenario G).
+Both channels call the same verification API with the same `CheckRequest` (`../contracts/meritum_contracts.py`, a synced copy that is never edited by hand; the single source of truth is the meritum-core repository) and render the same `CheckResult`. The extension holds no verification logic of its own, so the same request with the same corpus version gives the same verdicts and citations on both channels (MSZ scenario G).
 
 Rules for this channel:
 
@@ -10,7 +10,7 @@ Rules for this channel:
 - No automatic warnings on ads. The scam card and the „hide ad” flow from the earlier NASK scope are out.
 - The result card shows one of five verdicts per claim (confirmed, false, misleading, insufficient evidence, not verifiable) with citations (title, publisher, date, link, fragment), the premises behind the strength and the limitations. Technical failure, „needs clarification” and „out of scope” are shown as statuses, never as verdicts. All strings come from `../copy/pl.json`.
 
-This folder has everything a developer needs to build the real Manifest V3 extension: the Shadow DOM widget styles, a working framework-free content script, the toolbar popup, onboarding and options pages, and icons. The same content script runs on the real sites and on the local mocks in `demo/platforms/`. The visual spec is `../DESIGN_SYSTEM.md`. The code in `reference/` still implements the earlier „Zgłoś” (report) flow: see „What must change” below.
+The real Manifest V3 extension is built in the [meritum-extension](https://github.com/Meritum-HackNation2026/meritum-extension) repository (WXT, React, TypeScript). This folder is its reference kit: the Shadow DOM widget styles, a working framework-free content script, the toolbar popup, onboarding and options pages, and icons. The same content script runs on the real sites and on the local mocks in `demo/platforms/`. The visual spec is `../DESIGN_SYSTEM.md`. The code in `reference/` still implements the earlier „Zgłoś” (report) flow: see „What must change” below.
 
 ## Load it
 
@@ -142,5 +142,5 @@ The reference code still runs the earlier report flow on a mocked API. Before th
 ## Known limits
 
 - Fonts load from `fonts.gstatic.com`. A host CSP with a strict `font-src` (X has one) can block them; the widget then falls back to `system-ui`. For production, ship the woff2 files in the extension and point the `@font-face` URLs at `chrome.runtime.getURL()`; check that the host CSP allows them.
-- X's action bar is four flexible slots. With „Zgłoszono” in the bar, a long count such as „184 tys.” can wrap to two lines on a 600 px column. If that matters, use the fallback from `SELECTORS.md`: a separate row right after `[role="group"]`.
-- Clones of the same X post share a status link, so a reported post's card also appears on later clones in the mock feed.
+- X's action bar is four flexible slots. With „Sprawdzono” in the bar (today still „Zgłoszono”), a long count such as „184 tys.” can wrap to two lines on a 600 px column. If that matters, use the fallback from `SELECTORS.md`: a separate row right after `[role="group"]`.
+- Clones of the same X post share a status link, so a checked post's card also appears on later clones in the mock feed.
