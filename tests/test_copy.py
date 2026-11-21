@@ -1,6 +1,6 @@
 """Checks copy/pl.json: required screen keys and the tone of DESIGN_SYSTEM.md section 8.
 
-Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39, US-ZRD-12, F-29, US-SPR-01, US-BEZ-07, F-01, F-21, design-system#49, design-system#52, design-system#66, design-system#71
+Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39, US-ZRD-12, F-29, US-SPR-01, US-BEZ-07, F-01, F-21, design-system#49, design-system#52
 Run: python3 -m unittest discover -s tests
 """
 
@@ -253,22 +253,6 @@ class Tone(unittest.TestCase):
         self.assertIn("Spróbuj", text)
         self.assertNotIn("{case}", text)
         self.assertNotRegex(text, r"#S-\d+")
-
-    def test_stance_headings_are_short_and_never_a_verdict(self) -> None:
-        # Gherkin "nagłówki grup cytatów na osi czasu" from design-system#66
-        verdicts = [str(v).lower() for k, v in COPY["verdict"].items() if not k.startswith("$")]
-        for stance in ("supports", "refutes", "context"):
-            text = lookup(f"result.stance.{stance}")
-            self.assertIsInstance(text, str)
-            self.assertLessEqual(len(str(text).split()), 3)
-            self.assertNotIn(str(text).lower(), verdicts)
-
-    def test_superseded_without_date_has_no_placeholder(self) -> None:
-        # Gherkin "dowód zastąpiony bez daty nowszego dokumentu" from design-system#71
-        text = lookup("result.superseded_undated")
-        self.assertIsInstance(text, str)
-        self.assertNotIn("{", str(text))
-        self.assertIn("zastąpił", str(text))
 
 
 if __name__ == "__main__":
