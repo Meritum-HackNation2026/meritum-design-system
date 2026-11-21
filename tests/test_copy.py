@@ -1,6 +1,6 @@
 """Checks copy/pl.json: required screen keys and the tone of DESIGN_SYSTEM.md section 8.
 
-Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08
+Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16
 Run: python3 -m unittest discover -s tests
 """
 
@@ -63,6 +63,10 @@ REQUIRED_KEYS = (
     "errors.audio_too_large",
     "errors.audio_too_long",
     "status_hint.out_of_scope_audio_format",
+    # extension popup: connection to the API (design-system#16)
+    "extension.popup_connecting",
+    "extension.popup_api_ok",
+    "extension.popup_api_down",
 )
 
 
@@ -119,6 +123,13 @@ class Tone(unittest.TestCase):
                 self.assertIn("{contact}", text)
                 for term in TECHNICAL_TERMS:
                     self.assertNotIn(term, text.lower())
+
+    def test_popup_api_state_has_server_placeholder_and_no_jargon(self) -> None:
+        # Gherkin from design-system#16; {api} is the API address or version
+        self.assertIn("{api}", str(lookup("extension.popup_api_ok")))
+        for key in ("extension.popup_connecting", "extension.popup_api_down"):
+            with self.subTest(key=key):
+                self.assertNotIn("API", str(lookup(key)))
 
 
 if __name__ == "__main__":
