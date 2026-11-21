@@ -42,9 +42,9 @@ python3 -m http.server 52990 --bind 127.0.0.1
 
 Potem otwórz http://localhost:52990/demo/live/ (makiety na pokaz) albo http://localhost:52990/demo/widgets/. Skróty na makietach: R reset, T motyw.
 
-Wdrożone makiety platform (te same strony co `demo/platforms/`, z repo [meritum-mocks](https://github.com/Meritum-HackNation2026/meritum-mocks)) są pod https://meritum-x.gburek.app, https://meritum-facebook.gburek.app, https://meritum-instagram.gburek.app, https://meritum-reddit.gburek.app i https://meritum-tiktok.gburek.app; wersje dev mają sufiks `-dev`.
+Wdrożone makiety platform (te same strony co `demo/platforms/`, z repo [meritum-mocks](https://github.com/Meritum-HackNation2026/meritum-mocks)) są pod https://meritum-x.gburek.app, https://meritum-facebook.gburek.app, https://meritum-instagram.gburek.app, https://meritum-reddit.gburek.app i https://meritum-tiktok.gburek.app. Makiety wdrażają się tylko z `main`, więc nie mają już aktualnej wersji dev.
 
-Kontrakty zmienia się w [meritum-core](https://github.com/Meritum-HackNation2026/meritum-core) (`src/meritum_core/checks/contracts.py`), nie tutaj. Po zmianie kontraktów na gałęzi develop workflow `bump-dependents.yml` w meritum-core otwiera tu PR z odświeżoną kopią (ADR-33). Ręcznie kopię w `contracts/` odświeża:
+Kontrakty zmienia się w [meritum-core](https://github.com/Meritum-HackNation2026/meritum-core) (`src/meritum_core/checks/contracts.py`), nie tutaj. Po zmianie kontraktów na gałęzi main workflow `bump-dependents.yml` w meritum-core otwiera tu PR z odświeżoną kopią (ADR-33). Ręcznie kopię w `contracts/` odświeża:
 
 ```bash
 contracts/sync.sh
