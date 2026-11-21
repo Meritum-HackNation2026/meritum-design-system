@@ -124,9 +124,9 @@ class FailureTexts(unittest.TestCase):
 class OutOfScopeTexts(unittest.TestCase):
     def test_audio_text_leaves_the_reason_to_limitation_codes(self) -> None:
         # design-system#89: formats and length limit come from limitation_code, not repeated here
-        text = str(lookup("out_of_scope_code.audio")).lower()
-        for word in ("format", "min", "{"):
-            self.assertNotIn(word, text)
+        text = str(lookup("out_of_scope_code.audio"))
+        for part in ("format", "{", "Przyjmujemy pliki", "Sprawdzamy nagrania do"):
+            self.assertNotIn(part, text)
 
     def test_audio_text_moved_out_of_status_hint(self) -> None:
         self.assertIsNone(lookup("status_hint.out_of_scope_audio_format"))

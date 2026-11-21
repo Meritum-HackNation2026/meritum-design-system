@@ -47,10 +47,11 @@
   }
 
   // `message` is never shown: the status line and the limitations come from contract codes through copy (the API's limitation texts only when it sent no codes)
-  const statusText = r =>
-    r.status === 'technical_failure' && r.failure_code ? T.failure_code[r.failure_code]
-      : r.status === 'out_of_scope' && r.out_of_scope_code ? T.out_of_scope_code[r.out_of_scope_code]
-        : T.status_hint[r.status];
+  const statusText = r => {
+    if (r.status === 'technical_failure' && r.failure_code) return T.failure_code[r.failure_code];
+    if (r.status === 'out_of_scope' && r.out_of_scope_code) return T.out_of_scope_code[r.out_of_scope_code];
+    return T.status_hint[r.status];
+  };
   const limitationTexts = r => (r.limitation_codes?.length ? r.limitation_codes.map(c => T.limitation_code[c]) : r.limitations || []);
 
   function resultCard(r) {
