@@ -103,6 +103,7 @@
     "ai_disclosure": "Odpowiedź przygotował system z użyciem AI. Sprawdź źródła sam: linki prowadzą do oryginałów.",
     "via_web": "znalezione w wyszukiwaniu w zatwierdzonych serwisach",
     "superseded": "Ten dowód zastąpił nowszy dokument z {date}.",
+    "superseded_undated": "Ten dowód zastąpił nowszy dokument.",
     "timeline_title": "Oś czasu dowodów",
     "what_would_change": "Co zmieniłoby werdykt",
     "stance": {
