@@ -74,6 +74,8 @@ REQUIRED_KEYS = (
     "extension.popup_delete_cancel",
     "extension.popup_deleted",
     "extension.popup_delete_failed",
+    # check form: a link longer than the contract's url.maxLength (design-system#35)
+    "errors.url_too_long",
 )
 
 
