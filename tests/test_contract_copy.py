@@ -16,6 +16,7 @@ SCHEMA = json.loads((ROOT / "contracts" / "meritum.schema.json").read_text(encod
 # copy keys in a code section that are not contract codes: a staff role outside ModeratorCase,
 # core/015 not synced yet, and status texts for one input kind
 NOT_IN_CONTRACT = {
+    "escalation.not_saved",
     "moderation.role.admin",
     "notifications.kind.eval_run_done",
     "status_hint.out_of_scope_image",

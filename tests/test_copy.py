@@ -1,6 +1,6 @@
 """Checks copy/pl.json: required screen keys and the tone of DESIGN_SYSTEM.md section 8.
 
-Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39, US-ZRD-12, F-29, US-SPR-01, US-BEZ-07, F-01, F-21, design-system#49
+Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39, US-ZRD-12, F-29, US-SPR-01, US-BEZ-07, F-01, F-21, design-system#49, design-system#52
 Run: python3 -m unittest discover -s tests
 """
 
@@ -89,6 +89,8 @@ REQUIRED_KEYS = (
     "errors.rate_limited_daily",
     # result page when GET /api/v1/checks/{id} returns 404 (design-system#49)
     "errors.check_not_found",
+    # HTTP 503 when moderator case save fails (design-system#52)
+    "escalation.not_saved",
     # page „Jak działa Meritum” (meritum-frontend#20)
     "method.lead",
     "method.sources.title",
@@ -221,6 +223,15 @@ class Tone(unittest.TestCase):
         self.assertIn("Wklej", text)
         self.assertNotIn("Spróbuj za kilka minut", text)
         self.assertNotIn(str(lookup("status_hint.technical_failure")), text)
+
+    def test_escalation_not_saved_says_retry_without_case_number(self) -> None:
+        # Gherkin "nieudany zapis sprawy" from design-system#52
+        text = lookup("escalation.not_saved")
+        self.assertIsInstance(text, str)
+        self.assertRegex(text.lower(), r"zapis")
+        self.assertIn("Spróbuj", text)
+        self.assertNotIn("{case}", text)
+        self.assertNotRegex(text, r"#S-\d+")
 
 
 if __name__ == "__main__":
