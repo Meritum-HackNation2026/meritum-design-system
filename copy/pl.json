@@ -90,7 +90,14 @@
     "what_would_change": "Co zmieniłoby werdykt",
     "transcript": "Transkrypcja nagrania",
     "transcript_hint": "Transkrypcję przygotował system automatycznie. Może zawierać błędy.",
-    "claim_review": "Ocena fact-checkera {publisher}: „{rating}”. To kontekst, a nie podstawa naszej oceny.",
+    "claim_review": "Według {publisher}: „{rating}”.",
+    "claim_review_context": "Ocena fact-checkera {publisher}: „{rating}”. To kontekst, a nie podstawa naszej oceny.",
+    "fact_check_unavailable": "Nie mogę teraz sprawdzić indeksu Google Fact Check z powodu błędu dostępu. To nie znaczy, że takiej oceny nie ma.",
+    "no_result_hint": "Brak wyniku w naszych źródłach nie oznacza, że tak nie jest.",
+    "announced_only": "Zapowiedziano to na {date}. Nie mamy informacji, czy się odbyło.",
+    "image_date_hint": "Data widoczna na obrazie nie potwierdza sama w sobie rzeczywistej daty publikacji.",
+    "match_basis": "Podstawa dopasowania: zgadzają się {fields}.",
+    "different_quantities": "Te liczby mierzą co innego: {difference}. To nie są sprzeczne dane.",
     "incident_database": {
       "organiser": "incydentów organizatora",
       "euvsdisinfo": "EUvsDisinfo (EEAS East StratCom Task Force)"
