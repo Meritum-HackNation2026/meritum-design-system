@@ -326,28 +326,43 @@ points(s, 1016, 342, 740, [("scan-search", "Warstwa kontroli przed każdym wywo�
                            ("file-check-2", "Strony skanujemy przed użyciem", "katalog przy wczytywaniu, wyniki wyszukiwania w kwarantannie"),
                            ("ban", "Model nie ma narzędzi, które coś zmieniają", "każdą próbę zapisujemy w przebiegu")], size=25, sub=23, rule=TINT_RULE, subcolor=SEA_D)
 
-# 9. Architektura
+# 9. Architektura: each cell names its real dependencies with their logos (Simple Icons, in ink)
 s = slide(8)
-layers = [("Kanały", [("globe", "Formularz WWW", "kanał podstawowy, bez konta"), ("message-circle", "Bot na Discordzie", "drugi kanał, ten sam wynik"),
-                      ("puzzle", "Wtyczka „Sprawdź”", "pod postem na 5 platformach, opcja"), ("users", "Panel moderatora", "sprawy, role, jakość")]),
-          ("Rdzeń weryfikacji", [("workflow", "Workflow DBOS z kontraktami", "kontrola poleceń, twierdzenia, wyszukiwanie, ocena dowodów, weryfikacja cytatów, "
-                                  "odpowiedź. Kontrakty z meritum-core; awaria modelu albo wyszukiwania daje „Problem techniczny”, nigdy werdykt.")]),
-          ("Porty i adaptery", [("scale", "Model", "Vertex AI w GCP, wymiana konfiguracją"), ("library", "Korpus", "wyszukiwanie hybrydowe w migawkach katalogu"),
-                                ("search", "Wyszukiwarka", "Firecrawl na żywo, tylko domeny z katalogu"), ("badge-check", "Fact-checkerzy", "Google Fact Check Tools API")]),
-          ("Zapis i uruchomienie", [("file-check-2", "Zapis przebiegu", "każde sprawdzenie: źródła, modele, region, koszt, czas, próby wstrzyknięcia poleceń; dane osobowe zamaskowane"),
-                                    ("gauge", "Jedno polecenie", "docker compose up uruchamia całość, także dla jury")])]
-y = 290
+layers = [("Kanały", [(["react", "typescript", "tailwindcss"], "Formularz WWW", "kanał podstawowy, bez konta"),
+                      (["discord"], "Bot na Discordzie", "drugi kanał, ten sam wynik"),
+                      (["googlechrome"], "Wtyczka „Sprawdź”", "pod postem na 5 platformach, opcja"),
+                      (["react", "shadcnui"], "Panel moderatora", "sprawy, role, jakość")]),
+          ("Rdzeń weryfikacji", [([("python", "Python"), ("fastapi", "FastAPI"), ("pydantic", "Pydantic AI"), (None, "DBOS")], "Workflow DBOS z kontraktami",
+                                  "kontrola poleceń, twierdzenia, wyszukiwanie, ocena dowodów, weryfikacja cytatów, odpowiedź. Kontrakty z meritum-core; "
+                                  "awaria modelu albo wyszukiwania daje „Problem techniczny”, nigdy werdykt.")]),
+          ("Porty i adaptery", [([("googlecloud", "Vertex AI")], "Model", "wymiana konfiguracją, region w UE"),
+                                ([("postgresql", "pgvector")], "Korpus", "wyszukiwanie hybrydowe w migawkach katalogu"),
+                                ([("search", "Firecrawl")], "Wyszukiwarka", "na żywo, tylko domeny z katalogu"),
+                                (["google"], "Fact-checkerzy", "Google Fact Check Tools API")]),
+          ("Zapis i uruchomienie", [([("postgresql", "PostgreSQL")], "Zapis przebiegu", "każde sprawdzenie: źródła, modele, region, koszt, czas, próby wstrzyknięcia poleceń; dane osobowe zamaskowane"),
+                                    ([("docker", "Docker")], "Jedno polecenie", "docker compose up uruchamia całość, także dla jury")])]
+y = 280
 for name, cells in layers:
-    text(s, 128, y + 22, 220, 60, name, size=22, color=INK2)
-    w = (1408 - 18 * (len(cells) - 1)) / len(cells)
-    for k, (ic, b, t) in enumerate(cells):
-        x = 384 + k * (w + 18)
+    text(s, 128, y + 20, 220, 60, name, size=22, color=INK2)
+    w = (1400 - 16 * (len(cells) - 1)) / len(cells)
+    for k, (tech, b, t) in enumerate(cells):
+        x = 392 + k * (w + 16)
         core = name == "Rdzeń weryfikacji"
         box(s, x, y, w, 158, fill=SEA_T if core else CARD, line=SEA if core else LINE, weight=2 if core else 1)
-        icon(s, ic, x + 26, y + 26)
-        text(s, x + 70, y + 20, w - 86, 40, b, size=24, bold=True)
-        text(s, x + 70, y + 60, w - 86, 90, t, size=20, color=SEA_D if core else INK2, spacing=1.35)
-    y += 176
+        tx = x + 22
+        for item in tech:
+            slug, label = item if isinstance(item, tuple) else (item, None)
+            if slug == "search":
+                icon(s, "search", tx, y + 16, 28)
+            elif slug:
+                image(s, ICONS / f"brand-{slug}.png", tx, y + 16, 28, 28)
+            tx += 40 if slug else 0
+            if label:
+                text(s, tx, y + 18, 200, 28, label, size=18, bold=True, color=INK2)
+                tx += 22 + len(label) * 10
+        text(s, x + 22, y + 56, w - 44, 36, b, size=25, bold=True)
+        text(s, x + 22, y + 92, w - 44, 64, t, size=20, color=SEA_D if core else INK2, spacing=1.35)
+    y += 172
 
 # 10. Źródła
 s = new_slide(10, TOTAL, NOTES[9])
@@ -402,7 +417,7 @@ for ic, a, b in [("quote", "Halucynacje", "dosłowna weryfikacja cytatów, werdy
 hline(s, 128, y, 1040)
 text(s, 128, y + 30, 1040, 50, "Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost.", size=32, bold=True)
 text(s, 128, y + 90, 1040, 30, "Zdjęcia: Unsplash, autorzy Ilya Semenov, camilo jimenez, Nagihan Gülmez, Maksym Kaharlytskyi, "
-     "Kate Bezzubets. Ikony: Lucide.", size=16, color=INK2)
+     "Kate Bezzubets. Ikony: Lucide. Logotypy technologii: Simple Icons, znaki należą do ich właścicieli.", size=16, color=INK2)
 
 # Theme fonts: anything typed into new text boxes defaults to Archivo too.
 theme_part = next(p for p in prs.part.package.iter_parts() if p.partname.endswith("theme1.xml"))

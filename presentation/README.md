@@ -13,7 +13,7 @@ Meritum startuje tylko w konkursie MSZ „Prawdowid”. Cały zestaw jest już p
 | `screenshots/` | zrzuty z makiet: formularz, pasek analizy, przycisk „Sprawdź” i karta wyniku pod postem, brak dowodów ze sprawą dla moderatora, sprzeczne źródła, próba wstrzyknięcia polecenia |
 | `social/` | obraz do linków (1200×630), post kwadratowy (1080×1080), story (1080×1920), baner LinkedIn (1584×396): pliki PNG gotowe do wrzucenia |
 | `photos/` | zdjęcia z Unsplash do slajdów 1, 2, 3, 10 i 12, autorzy w `photos/CREDITS.md` |
-| `icons/` | ikony Lucide (SVG, licencja ISC) i ich wersje PNG dla PPTX w `icons/png/` |
+| `icons/` | ikony Lucide (SVG, licencja ISC), w `icons/brands/` logotypy technologii ze slajdu 9 z Simple Icons (CC0; znaki należą do właścicieli), wersje PNG dla PPTX w `icons/png/` |
 | `../brand/exports/` | logo w PNG (znak, ikona aplikacji, logo ze słowem „meritum”) |
 
 ### Które logo wziąć

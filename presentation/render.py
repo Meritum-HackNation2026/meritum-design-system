@@ -104,6 +104,10 @@ def icons(b):
     for f in sorted(src.glob("*.svg")):
         inner = re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(), re.S).group(1).strip()
         syms.append(f'<symbol id="i-{f.stem}" viewBox="0 0 24 24">{re.sub(chr(10) + " *", "", inner)}</symbol>')
+    # Simple Icons (CC0) brand logos of the stack: filled single-colour paths, ids b-<slug>
+    for f in sorted((src / "brands").glob("*.svg")):
+        inner = re.sub(r"<title>.*?</title>", "", re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(), re.S).group(1))
+        syms.append(f'<symbol id="b-{f.stem}" viewBox="0 0 24 24">{inner.strip()}</symbol>')
     html = deck.read_text()
     a, z = "<!-- icons:start -->", "<!-- icons:end -->"
     assert a in html and z in html, "icon sprite markers missing in slides/index.html"
@@ -116,6 +120,10 @@ def icons(b):
             svg = f.read_text().replace('width="24"', 'width="128"').replace('height="24"', 'height="128"').replace("currentColor", colour)
             pg.set_content(f"<html><body style='margin:0;background:transparent'>{svg}</body></html>")
             pg.screenshot(path=out / f"{f.stem}{suffix}.png", omit_background=True, clip={"x": 0, "y": 0, "width": 128, "height": 128})
+    for f in sorted((src / "brands").glob("*.svg")):
+        svg = f.read_text().replace("<svg ", '<svg width="128" height="128" fill="#14191E" ', 1)
+        pg.set_content(f"<html><body style='margin:0;background:transparent'>{svg}</body></html>")
+        pg.screenshot(path=out / f"brand-{f.stem}.png", omit_background=True, clip={"x": 0, "y": 0, "width": 128, "height": 128})
 
 
 def deck(b, out):
