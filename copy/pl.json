@@ -37,6 +37,20 @@
     "account_note": "Jesteś zalogowany, więc historię przechowujemy na naszym serwerze. Możesz ją usunąć w każdej chwili.",
     "delete": "Usuń moją historię"
   },
+  "conversation": {
+    "$comment": "Conversation view of the web page (DESIGN_SYSTEM.md 6.8, design-system#79, meritum-frontend#67). label names the thread for screen readers; you is the hidden speaker name of the citizen's question; examples are claims to check, not facts, shown on the empty page and sent on click; audio_question stands in the thread for a sent recording.",
+    "label": "Rozmowa z Meritum",
+    "you": "Ty",
+    "examples_lead": "Albo sprawdź jedno z tych twierdzeń:",
+    "examples": [
+      "Od stycznia nie zapłacisz w sklepie gotówką.",
+      "Prezydent w Polsce może rządzić przez trzy kadencje.",
+      "Od 1 stycznia 2026 płaca minimalna wynosi 4806 zł."
+    ],
+    "attach_audio": "Dodaj nagranie",
+    "remove_audio": "Usuń nagranie",
+    "audio_question": "Nagranie: {name}"
+  },
   "account": {
     "optional": "Logowanie nie jest potrzebne. Zaloguj się, jeśli chcesz zachować historię po zamknięciu przeglądarki.",
     "sign_in_google": "Zaloguj się kontem Google",
