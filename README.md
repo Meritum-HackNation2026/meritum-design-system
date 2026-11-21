@@ -36,11 +36,11 @@ Z tych kluczy w `copy/pl.json` korzystają zgłoszenia frontendu:
 
 | Klucze | Zgłoszenie |
 |---|---|
-| `account.*` (logowanie i wylogowanie obywatela) | [meritum-frontend#28](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/28) |
-| `staff.sign_in.*` (logowanie personelu do panelu) | [meritum-frontend#24](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/24) |
-| `staff.admin.*` (konta personelu i tematy wysokiego ryzyka) | [meritum-frontend#31](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/31) |
-| `jury.*` (wejście z jednorazowego linku jury) | [meritum-frontend#27](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/27) |
-| `form.audio_*`, `errors.audio_*` (przesyłanie nagrania) | [meritum-frontend#22](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/22) |
+| `account.*` (logowanie i wylogowanie obywatela) | [meritum-frontend#28](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/28), frontend/017 |
+| `staff.sign_in.*` (logowanie personelu do panelu) | [meritum-frontend#24](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/24), frontend/010 |
+| `staff.admin.*` (konta personelu i tematy wysokiego ryzyka) | [meritum-frontend#31](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/31), frontend/021 |
+| `jury.*` (wejście z jednorazowego linku jury) | [meritum-frontend#27](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/27), frontend/011 |
+| `form.audio_*`, `errors.audio_*` (przesyłanie nagrania; nieobsługiwany format to istniejący `status_hint.out_of_scope_audio_format`) | [meritum-frontend#22](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/22), frontend/007 |
 
 Test kluczy i tonu (sekcja 8 w DESIGN_SYSTEM.md) uruchamia CI (`.github/workflows/copy.yml`), a lokalnie:
 

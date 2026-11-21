@@ -7,6 +7,7 @@ Run: python3 -m unittest discover -s tests
 import json
 import re
 import unittest
+from collections.abc import Iterator
 from pathlib import Path
 
 COPY = json.loads((Path(__file__).parent.parent / "copy" / "pl.json").read_text(encoding="utf-8"))
@@ -59,7 +60,7 @@ REQUIRED_KEYS = (
     "form.audio_transcription_warning",
     "errors.audio_too_large",
     "errors.audio_too_long",
-    "errors.audio_format",
+    "status_hint.out_of_scope_audio_format",
 )
 
 
@@ -73,7 +74,7 @@ def lookup(path: str) -> object:
     return node
 
 
-def texts(node: object, path: str = ""):
+def texts(node: object, path: str = "") -> Iterator[tuple[str, object]]:
     """Yields (path, text) for every user-facing string, skipping $comment."""
     if isinstance(node, dict):
         for key, value in node.items():
@@ -107,13 +108,14 @@ class Tone(unittest.TestCase):
 
     def test_expired_jury_link_says_whom_to_write_without_technical_details(self) -> None:
         # Gherkin "link jury po terminie" from design-system#9
-        text = lookup("jury.expired")
-        self.assertIsInstance(text, str)
-        self.assertIn("wygasł", text)
-        self.assertIn("{contact}", text)
-        for term in TECHNICAL_TERMS:
-            self.assertNotIn(term, text.lower())
-
+        self.assertIn("wygasł", str(lookup("jury.expired")))
+        for key in ("jury.expired", "jury.used"):
+            with self.subTest(key=key):
+                text = lookup(key)
+                self.assertIsInstance(text, str)
+                self.assertIn("{contact}", text)
+                for term in TECHNICAL_TERMS:
+                    self.assertNotIn(term, text.lower())
 
 if __name__ == "__main__":
     unittest.main()
