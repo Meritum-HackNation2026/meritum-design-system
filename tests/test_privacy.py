@@ -125,8 +125,10 @@ class Policies(unittest.TestCase):
     def test_web_sign_in_names_oauth_scopes_and_account_data(self) -> None:
         # Gherkin "polityka strony opisuje logowanie kontem Google albo Microsoft" from design-system#28
         text = " ".join(str(t) for _, t in texts(POLICIES["web"]["sign_in"])).lower()
-        for phrase in ("dobrowolne", "openid, email i profile", "imię i nazwisko", "nie dostajemy hasła",
-                       "nie używamy do reklam", "ról", "dopóki masz konto", "cofnąć"):
+        for phrase in ("dobrowolne", "openid, email i profile", "imię i nazwisko", "identyfikator konta",
+                       "nie dostajemy hasła", "poczty, plików czy kontaktów", "sesji logowania", "historii",
+                       "ról", "nie używamy do reklam", "dopóki masz konto",
+                       "cofnąć w ustawieniach konta google albo microsoft"):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, text)
 
@@ -139,6 +141,7 @@ class Policies(unittest.TestCase):
             with self.subTest(where=where):
                 self.assertIn("imię i nazwisko", text.lower())
                 self.assertIn("adres e-mail", text)
+                self.assertIn("identyfikator", text)
 
     def test_extension_explains_why_no_manual_deletion(self) -> None:
         deletion = POLICIES["extension"]["deletion"]
