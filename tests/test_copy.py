@@ -1,6 +1,6 @@
 """Checks copy/pl.json: required screen keys and the tone of DESIGN_SYSTEM.md section 8.
 
-Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16
+Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22
 Run: python3 -m unittest discover -s tests
 """
 
@@ -67,6 +67,13 @@ REQUIRED_KEYS = (
     "extension.popup_connecting",
     "extension.popup_api_ok",
     "extension.popup_api_down",
+    # extension popup: deleting the user's checks (design-system#22)
+    "extension.popup_delete",
+    "extension.popup_delete_confirm",
+    "extension.popup_delete_yes",
+    "extension.popup_delete_cancel",
+    "extension.popup_deleted",
+    "extension.popup_delete_failed",
 )
 
 

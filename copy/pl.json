@@ -57,14 +57,20 @@
     "deleted": "Usunęliśmy zapisy twoich sprawdzeń."
   },
   "extension": {
-    "$comment": "popup_* show the popup's connection to the Meritum server; {api} is its address or version (design-system#16).",
+    "$comment": "popup_* show the popup's connection to the Meritum server; {api} is its address or version (design-system#16); popup_delete* delete the checks sent from this extension (design-system#22).",
     "check": "Sprawdź",
     "checked": "Sprawdzono",
     "popup_title": "Sprawdź tekst albo link",
     "page_hint": "Wysyłamy treść posta dopiero po kliknięciu „Sprawdź”.",
     "popup_connecting": "Łączymy z serwerem Meritum…",
     "popup_api_ok": "Połączono z serwerem Meritum ({api}).",
-    "popup_api_down": "Serwer Meritum nie odpowiada. Spróbuj za kilka minut."
+    "popup_api_down": "Serwer Meritum nie odpowiada. Spróbuj za kilka minut.",
+    "popup_delete": "Usuń moje sprawdzenia",
+    "popup_delete_confirm": "Usunąć sprawdzenia wysłane z tej wtyczki? Tego nie da się cofnąć.",
+    "popup_delete_yes": "Usuń",
+    "popup_delete_cancel": "Anuluj",
+    "popup_deleted": "Usunęliśmy sprawdzenia wysłane z tej wtyczki.",
+    "popup_delete_failed": "Nie udało się usunąć sprawdzeń. Spróbuj za kilka minut."
   },
   "result": {
     "label": "Meritum",
