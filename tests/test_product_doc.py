@@ -32,26 +32,25 @@ def adr(adr_id: str) -> str:
 
 
 def days(text: str) -> set[str]:
-    """Retention periods in days named in a text ("14 dni", "po 30 dniach")."""
+    """Retention periods (exact sets, so a stray extra period also fails) in days named in a text ("14 dni", "po 30 dniach")."""
     return set(re.findall(r"(\d+) dni", text))
 
 
 class ProductDocMatchesPrivacy(unittest.TestCase):
     def test_adr13_names_ip_log_and_rate_limit_retention(self):
         text = adr("ADR-13")
-        self.assertLessEqual(days(WEB["ip_addresses"]), days(text))
-        self.assertLessEqual(days(WEB["retention"]), days(text))
+        self.assertEqual(days(WEB["ip_addresses"]) | days(WEB["retention"]), days(text))
         self.assertIn("okna limitu", WEB["ip_addresses"])
         self.assertIn("okna limitu", text)
 
     def test_rate_limit_story_names_ip_log_retention(self):
         text = story("US-BEZ-02")
-        self.assertLessEqual(days(WEB["ip_addresses"]), days(text))
+        self.assertEqual(days(WEB["ip_addresses"]), days(text))
         self.assertIn("okna limitu", text)
 
     def test_deletion_story_names_history_retention(self):
         text = story("US-BEZ-05")
-        self.assertLessEqual(days(WEB["retention"]), days(text))
+        self.assertEqual(days(WEB["retention"]), days(text))
         self.assertIn("„Usuń konto”", text)
 
     def test_controller_and_contact_match_policies(self):
