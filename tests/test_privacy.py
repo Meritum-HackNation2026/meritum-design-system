@@ -214,6 +214,9 @@ class Processors(unittest.TestCase):
                 for channel in CHANNELS:
                     self.assertIn(processor, POLICIES[channel]["processors"])
         self.assertIn("standardowych klauzul umownych", ACTIVE["openrouter"]["region"])
+        # Google Vertex keeps flagged prompts up to 90 days, so with Safety Retention off only Bedrock serves Haiku
+        self.assertIn("Amazon Bedrock", ACTIVE["anthropic"]["region"])
+        self.assertNotIn("Google", ACTIVE["anthropic"]["region"] + ACTIVE["anthropic"]["name"])
         self.assertIn("OpenRouter", " ".join(lookup("method.team.text")))
 
     def test_columns_have_headers(self) -> None:

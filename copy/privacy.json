@@ -117,8 +117,8 @@
       },
       {
         "id": "anthropic",
-        "name": "Anthropic (Claude Haiku 5.5) w Google Vertex AI albo Amazon Bedrock",
-        "region": "Bez gwarancji EOG, możliwie poza EOG. Model działa u Google (Vertex AI, global) albo Amazon (Bedrock). Podstawa przekazania to umowy OpenRouter z tymi firmami. Ich treści jeszcze nie sprawdziliśmy",
+        "name": "Anthropic (Claude Haiku 5.5) w Amazon Bedrock",
+        "region": "Bez gwarancji EOG, możliwie poza EOG. Model działa w Amazon Bedrock. Podstawa przekazania to umowa OpenRouter z Amazon. Jej treści jeszcze nie sprawdziliśmy",
         "data": "Zamaskowane twierdzenia, fragmenty źródeł i odpowiedzi modelu. Tylko wersje modelu z listy ZDR w OpenRouter",
         "purpose": "Główny model językowy"
       },
