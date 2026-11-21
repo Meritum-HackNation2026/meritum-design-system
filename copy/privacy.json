@@ -11,16 +11,22 @@
   "policies": {
     "web": {
       "title": "Polityka prywatności strony Meritum",
-      "data": "Przetwarzamy tekst albo link, który wklejasz, i nagranie, jeśli je prześlesz. Oczywiste dane osobowe (telefon, e-mail, PESEL) ukrywamy przed analizą. Konto nie jest potrzebne: sesję rozpoznajemy po losowym identyfikatorze z przeglądarki. Historia rozmowy zostaje w tej karcie przeglądarki. Jeśli zalogujesz się kontem Google albo Microsoft, zapisujemy identyfikator konta i historię sprawdzeń z ukrytymi danymi osobowymi.",
+      "data": "Przetwarzamy tekst albo link, który wklejasz, i nagranie, jeśli je prześlesz. Oczywiste dane osobowe (telefon, e-mail, PESEL) ukrywamy przed analizą. Konto nie jest potrzebne: sesję rozpoznajemy po losowym identyfikatorze z przeglądarki. Historia rozmowy zostaje w tej karcie przeglądarki. Jeśli zalogujesz się kontem Google albo Microsoft, zapisujemy imię i nazwisko, adres e-mail i identyfikator konta. Zapisujemy też historię sprawdzeń z ukrytymi danymi osobowymi.",
       "purpose": "Dane służą tylko do sprawdzenia informacji, odpowiedzi i pokazania twojej historii sprawdzeń.",
-      "retention": "Historię sprawdzeń i powiadomienia usuwamy automatycznie po 30 dniach, a wcześniej, jeśli usuniesz historię albo konto. Plik nagrania przechowujemy najwyżej tak długo jak zapis sprawdzenia. Logowanie jest opcjonalne. Identyfikator konta przechowujemy do kliknięcia „Usuń konto”.",
+      "retention": "Historię sprawdzeń i powiadomienia usuwamy automatycznie po 30 dniach, a wcześniej, jeśli usuniesz historię albo konto. Plik nagrania przechowujemy najwyżej tak długo jak zapis sprawdzenia. Logowanie jest opcjonalne. Dane konta przechowujemy do kliknięcia „Usuń konto”.",
       "deletion": "Przycisk „Usuń moje sprawdzenia” usuwa zapisy twojej sesji. Po zalogowaniu „Usuń moją historię” usuwa historię, a „Usuń konto” także konto.",
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
       "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane strony przetwarzają te podmioty:",
       "processors": ["team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "sign_in", "moderator_notifications"],
       "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
-      "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"]
+      "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"],
+      "sign_in": {
+        "title": "Logowanie kontem Google albo Microsoft",
+        "scopes": "Logowanie jest dobrowolne. Prosimy Google albo Microsoft tylko o podstawowe dane (zakresy openid, email i profile). To imię i nazwisko, adres e-mail i identyfikator konta u dostawcy. Nie dostajemy hasła ani dostępu do poczty, plików czy kontaktów.",
+        "purpose": "Te dane służą tylko do utrzymania sesji logowania, zapisania historii twoich sprawdzeń i nadania ról członkom zespołu, na przykład moderatorom. Nie sprzedajemy ich i nie używamy do reklam. Nie przekazujemy ich nikomu poza podmiotami z rejestru.",
+        "retention": "Trzymamy je, dopóki masz konto. „Usuń moją historię” usuwa historię sprawdzeń, a „Usuń konto” usuwa konto razem z historią. Dostęp aplikacji możesz też cofnąć w ustawieniach konta Google albo Microsoft."
+      }
     },
     "discord": {
       "title": "Polityka prywatności bota Meritum na Discordzie",
@@ -190,7 +196,7 @@
         "id": "sign_in",
         "name": "Google i Microsoft (logowanie)",
         "region": "USA",
-        "data": "Identyfikator konta",
+        "data": "Imię i nazwisko, adres e-mail i identyfikator konta, tylko gdy się logujesz",
         "purpose": "Opcjonalne logowanie, jeśli starczy czasu"
       },
       {
