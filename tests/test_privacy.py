@@ -161,13 +161,12 @@ class Processors(unittest.TestCase):
         for processor in ("fact_check_tools", "moderator_notifications"):
             with self.subTest(processor=processor):
                 self.assertIn("poza gwarancją EOG", ACTIVE[processor]["region"])
-        self.assertIn("europe-central2", ACTIVE["vertex_ai_embeddings"]["region"])
         # design-system#26: the app stays on the team server in Poland; only files and Vertex AI are in GCP
         self.assertEqual("Serwer zespołu w Polsce", ACTIVE["team_server"]["region"])
-        self.assertNotIn("GCP", ACTIVE["team_server"]["purpose"])
-        for processor in ("cloud_storage", "vertex_ai"):
+        self.assertNotIn("migracj", ACTIVE["team_server"]["purpose"])
+        for processor in ("cloud_storage", "vertex_ai", "vertex_ai_embeddings"):
             with self.subTest(processor=processor):
-                self.assertIn("GCP europe-central2", ACTIVE[processor]["region"])
+                self.assertEqual("GCP europe-central2 (Warszawa)", ACTIVE[processor]["region"])
         self.assertNotIn("API", ACTIVE["gcp_europe_central2"]["data"])
         self.assertIn("bez danych osobowych", ACTIVE["jasnopis"]["data"])
 

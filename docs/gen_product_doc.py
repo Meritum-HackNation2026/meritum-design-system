@@ -848,7 +848,7 @@ PROCESSORS = [
     ("Bramka SMS", "do wyboru", "numer telefonu, treść SMS-a i odpowiedź", "kanał SMS, jeśli starczy czasu (US-WTY-07)"),
     ("Google i Microsoft (logowanie)", "USA", "identyfikator konta", "opcjonalne logowanie, jeśli starczy czasu (US-SPR-10)"),
     ("Google Speech-to-Text v2 (Chirp 3)", "GCP, multi-region eu", "pliki audio i transkrypcje", "weryfikacja nagrań (ADR-30)"),
-    ("Vertex AI (embeddingi)", "GCP, region UE; dostępność modelu w europe-central2 do sprawdzenia", "zamaskowane twierdzenia, fragmenty źródeł, opisy incydentów", "wyszukiwanie, podobieństwo spraw i incydentów (ADR-04)"),
+    ("Vertex AI (embeddingi)", "GCP europe-central2 (Warszawa)", "zamaskowane twierdzenia, fragmenty źródeł, opisy incydentów", "wyszukiwanie, podobieństwo spraw i incydentów (ADR-04)"),
     ("Serwer MCP EUvsDisinfo (Vercel)", "USA", "token i nasze zapytania o kolejne strony bazy, bez danych użytkowników", "pobieranie lokalnej kopii EUvsDisinfo (ADR-26)"),
     ("Powiadomienia moderatora: Cloudflare Email Workers, Gmail API albo webhook (np. Google Chat)", "Cloudflare albo Google, region do sprawdzenia", "adres e-mail moderatora, numer i streszczenie sprawy", "powiadomienia moderatora (US-POW-05, ADR-29)"),
     ("GitHub", "USA", "kod, zgłoszenia i logi CI, bez danych użytkowników", "repozytoria i CI"),

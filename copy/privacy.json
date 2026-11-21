@@ -203,7 +203,7 @@
       {
         "id": "vertex_ai_embeddings",
         "name": "Vertex AI (embeddingi)",
-        "region": "GCP, region UE (docelowo europe-central2 albo inny dostępny region UE)",
+        "region": "GCP europe-central2 (Warszawa)",
         "data": "Zamaskowane twierdzenia, fragmenty źródeł, opisy incydentów",
         "purpose": "Wyszukiwanie, podobieństwo spraw i incydentów"
       },
