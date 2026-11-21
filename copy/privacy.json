@@ -18,7 +18,7 @@
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
       "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane strony przetwarzają te podmioty:",
-      "processors": ["team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "sign_in", "moderator_notifications"],
+      "processors": ["team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "openrouter", "anthropic", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "sign_in", "moderator_notifications"],
       "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
       "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"],
       "sign_in": {
@@ -38,7 +38,7 @@
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
       "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane tego kanału przetwarzają te podmioty:",
-      "processors": ["discord", "team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
+      "processors": ["discord", "team_server", "gcp_europe_central2", "cloud_storage", "cloudflare", "openrouter", "anthropic", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "speech_to_text", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
       "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
       "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"]
     },
@@ -51,7 +51,7 @@
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
       "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane tego kanału przetwarzają te podmioty:",
-      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
+      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "openrouter", "anthropic", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
       "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
       "planned_processors": ["cloudflare_workers_ai", "vertex_ai_ranking"]
     },
@@ -66,7 +66,7 @@
       "telemetry": "Telemetrię użycia przetwarzamy tylko do zbiorczych, liczbowych miar o wszystkich użytkownikach.",
       "ip_addresses": "Adres IP i region możemy przetwarzać, żeby liczyć limit zapytań i chronić usługę przed DDoS i innymi atakami. Licznik limitu zapytań trzymamy tylko przez czas okna limitu (minuty albo godziny), bez trwałego zapisu. Logi techniczne i bezpieczeństwa z adresem IP usuwamy automatycznie po 14 dniach. Cloudflare przechowuje swoje logi według własnej polityki retencji.",
       "processors_lead": "Dane tego kanału przetwarzają te podmioty:",
-      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "vertex_ai", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
+      "processors": ["team_server", "gcp_europe_central2", "cloudflare", "openrouter", "anthropic", "mistral_vertex", "vertex_ai_embeddings", "model_armor", "sensitive_data_protection", "vertex_ai_search", "searxng", "linkup", "crawl4ai", "firecrawl", "fact_check_tools", "moderator_notifications"],
       "planned_processors_lead": "Po włączeniu planowanych funkcji dołączą do nich:",
       "planned_processors": ["sms_gateway", "cloudflare_workers_ai", "vertex_ai_ranking"]
     }
@@ -105,15 +105,22 @@
         "id": "gcp_europe_central2",
         "name": "GCP europe-central2",
         "region": "UE (Warszawa)",
-        "data": "Przesłane pliki i wywołania modeli; aplikacja i baza tu nie działają",
-        "purpose": "Magazyn plików i modele Vertex AI"
+        "data": "Przesłane pliki i wywołania modeli wektorów, transkrypcji i maskowania danych; aplikacja i baza tu nie działają",
+        "purpose": "Magazyn plików i modele wektorów Vertex AI"
       },
       {
-        "id": "vertex_ai",
-        "name": "Vertex AI",
-        "region": "GCP europe-central2 (Warszawa)",
-        "data": "Zamaskowane pytanie, fragmenty źródeł, odpowiedzi modelu",
-        "purpose": "Wyodrębnianie twierdzeń, ocena wymowy, odpowiedź"
+        "id": "openrouter",
+        "name": "OpenRouter (pośrednik do modelu językowego)",
+        "region": "USA (OpenRouter, Inc., Nowy Jork), poza EOG. Przekazanie na podstawie standardowych klauzul umownych (moduł 2) z umowy powierzenia OpenRouter",
+        "data": "Zamaskowane twierdzenia, fragmenty źródeł i odpowiedzi modelu. Ustawienie ZDR (zero przechowywania danych): OpenRouter nie przechowuje zapytań ani odpowiedzi. Kieruje je tylko do dostawców, którzy też ich nie przechowują i nie zbierają",
+        "purpose": "Dostęp do głównego modelu językowego: wyodrębnianie twierdzeń, ocena wymowy, odpowiedź"
+      },
+      {
+        "id": "anthropic",
+        "name": "Anthropic (model Claude Haiku 5.5), uruchamiany przez Google albo Amazon",
+        "region": "Bez gwarancji EOG, możliwie poza EOG. Model działa u Google (Vertex AI, global) albo Amazon (Bedrock), z którymi umowy ma OpenRouter",
+        "data": "Zamaskowane twierdzenia, fragmenty źródeł i odpowiedzi modelu. Tylko wersje modelu z ZDR, które nie przechowują danych",
+        "purpose": "Główny model językowy"
       },
       {
         "id": "model_armor",

@@ -27,7 +27,8 @@ REQUIRED_PROCESSORS = (
     "cloud_storage",
     "cloudflare",
     "cloudflare_workers_ai",
-    "vertex_ai",
+    "openrouter",
+    "anthropic",
     "speech_to_text",
     "sensitive_data_protection",
     "vertex_ai_search",
@@ -191,14 +192,28 @@ class Processors(unittest.TestCase):
         for processor in ("fact_check_tools", "moderator_notifications"):
             with self.subTest(processor=processor):
                 self.assertIn("poza gwarancją EOG", ACTIVE[processor]["region"])
-        # design-system#26: the app stays on the team server in Poland; only files and Vertex AI are in GCP
+        # design-system#26: the app stays on the team server in Poland; only files, embeddings, transcription and masking are in GCP
         self.assertEqual("Serwer zespołu w Polsce", ACTIVE["team_server"]["region"])
         self.assertNotIn("migracj", ACTIVE["team_server"]["purpose"])
-        for processor in ("cloud_storage", "vertex_ai", "vertex_ai_embeddings"):
+        for processor in ("cloud_storage", "vertex_ai_embeddings"):
             with self.subTest(processor=processor):
                 self.assertEqual("GCP europe-central2 (Warszawa)", ACTIVE[processor]["region"])
         self.assertNotIn("API", ACTIVE["gcp_europe_central2"]["data"])
         self.assertIn("bez danych osobowych", ACTIVE["jasnopis"]["data"])
+
+    def test_language_model_runs_outside_eea_without_retention(self) -> None:
+        # design-system#56: Claude Haiku 5.5 through OpenRouter, not Vertex AI in the EU
+        self.assertNotIn("vertex_ai", ACTIVE)
+        for processor in ("openrouter", "anthropic"):
+            with self.subTest(processor=processor):
+                entry = ACTIVE[processor]
+                self.assertIn("poza eog", entry["region"].lower())
+                self.assertIn("zamaskowane twierdzenia", entry["data"].lower())
+                self.assertIn("ZDR", entry["data"])
+                for channel in CHANNELS:
+                    self.assertIn(processor, POLICIES[channel]["processors"])
+        self.assertIn("standardowych klauzul umownych", ACTIVE["openrouter"]["region"])
+        self.assertIn("OpenRouter", " ".join(lookup("method.team.text")))
 
     def test_columns_have_headers(self) -> None:
         for field in PROCESSOR_FIELDS:
