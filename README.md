@@ -7,7 +7,7 @@
 - [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md): specyfikacja dla całego zespołu i dla agentów AI (kolory, typografia, logo, komponenty, ton). Sekcja 12 to gotowe polecenie do wklejenia.
 - [PRODUCT.md](PRODUCT.md): kim są użytkownicy, co robi produkt, zasady.
 - [KEY_SELLING_POINTS.md](KEY_SELLING_POINTS.md): jak odpowiadamy na wymagania konkursu MSZ i co pokazujemy na demo.
-- [docs/product-doc.html](docs/product-doc.html): dokument produktowy dla zespołu i agentów AI: historie użytkowników, funkcje, decyzje architektoniczne (ADR), prawa autorskie i licencje, słownik pojęć.
+- [docs/product-doc.html](docs/product-doc.html): dokument produktowy dla zespołu i agentów AI: historie użytkowników, funkcje, decyzje architektoniczne (ADR), prawa autorskie i licencje, ewidencja źródeł, słownik pojęć, wiadomość do mentorów i fakty do potwierdzenia.
 
 ## Zawartość
 
@@ -17,8 +17,8 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 |---|---|
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
 | `components/meritum/` | komponenty React (shadcn/ui) typowane kontraktami: formularz, historia, przycisk „Sprawdź”, pasek analizy, karta wyniku, kolejka moderatorów. Komponenty z poprzedniego zakresu (NASK, notatki) są w `components/legacy/` i nie należą do produktu dla MSZ |
-| `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
-| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie, SMS, prywatność kanałów, panel moderatora, błędy |
+| `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia, powiadomienie. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
+| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie, SMS, Discord, informacja o AI, prywatność kanałów, panel moderatora, powiadomienia, strona ewaluacji, błędy |
 | `extension/` | zestaw wtyczki Chrome (kanał dodatkowy; drugim kanałem jest bot na Discordzie): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
 | `brand/` | logo (SVG, PNG, logotyp) |
 | `presentation/` | szablon PPTX, slajdy HTML, zrzuty demo, grafiki social |
