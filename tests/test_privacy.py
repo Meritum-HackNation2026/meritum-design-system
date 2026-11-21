@@ -166,6 +166,21 @@ class Policies(unittest.TestCase):
     def test_extension_sends_only_after_click(self) -> None:
         self.assertIn("dopiero po kliknięciu", policy_text("extension"))
 
+    def test_web_policy_lists_all_masked_data_types(self) -> None:
+        # design-system#47: web policy names every type the DLP gate hides
+        data = POLICIES["web"]["data"].lower()
+        for phrase in (
+            "telefon",
+            "e-mail",
+            "pesel",
+            "adres",
+            "dokument",
+            "konta",
+            "kart",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, data)
+
 
 class Processors(unittest.TestCase):
     def test_register_covers_adr14(self) -> None:
@@ -199,6 +214,18 @@ class Processors(unittest.TestCase):
                 self.assertEqual("GCP europe-central2 (Warszawa)", ACTIVE[processor]["region"])
         self.assertNotIn("API", ACTIVE["gcp_europe_central2"]["data"])
         self.assertIn("bez danych osobowych", ACTIVE["jasnopis"]["data"])
+
+    def test_sensitive_data_protection_region_and_data(self) -> None:
+        # design-system#47: DLP stays on the regional europe-central2 endpoint; register names what reaches it
+        item = ACTIVE["sensitive_data_protection"]
+        self.assertEqual(
+            "GCP europe-central2 (Warszawa), endpoint regionalny",
+            item["region"],
+        )
+        data = item["data"].lower()
+        self.assertIn("wejście użytkownika", data)
+        self.assertIn("wyniki kroków", data)
+        self.assertIn("przed maskowaniem", data)
 
     def test_columns_have_headers(self) -> None:
         for field in PROCESSOR_FIELDS:
