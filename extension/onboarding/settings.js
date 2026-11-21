@@ -2,7 +2,7 @@
 // (falls back to localStorage when the page is opened outside the extension, e.g. for design review).
 (async () => {
   const EXT = !!globalThis.chrome?.storage;
-  const DEFAULTS = { theme: 'auto', paused: [], guardian: false, reports: [] };
+  const DEFAULTS = { theme: 'auto', paused: [], checks: [] };
   const local = {
     get: async () => { try { return { ...DEFAULTS, ...JSON.parse(localStorage.getItem('meritum-settings') || '{}') }; } catch { return { ...DEFAULTS }; } },
     set: async v => { try { localStorage.setItem('meritum-settings', JSON.stringify({ ...(await local.get()), ...v })); } catch {} }
@@ -22,11 +22,9 @@
   for (const el of document.querySelectorAll('[data-setting]')) {
     const key = el.dataset.setting;
     if (key === 'theme') el.checked = el.value === s.theme;
-    else if (key === 'guardian') el.checked = s.guardian;
     else if (key === 'site') el.checked = !s.paused.includes(el.value);
     el.addEventListener('change', async () => {
       if (key === 'theme') { applyTheme(el.value); await store.set({ theme: el.value }); }
-      if (key === 'guardian') await store.set({ guardian: el.checked });
       if (key === 'site') {
         s = await store.get();
         const paused = el.checked ? s.paused.filter(h => h !== el.value) : [...new Set([...s.paused, el.value])];
@@ -37,8 +35,8 @@
   }
 
   document.querySelector('[data-clear]')?.addEventListener('click', async () => {
-    await store.set({ reports: [] });
-    say('Historia zgłoszeń na tym komputerze została usunięta.');
+    await store.set({ checks: [] });
+    say('Historia sprawdzeń na tym komputerze została usunięta.');
   });
   document.querySelector('[data-close]')?.addEventListener('click', () => window.close());
   const v = document.querySelector('[data-version]');

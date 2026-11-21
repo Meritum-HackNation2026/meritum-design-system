@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 
-import { MeritumLabel } from "./meritum-mark"
+import { MeritumLabel } from "../meritum/meritum-mark"
 
 export type SourceKind = "akt prawny" | "instytucja" | "media" | "encyklopedia" | "oświadczenie"
 

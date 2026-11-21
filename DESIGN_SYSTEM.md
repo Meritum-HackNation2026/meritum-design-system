@@ -118,7 +118,7 @@ Nic poniżej 12 px. Nagłówki zdaniowe (wielka litera tylko na początku), bez 
 
 ## 6. Komponenty
 
-Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Shadow DOM wtyczki w `extension/widget.css`, dane opisują kontrakty (źródłem prawdy jest repozytorium meritum-core, a w `contracts/` leży kopia pobierana skryptem `contracts/sync.sh`, której nie edytuje się ręcznie), teksty `copy/pl.json`. Bot na Discordzie i SMS nie mają własnego wyglądu: korzystają z tych samych tekstów. Odpowiedź SMS podaje werdykt głównego twierdzenia i link do pełnej karty wyniku, żeby zmieścić się w 70 znakach (polskie znaki wymuszają kodowanie UCS-2); opcją jest GSM-7 bez polskich znaków i 160 znaków (`sms`). Makieta Discorda dla jury leży w repozytorium meritum-mocks i woła to samo API co bot. Interaktywne makiety: `demo/widgets/`, przepływ na makiecie X: `demo/x/`. Makiety i komponenty pokazują jeszcze stary przepływ zgłoszenia i trzeba je przerobić według tej sekcji.
+Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Shadow DOM wtyczki w `extension/widget.css`, dane opisują kontrakty (źródłem prawdy jest repozytorium meritum-core, a w `contracts/` leży kopia pobierana skryptem `contracts/sync.sh`, której nie edytuje się ręcznie), teksty `copy/pl.json`. Bot na Discordzie i SMS nie mają własnego wyglądu: korzystają z tych samych tekstów. Odpowiedź SMS podaje werdykt głównego twierdzenia i link do pełnej karty wyniku, żeby zmieścić się w 70 znakach (polskie znaki wymuszają kodowanie UCS-2); opcją jest GSM-7 bez polskich znaków i 160 znaków (`sms`). Makieta Discorda dla jury leży w repozytorium meritum-mocks i woła to samo API co bot. Karta wyniku w skórkach pięciu platform: `demo/widgets/`, cały przepływ „Sprawdź” na makietach: `demo/live/`.
 
 ### 6.1 Formularz „Sprawdź informację” (strona WWW, kanał podstawowy)
 Jedna kolumna, działa od 320 px szerokości.
@@ -156,7 +156,7 @@ Gdy wynik nie jest werdyktem (doprecyzuj, poza zakresem, problem techniczny), ka
 Do panelu logują się osoby z kontem nadanym przez administratora, w roli moderatora, analityka albo administratora (`moderation.role`). Lista spraw: ID w mono (#S-1), krótki opis, powody słowami (sprawa może mieć kilka: „brak wystarczających dowodów”, „sprawa wysokiego ryzyka” z dopasowanym tematem, „powtarzające się pytanie bez odpowiedzi”), twierdzenia sprawy, liczba podobnych pytań, pierwsze i ostatnie wystąpienie, stan. Podobne twierdzenia trafiają do jednej sprawy, nie tworzą nowych. Panel nie pokazuje identyfikatorów z Discorda ani numerów telefonów. Panel pokazuje też jakość: medianę czasu odpowiedzi, odsetek wstrzymań, błędy wyszukiwania, wykryte próby wstrzyknięcia poleceń i szacowany koszt. Wykresy według zasad z sekcji 3: etykiety przy liniach, bez kafelków KPI z ikonami.
 
 ### 6.6 Komponenty poza zakresem MSZ
-`ScamWarningCard`, `CampaignRotation`, `BotDefenseTelemetry` i `QuickReportPopover` zostały w repozytorium z wcześniejszej wersji produktu (wątek NASK i notatek społeczności). Nie używamy ich w demo ani w materiałach na konkurs MSZ.
+`ContextCard` (notatka i ostrzeżenie o oszustwie), `CampaignRotation`, `BotDefenseTelemetry` i `QuickReportPopover` leżą w `components/legacy/` jako pozostałość wcześniejszej wersji produktu (wątek NASK i notatek społeczności). Nie używamy ich w demo ani w materiałach na konkurs MSZ.
 
 ---
 
@@ -253,12 +253,12 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 ## 13. Kto czego używa
 
 ### Strona WWW i panel (React)
-- `components/meritum/`: komponenty React (shadcn/ui). Do przerobienia na karty wyniku według sekcji 6.4; stan opisuje `components/meritum/README.md`.
+- `components/meritum/`: komponenty React (shadcn/ui) typowane kontraktami: `CheckForm` i `CheckHistory` (6.1), `CheckButton` (6.2), `AnalysisSteps` (6.3), `ResultCard` z `VerdictBadge`, `CitationItem` i `StrengthMeter` (6.4), `ModerationQueue` (6.5). Instalacja i podgląd: `components/meritum/README.md`.
 - `tokens/meritum.css`: te same tokeny dla strony, panelu i wtyczki.
 
 ### Wtyczka Chrome (programista)
 - `extension/widget.css`: style widżetu dla Shadow DOM (`:host`), tokeny jasne i ciemne, skórki platform przez `:host([data-host=…])`.
-- `extension/manifest.json` i `extension/reference/`: referencyjny skrypt (MV3) bez frameworka: wykrywa platformę, znajduje posty selektorami z `demo/platforms/SELECTORS.md`, wstawia przycisk we własnym Shadow DOM i wykrywa motyw gospodarza. Dziś gra stary przepływ „Zgłoś” na atrapie API; trzeba go zamienić na „Sprawdź” wołające to samo API co formularz WWW.
+- `extension/manifest.json` i `extension/reference/`: referencyjny skrypt (MV3) bez frameworka: wykrywa platformę, znajduje posty selektorami z `demo/platforms/SELECTORS.md`, wstawia przycisk we własnym Shadow DOM i wykrywa motyw gospodarza. Przycisk „Sprawdź” wysyła post dopiero po kliknięciu, pasek analizy i karta wyniku (`reference/card.js`) mają tę samą budowę co komponenty React. Na razie woła atrapę API (`reference/api.js`); połączenie z prawdziwym API opisuje `extension/README.md`.
 - `extension/popup/`, `extension/onboarding/`, `extension/icons/`. Opis techniczny po angielsku: `extension/README.md`.
 
 ### Backend (FastAPI)
@@ -291,7 +291,8 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 |---|---|
 | `DESIGN_SYSTEM.md` | ta specyfikacja |
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
-| `components/meritum/` | komponenty React: `ContextCard`, `AnalysisSteps`, `MeritumMark` oraz nieużywane w MSZ `QuickReportPopover`, `BotDefenseTelemetry`, `CampaignRotation` |
+| `components/meritum/` | komponenty React: `CheckForm`, `CheckHistory`, `CheckButton`, `AnalysisSteps`, `ResultCard`, `VerdictBadge`, `CitationItem`, `StrengthMeter`, `ModerationQueue`, `MeritumMark` |
+| `components/legacy/` | komponenty z wcześniejszego zakresu (NASK, notatki społeczności), poza produktem dla MSZ |
 | `contracts/` | kopia kontraktów z meritum-core, odświeżana skryptem `sync.sh`, nie do ręcznej edycji: Pydantic, JSON Schema, typy TS, przykłady |
 | `copy/pl.json` | teksty interfejsu |
 | `extension/` | zestaw wtyczki Chrome: style Shadow DOM, skrypt referencyjny, popup, onboarding, ikony |
@@ -299,7 +300,7 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 | `presentation/` | szablon PPTX, slajdy HTML, zrzuty, grafiki social, instrukcja |
 | `demo/live/` | interaktywne makiety platform na pokaz |
 | `demo/platforms/` | czyste makiety platform i `SELECTORS.md` |
-| `demo/x/`, `demo/widgets/`, `demo/logo/` | demo na X, widżet na platformach ze stanami, warianty znaku |
+| `demo/widgets/`, `demo/logo/` | karta wyniku w skórkach platform (jasna i ciemna), warianty znaku; `demo/x/` przekierowuje do `demo/live/x/` |
 | `docs/` | dokument produktowy (historie użytkowników, funkcje, ADR), źródło dla Google Docs |
 | `artifact/` | pliki opublikowanego Design System artifactu |
 | `PRODUCT.md`, `KEY_SELLING_POINTS.md` | produkt i strategia na konkurs MSZ „Prawdowid” |

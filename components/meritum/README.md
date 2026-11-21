@@ -1,47 +1,38 @@
 # Meritum components (React + shadcn/ui + Tailwind v4)
 
-Framework-agnostic React (Vite + TanStack Router in the panel, a content script in the extension).
+Components for the MSZ "Prawdowid" flow: a citizen pastes text or a link in the web form (or clicks "Sprawdź" under a post) and gets a per-claim verdict with verbatim citations. Visual spec: section 6 of `../../DESIGN_SYSTEM.md`. Props are the contract types, so the components render API responses as they come.
 
 ## Setup
 
 1. Tokens: paste `../../tokens/meritum.css` into the app's global CSS after `@import "tailwindcss";`.
-2. Fonts (Google Fonts): Archivo (wdth 75..125, wght 400..800) and Azeret Mono (400..600).
-3. shadcn primitives (Radix flavour, `asChild` API):
-   `npx shadcn@latest add button badge popover tooltip textarea input label chart`
-4. Copy this folder to `src/components/meritum/` and wrap the app in `<TooltipProvider>`.
+2. Fonts: Archivo (wdth 75..125, wght 400..800) and Azeret Mono (400..600); the frontend self-hosts them with Fontsource.
+3. shadcn primitives (Radix flavour, `asChild` API): `npx shadcn@latest add button textarea tooltip`.
+4. Copy this folder to `src/components/meritum/`, `../../contracts/meritum.ts` to `src/contracts/meritum.ts` and `../../copy/pl.json` to `src/copy/pl.json` (the components import `@/contracts/meritum` and `@/copy/pl.json`; turn on `resolveJsonModule`). Wrap the app in `<TooltipProvider>`.
 
 ## Components
 
-Meritum now targets only the MSZ "Prawdowid" challenge: a citizen pastes text or a link in the web form (or clicks "Sprawdź" under a post in the extension) and gets a per-claim verdict with verbatim citations. The visual spec is section 6 of `../../DESIGN_SYSTEM.md`.
-
-### Used in the MSZ flow
-
-| Component | Use | State |
+| Component | Spec | Props |
 |---|---|---|
-| `ContextCard` | Becomes the result card: verdict badge per claim (`confirmed`, `false`, `misleading`, `insufficient_evidence`, `not_verifiable`), explanation labelled as model interpretation, sources with publisher, date and fragment, strength with premises, unresolved, limitations, AI disclosure; non-verdict statuses without a badge. | Needs rework: still has the old `note` / `pending` / `scam` variants. |
-| `AnalysisSteps` | Processing strip between "Sprawdź" and the result; drive it from the DBOS workflow status (`AnalysisStep` codes in the contracts). | Needs the new step list. |
-| `MeritumMark`, `MeritumLabel` | Logo B; the label is mandatory in every injected widget header. | Ready. |
+| `CheckForm` | 6.1 | `onSubmit(CheckRequest)`, `pending`, `serverError` (an `errors` key), `retentionDays`, `onDeleteChecks`. Validates text (3 to 4000 characters) or a full http(s) link with `toRequest()`; keeps the text on an error. |
+| `CheckHistory` | 6.1 | `items: HistoryItem[]` (newest first), `account` (anonymous with `onSignIn`, or signed in with sign-out and delete actions), `onOpen(checkId)` |
+| `CheckButton` | 6.2 | `state: "idle" \| "pending" \| "done"`, `onClick`. Takes the host's icon colour through `--host-icon`. |
+| `AnalysisSteps` | 6.3 | `steps: AnalysisStep[]` from `AnalysisStatus`, `draft` while citations are not verified yet |
+| `ResultCard` | 6.4 | `result: CheckResult`. One block per claim; non-verdict statuses get an icon and a sentence, never a badge. Conflicting sources are shown side by side with what differs. |
+| `VerdictBadge` | 3, 6.4 | `verdict`, `size: "sm" \| "md"`. Red only for "false". |
+| `CitationItem` | 6.4 | `citation: Citation`: linked title, publisher and date, kind and tier, verbatim fragment |
+| `StrengthMeter` | 6.4 | `strength: EvidenceStrength`, `claimDate`, `claimDateSource`: word and three bars in ink, premises in words |
+| `ModerationQueue` | 6.5 | `cases: ModeratorCase[]`, `selectedId`, `onOpen(id)`. Question count is the sum of checks over a case's claims. |
+| `MeritumMark`, `MeritumLabel` | 2 | Logo B; the label heads every card. |
+| `t`, `fill`, `formatDate` | | the `copy/pl.json` object, `{placeholder}` filling, Polish dates |
 
-Still to build: the web form ("Sprawdź informację"), the extension "Sprawdź" button and the moderator queue (sections 6.1, 6.2, 6.5 of the spec).
+`Hint` and `InfoButton` hang tooltips off real buttons, so keyboard users reach every explanation.
 
-### Legacy (NASK and community notes), not used in the demo
+In the extension, render inside a Shadow DOM root and inject the compiled CSS there; set `data-host="x|facebook|instagram|reddit|tiktok"` on the root for the platform skin and `class="dark"` when the host is dark. The framework-free twin of `ResultCard` and `AnalysisSteps` is `../../extension/reference/card.js`.
 
-| Component | Was |
-|---|---|
-| `QuickReportPopover` | "Zgłoś" button and report form. Replaced by the "Sprawdź" flow. |
-| `BotDefenseTelemetry` | Live Dashboard of a bot attack on a note. |
-| `CampaignRotation` | Campaign view: domain lifetimes, platform sum, shared traces. |
+## Legacy
 
-## In the extension
-
-Render inside a Shadow DOM root and inject the compiled CSS there, so host styles cannot leak in or out.
-Set `data-host="x|facebook|instagram|reddit|tiktok"` on the root to pick the platform skin, and
-`class="dark"` when the host is in dark mode.
-
-## Contracts
-
-Props should mirror the API contracts. Their single source of truth is the meritum-core repository; `../../contracts/` holds a synced copy (refreshed with `contracts/sync.sh`, never edited by hand) (Pydantic models, generated `meritum.ts` types and JSON Schema): `CheckResult`, `ClaimResult`, `Citation`, `Source`, `EvidenceStrength`, `AnalysisStatus`, `ModeratorCase`. The components still declare their own older types; switch them to `meritum.ts` during the rework. UI strings come from `../../copy/pl.json`.
+`../legacy/` keeps the components of the earlier scope (NASK fake ads and community notes): `ContextCard`, `QuickReportPopover`, `BotDefenseTelemetry`, `CampaignRotation`. They are not part of the MSZ product.
 
 ## Checked
 
-`tsc --strict --noUncheckedIndexedAccess` and `biome check` (a11y rules on) pass against stubbed shadcn primitives. Tooltips hang off real buttons (an info icon or the domain name), so keyboard users reach every explanation.
+Type-checked with `tsc` (strict, `noUncheckedIndexedAccess`) and linted with `biome lint` inside a copy of meritum-frontend, and rendered there on the contract examples (`contracts/examples.json`) in light and dark mode at 1280 px and 375 px.

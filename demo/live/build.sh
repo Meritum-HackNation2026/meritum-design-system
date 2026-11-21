@@ -8,6 +8,7 @@ for p in x facebook instagram reddit tiktok; do
   sed -e 's#"\.\./assets/#"../../platforms/assets/#g' \
       -e 's#<title>\(.*\)</title>#<title>\1, demo Meritum</title>#' \
       -e 's#</body>#<script src="../../../extension/reference/api.js"></script>\
+<script src="../../../extension/reference/card.js"></script>\
 <script src="../../../extension/reference/content.js"></script>\
 <script src="../demo.js"></script>\
 </body>#' \

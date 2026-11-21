@@ -7,7 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 
-import { MeritumMark } from "./meritum-mark"
+import { MeritumMark } from "../meritum/meritum-mark"
 
 export type ReportKind = "manipulation" | "scam"
 
