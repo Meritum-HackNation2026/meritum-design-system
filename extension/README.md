@@ -15,7 +15,7 @@ The real Manifest V3 extension is built in the [meritum-extension](https://githu
 ## Load it
 
 1. `chrome://extensions`, turn on Developer mode, **Load unpacked**, pick this `extension/` folder.
-2. Serve `design-system/` on port 52990 (`python3 -m http.server 52990` from `design-system/`) and open `http://localhost:52990/demo/platforms/x/` (or `facebook`, `instagram`, `reddit`, `tiktok`; add `?theme=dark`).
+2. Open a deployed mock: https://meritum-x.gburek.app (or `meritum-facebook`, `meritum-instagram`, `meritum-reddit`, `meritum-tiktok`; the dev versions end in `-dev`, e.g. https://meritum-x-dev.gburek.app; add `?theme=dark`). They are served by [meritum-mocks](https://github.com/Meritum-HackNation2026/meritum-mocks) from a copy of `demo/platforms/`. To test changes to the mocks before they are deployed, serve `design-system/` locally on port 52990 (`python3 -m http.server 52990` from `design-system/`) and open `http://localhost:52990/demo/platforms/x/`.
 
 `manifest.json` lives at the extension root, not in `reference/`: Chrome only loads files under the manifest's folder, and the popup, icons and `widget.css` sit next to `reference/`.
 
@@ -25,7 +25,7 @@ Without installing anything: `demo/live/<platform>/` loads the same `reference/a
 
 | Path | What it is |
 |---|---|
-| `manifest.json` | MV3 manifest: content scripts for x.com, twitter.com, facebook.com, instagram.com, reddit.com, tiktok.com and `http://localhost:52990/*`; `widget.css` is web-accessible; permissions `storage`, `activeTab` |
+| `manifest.json` | MV3 manifest: content scripts for x.com, twitter.com, facebook.com, instagram.com, reddit.com, tiktok.com, the deployed mocks (`https://*.gburek.app/*`) and `http://localhost:52990/*`; `widget.css` is web-accessible; permissions `storage`, `activeTab` |
 | `widget.css` | Widget styles for Shadow DOM. Built from `demo/meritum.css` (same class names) + `tokens/meritum.css` |
 | `reference/content.js` | Content script: platform detection, post discovery, injection, theme detection; still the old report popover and send / analysis / reveal flow |
 | `reference/api.js` | Mocked API, `MeritumAPI.submitReport()`: to be removed (see below) |
