@@ -77,7 +77,7 @@
     ]
   },
   "CheckRecord": {
-    "check_id": "c_02", "channel": "extension",
+    "check_id": "c_02", "session_id": "s_7f3a9c21", "channel": "extension",
     "received_at": "2026-11-21T14:02:11+01:00", "answered_at": "2026-11-21T14:02:24+01:00",
     "question_masked": "Wczoraj w Gdańsku wyłączono wszystkie bankomaty. Dzwońcie [TELEFON].",
     "status": "done", "verdicts": ["insufficient_evidence"], "source_ids": [], "corpus_version": "2026-11-21.1",

@@ -751,6 +751,13 @@
           "title": "Check Id",
           "type": "string"
         },
+        "session_id": {
+          "description": "Random id kept in the browser; no account.",
+          "maxLength": 64,
+          "minLength": 8,
+          "title": "Session Id",
+          "type": "string"
+        },
         "channel": {
           "enum": [
             "web",
@@ -861,6 +868,7 @@
       },
       "required": [
         "check_id",
+        "session_id",
         "channel",
         "received_at",
         "answered_at",

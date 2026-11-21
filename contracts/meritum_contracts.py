@@ -130,9 +130,16 @@ class Premises(_Model):
     agreement: Agreement
 
 
+STALE_AFTER_DAYS = 365  # newer evidence needed above this age; caps strength and marks the claim archival
+
+
+def is_stale(p: Premises) -> bool:
+    return p.newest_source_age_days is not None and p.newest_source_age_days > STALE_AFTER_DAYS
+
+
 def strength_for(p: Premises) -> Strength:
     """The one rule that turns premises into strength. Shown to the user next to the premises."""
-    if p.agreement == "consistent" and p.independent_sources >= 2 and p.primary_sources >= 1:
+    if p.agreement == "consistent" and p.independent_sources >= 2 and p.primary_sources >= 1 and not is_stale(p):
         return "strong"
     if p.agreement == "consistent" and p.independent_sources >= 1:
         return "moderate"
@@ -191,10 +198,14 @@ class ClaimResult(_Model):
                 raise ValueError("'confirmed' needs a supporting citation")
             if self.verdict == "false" and "refutes" not in stances:
                 raise ValueError("'false' needs a refuting citation")
+            if self.verdict == "misleading" and ("context" not in stances or self.technique is None):
+                raise ValueError("'misleading' needs a context citation and the technique it uses")
         if self.verdict == "insufficient_evidence" and not self.unresolved:
             raise ValueError("'insufficient_evidence' must say what could not be established")
-        if self.verdict == "confirmed" and self.strength and self.strength.premises.agreement == "conflicting":
-            raise ValueError("conflicting sources cannot confirm a claim")
+        if self.verdict in ("confirmed", "false") and self.strength and self.strength.premises.agreement == "conflicting":
+            raise ValueError("conflicting sources cannot settle a claim as confirmed or false")
+        if self.strength and is_stale(self.strength.premises) and not self.archival:
+            raise ValueError(f"evidence older than {STALE_AFTER_DAYS} days must be marked archival")
         return self
 
 
@@ -285,6 +296,7 @@ class CheckRecord(_Model):
     """Audit log of one check (MSZ MVP: question, time, sources, result; plus observability)."""
 
     check_id: str
+    session_id: Annotated[str, Field(min_length=8, max_length=64, description="Random id kept in the browser; no account.")]
     channel: Channel
     received_at: datetime
     answered_at: datetime

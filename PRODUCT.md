@@ -11,7 +11,7 @@ web
 - **Cloud:** GCP (`europe-central2`) and Cloudflare. A public demo for the jury plus `docker compose` to run everything locally.
 - **API:** Python, FastAPI, FastMCP, Pydantic, Pydantic AI, DBOS (durable workflows). Ruff and Ty in strict mode.
 - **Architecture:** vertical slices by core domain with hexagonal architecture inside each; every domain repeats the same subfolders (`models/`, `dtos/`, `ports/`, `adapters/`, …). Channels (web form, extension, MCP, optional Discord) are inbound adapters; the LLM, the web search and the corpus store are outbound adapters behind ports, so a model or provider can be swapped without rebuilding the system. TDD. Architecture tests with pytestarch, behaviour specs with behave.
-- **Database:** PostgreSQL with pgvector and full-text search (hybrid retrieval over the corpus).
+- **Database:** PostgreSQL with pgvector, Polish full-text search (ispell dictionary in our own container image, since managed Cloud SQL cannot load one) and pg_trgm; hybrid retrieval over the corpus.
 - **Web search:** a `WebSearch` port; first adapter Firecrawl (search and content extraction), restricted to catalogue domains. Scheduled RSS and sitemap ingestion runs as DBOS workflows without any third-party search.
 - **Frontend:** React, shadcn/ui with shadcnblocks, TanStack Router, TanStack Query, Tailwind CSS v4, Biome in strict mode.
 - **Extension:** Chrome MV3; a „Sprawdź” button under posts and a paste box in the popup, both calling the same API as the web form. It runs on the demo mocks (design-system/demo/platforms/) and on the real sites; injected UI renders in Shadow DOM.
@@ -37,7 +37,7 @@ Honest by construction: the language model reads, searches and writes, but a ver
 
 ## Operating Context
 
-- Primary channel: a responsive web form. Second channel: the Chrome extension (button under posts plus the popup paste box). Both use the same verification core and must give the same result for the same input and corpus version. We confirm with the MSZ mentors that the extension counts as an equivalent channel; a Discord bot on the same API is the fallback.
+- Primary channel: a responsive web form. Second channel: the Chrome extension (button under posts plus the popup paste box). Both use the same verification core and must give the same result for the same input and corpus version. We confirm with the MSZ mentors that the extension counts as an equivalent channel. A Discord bot on the same API is built from the start, so the two-channel requirement holds either way.
 - The extension injects UI into third-party feeds in light and dark themes. Per-platform skins (X, Facebook, Instagram, Reddit, TikTok) adapt font, radius, surface, borders and links; the Meritum mark, the verdict word and colour, and the sources block never change. It sends content only after the user clicks.
 - Demo for the jury: the same question asked in the web form and on an X mock through the extension, a sourced verdict, an honest abstention with a moderator case, an ignored prompt-injection attempt, and the evaluation results on the reference set. Film under 3 minutes, deck under 12 slides.
 - The jury runs it from our instructions, end to end, with no manual help. Nothing in the answer may depend on hard-coded examples.

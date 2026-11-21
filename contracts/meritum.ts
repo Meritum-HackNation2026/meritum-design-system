@@ -98,6 +98,10 @@ export type InputTokens = number;
 export type OutputTokens = number;
 export type CostUsd = number;
 export type CheckId2 = string;
+/**
+ * Random id kept in the browser; no account.
+ */
+export type SessionId = string;
 export type Channel1 = "web" | "extension" | "discord" | "mcp";
 export type ReceivedAt = string;
 export type AnsweredAt = string;
@@ -320,6 +324,7 @@ export interface ModelUsage {
  */
 export interface CheckRecord {
   check_id: CheckId2;
+  session_id: SessionId;
   channel: Channel1;
   received_at: ReceivedAt;
   answered_at: AnsweredAt;

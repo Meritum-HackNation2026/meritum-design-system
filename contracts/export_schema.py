@@ -51,10 +51,16 @@ must_reject("settling verdict without citations", lambda: c.CheckResult.model_va
 must_reject("'confirmed' backed only by a refuting citation", lambda: c.CheckResult.model_validate(with_claim(verdict="confirmed")))
 must_reject("strength that does not follow the premises", lambda: c.CheckResult.model_validate(with_claim(strength={"level": "strong", "premises": claim["strength"]["premises"]})))
 must_reject("insufficient evidence without saying what is missing", lambda: c.CheckResult.model_validate(with_claim(verdict="insufficient_evidence", unresolved=None)))
+conflicting = {"level": "weak", "premises": {"independent_sources": 2, "primary_sources": 1, "agreement": "conflicting"}}
+must_reject("'false' despite conflicting sources", lambda: c.CheckResult.model_validate(with_claim(strength=conflicting)))
+must_reject("'misleading' without context or technique", lambda: c.CheckResult.model_validate(with_claim(verdict="misleading")))
+stale = {"level": "moderate", "premises": claim["strength"]["premises"] | {"newest_source_age_days": 900}}
+must_reject("stale evidence not marked archival", lambda: c.CheckResult.model_validate(with_claim(strength=stale)))
+c.CheckResult.model_validate(with_claim(strength=stale, archival=True))
 must_reject("finished check without limitations", lambda: c.CheckResult.model_validate(done | {"limitations": []}))
 must_reject("technical failure shown with claims", lambda: c.CheckResult.model_validate(examples["CheckResult.failure"] | {"claims": done["claims"]}))
 must_reject("recommendation dressed up as a hand-off", lambda: c.Escalation.model_validate({"state": "recommended", "case_id": "#S-1"}))
 must_reject("hand-off without a case", lambda: c.Escalation.model_validate({"state": "created"}))
 must_reject("request with neither text nor URL", lambda: c.CheckRequest.model_validate({"channel": "web", "text": "  "}))
 must_reject("citation whose fragment was not found", lambda: c.Citation.model_validate(claim["citations"][0] | {"fragment_found_verbatim": False}))
-print(f"ok: {len(defs)} schema definitions, {len(examples)} examples valid, 10 rules hold")
+print(f"ok: {len(defs)} schema definitions, {len(examples)} examples valid, 13 rules hold")

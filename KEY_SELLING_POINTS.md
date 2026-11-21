@@ -25,7 +25,7 @@ Na slajd: *Sprawdź, zanim podasz dalej. Każde ustalenie ma źródło.*
 | Działanie end-to-end bez ręcznej ingerencji | Jedna ścieżka: przyjęcie, twierdzenia, wyszukiwanie, werdykt, odpowiedź, zapis przebiegu. Workflow DBOS, uruchamiany przez `docker compose` albo na publicznym demo. |
 | Brak sfabrykowanych źródeł | Cytat przechodzi tylko wtedy, gdy fragment występuje dosłownie w tekście źródła z korpusu. Inaczej odpada przed pokazaniem. |
 | Wstrzymanie się przy braku dowodów | Werdykt „brak wystarczających dowodów” z opisem, czego nie ustaliliśmy. Kontrakt odrzuca taki werdykt bez tego opisu. |
-| Dwa kanały | Formularz WWW (podstawowy) i przycisk „Sprawdź” we wtyczce Chrome pod postem oraz okienko do wklejenia w popupie. Ten sam rdzeń, ten sam wynik. Zapas: bot na Discordzie na tym samym API. |
+| Dwa kanały | Formularz WWW (podstawowy) i przycisk „Sprawdź” we wtyczce Chrome pod postem oraz okienko do wklejenia w popupie. Ten sam rdzeń, ten sam wynik. Bot na Discordzie na tym samym API budujemy od początku, więc warunek dwóch kanałów nie zależy od decyzji mentorów. |
 
 ### Minimalny zakres (MVP)
 
@@ -58,7 +58,7 @@ Na slajd: *Sprawdź, zanim podasz dalej. Każde ustalenie ma źródło.*
 2. **Zamknięta pętla informacji:** sprawy moderatora i grupowanie podobnych pytań.
 3. **Otwarty katalog źródeł** z zasadami kwalifikowania, aktualizowania i wykluczania (`CatalogEntry`).
 4. **Wielojęzyczne wyszukiwanie** z odpowiedzią po polsku.
-5. **Dopasowanie do bazy incydentów** od organizatora jako kontekst, nigdy jako werdykt.
+5. **Dopasowanie do bazy incydentów** od organizatora jako kontekst, nigdy jako werdykt. Scenariusz I jest w zestawie jury, więc budujemy to w MVP.
 6. **Zrzut ekranu z OCR** (scenariusz F), z jawnymi ograniczeniami.
 7. **Eksport JSON i CSV**, kody technik zmapowane na DISARM.
 8. **Przetwarzanie w EOG** tam, gdzie to możliwe, i opis drogi do samodzielnego hostowania (otwarty model na własnym serwerze z GPU, europejski indeks wyszukiwania).
@@ -158,9 +158,9 @@ Demo działa na prawdziwym korpusie i prawdziwym API. Żadna odpowiedź nie jest
 
 ## 10. Zakres na hackathon
 
-**Budujemy:** formularz WWW, „Sprawdź” we wtyczce i w popupie, rdzeń weryfikacji (twierdzenia, wyszukiwanie hybrydowe, werdykt, cytaty, przesłanki), korpus z katalogiem, cykliczne RSS i wyszukiwanie Firecrawl w domenach z katalogu, zapis przebiegu, sprawy moderatora z deduplikacją, ochronę przed wstrzykiwaniem poleceń, skrypt ewaluacji, `docker compose`, publiczne demo.
+**Budujemy:** formularz WWW, „Sprawdź” we wtyczce i w popupie, rdzeń weryfikacji (twierdzenia, wyszukiwanie hybrydowe, werdykt, cytaty, przesłanki), korpus z katalogiem, cykliczne RSS i wyszukiwanie Firecrawl w domenach z katalogu, zapis przebiegu, sprawy moderatora z deduplikacją, ochronę przed wstrzykiwaniem poleceń, dopasowanie do bazy incydentów, bota na Discordzie, skrypt ewaluacji (także na pliku jury), `docker compose`, publiczne demo, materiały z §4.
 
-**Jeśli starczy czasu:** OCR zrzutu ekranu, dopasowanie do bazy incydentów, eksport JSON i CSV z kodami DISARM, serwer MCP, bot na Discordzie (obowiązkowo, jeśli mentorzy nie uznają wtyczki za kanał).
+**Jeśli starczy czasu:** OCR zrzutu ekranu, ostrzeżenie o statusie źródła, wyszukiwanie wielojęzyczne, eksport JSON i CSV z kodami DISARM, serwer MCP.
 
 **Pomijamy:** konta użytkowników, wyszukiwanie odwrotne obrazu, transkrypcję nagrań, konsensus pomostowy przy publikacji odpowiedzi moderatorów (pomysł na później).
 
