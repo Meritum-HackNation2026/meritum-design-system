@@ -144,10 +144,19 @@ class Policies(unittest.TestCase):
                 self.assertIn("adres e-mail", text)
                 self.assertIn("identyfikator", text)
 
-    def test_extension_explains_why_no_manual_deletion(self) -> None:
+    def test_extension_deletes_from_the_popup(self) -> None:
+        # Gherkin "polityka wtyczki opisuje usuwanie z okienka" from design-system#31 (meritum-extension#24)
         deletion = POLICIES["extension"]["deletion"]
-        self.assertIn("identyfikatora", deletion)
-        self.assertIn("30 dniach", deletion)
+        self.assertIn("„Usuń moje sprawdzenia”", deletion)
+        self.assertIn("nowy losowy identyfikator", deletion)
+        self.assertIn("losowy identyfikator", POLICIES["extension"]["data"])
+        self.assertIn("tylko w przeglądarce", policy_text("extension"))
+
+    def test_every_purpose_counts_repetitions(self) -> None:
+        # Gherkin "cel przetwarzania obejmuje liczenie powtórzeń w każdym kanale" from design-system#31
+        for channel in CHANNELS:
+            with self.subTest(channel=channel):
+                self.assertIn("powtórze", POLICIES[channel]["purpose"])
 
     def test_mcp_clients_are_separate_controllers(self) -> None:
         self.assertNotIn("mcp_chat_apps", PROCESSORS)
