@@ -18,7 +18,7 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
 | `components/meritum/` | komponenty React (shadcn/ui) typowane kontraktami: formularz, historia, przycisk „Sprawdź”, pasek analizy, karta wyniku, kolejka moderatorów. Komponenty z poprzedniego zakresu (NASK, notatki) są w `components/legacy/` i nie należą do produktu dla MSZ |
 | `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia, powiadomienie. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
-| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie, SMS, Discord, informacja o AI, prywatność kanałów, panel moderatora, powiadomienia, strona ewaluacji, błędy |
+| `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie obywatela i personelu, administracja kontami i tematami, link jury, przesyłanie nagrania, SMS, Discord, informacja o AI, prywatność kanałów, panel moderatora, powiadomienia, strona ewaluacji, błędy. Test `tests/test_copy.py` pilnuje wymaganych kluczy i tonu |
 | `extension/` | zestaw wtyczki Chrome (kanał dodatkowy; drugim kanałem jest bot na Discordzie): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
 | `brand/` | logo (SVG, PNG, logotyp) |
 | `presentation/` | szablon PPTX, slajdy HTML, zrzuty demo, grafiki social |
@@ -29,6 +29,24 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 | `artifact/` | pliki opublikowanego Design System artifactu |
 
 Komponenty, wtyczka i makiety pokazują przepływ „Sprawdź” z kontraktów (`contracts/`) i tekstami z `copy/pl.json`. Wtyczka i makiety wołają jeszcze atrapę API (`extension/reference/api.js`). Slajdy i grafiki w `presentation/` pokazują jeszcze produkt sprzed zmiany zakresu.
+
+## Teksty ekranów logowania, administracji, linku jury i nagrania
+
+Z tych kluczy w `copy/pl.json` korzystają zgłoszenia frontendu:
+
+| Klucze | Zgłoszenie |
+|---|---|
+| `account.*` (logowanie i wylogowanie obywatela) | [meritum-frontend#28](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/28) |
+| `staff.sign_in.*` (logowanie personelu do panelu) | [meritum-frontend#24](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/24) |
+| `staff.admin.*` (konta personelu i tematy wysokiego ryzyka) | [meritum-frontend#31](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/31) |
+| `jury.*` (wejście z jednorazowego linku jury) | [meritum-frontend#27](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/27) |
+| `form.audio_*`, `errors.audio_*` (przesyłanie nagrania) | [meritum-frontend#22](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/22) |
+
+Test kluczy i tonu (sekcja 8 w DESIGN_SYSTEM.md) uruchamia CI (`.github/workflows/copy.yml`), a lokalnie:
+
+```bash
+python3 -m unittest discover -s tests
+```
 
 ## Podgląd online
 

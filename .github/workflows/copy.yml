@@ -1,0 +1,20 @@
+name: Copy
+
+# Checks copy/pl.json: the keys screens need and the tone of DESIGN_SYSTEM.md
+# section 8 (tests/test_copy.py, standard library only). Runs on the GCP runners.
+on:
+  push:
+    branches: ["**"]
+    paths: ["copy/**", "tests/**", ".github/workflows/copy.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  keys:
+    runs-on: [self-hosted, meritum]
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Copy keys and tone
+        run: python3 -m unittest discover -s tests -v
