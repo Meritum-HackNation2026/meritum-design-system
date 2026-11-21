@@ -41,10 +41,10 @@ Kolejność slajdów (12, tyle pozwala treść zadania):
 3. Użytkownicy: obywatel (także o niskich kompetencjach cyfrowych) i moderator lub analityk.
 4. Jak to działa: cztery kroki, pięć werdyktów, reguła siły podstawy z przesłanek.
 5. Demo, formularz WWW: formularz „Sprawdź informację” i pasek analizy.
-6. Demo, pod postem: „Sprawdź” na makiecie X i karta wyniku z cytatami i siłą podstawy.
+6. Kanały: ten sam tekst i ten sam werdykt na stronie (telefon), na Discordzie, we wtyczce i w SMS-ie (ten ostatni „jeśli starczy czasu”).
 7. Uczciwa niepewność: „Brak wystarczających dowodów”, sprawa dla moderatora, sprzeczne źródła obok siebie.
 8. Prompt injection: polecenie ukryte w tekście nie zmienia werdyktu i trafia do zapisu przebiegu.
-9. Architektura: kanały (formularz, Discord, wtyczka, panel) oddzielone od rdzenia, wymienne porty.
+9. Architektura: kanały (formularz, Discord, wtyczka, panel, SMS) oddzielone od rdzenia, wymienne porty, logotypy technologii.
 10. Źródła: dwa typy, katalog do audytu, niezależność według wydawcy, aktualność.
 11. Wyniki testów: mierniki i cele z treści zadania; kolumna wyników czeka na skrypt ewaluacji.
 12. Ryzyka i dalsze kroki, w tym koszt 1 000 zapytań z pomiaru.
@@ -89,6 +89,7 @@ Które stany są w `screenshots/` i gdzie ich używamy:
 | `web-01-form.png` | formularz „Sprawdź informację” przed wysłaniem | 5 |
 | `widgets-01-steps.png` | pasek analizy w trakcie | 5 |
 | `x-02-false.png`, `x-02-card.png` | post i karta wyniku „Fałszywe” z cytatami i siłą podstawy | 1, 6 |
+| `channel-mobile.png`, `channel-discord.png`, `channel-sms.png` | ten sam tekst na stronie w telefonie, u bota na Discordzie i w SMS-ie (makiety z `shots/web.html`) | 6 |
 | `x-03-abstain.png`, `x-03-card.png` | „Brak wystarczających dowodów” i sprawa #S-4 dla moderatorów | 7 |
 | `widgets-02-conflict.png` | sprzeczne źródła obok siebie | 7 |
 | `web-02-injection-input.png`, `web-03-injection-log.png` | tekst z ukrytym poleceniem i wpis w zapisie przebiegu | 8 |

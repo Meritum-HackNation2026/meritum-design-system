@@ -113,6 +113,17 @@ p,li,td,th{font-size:28px;line-height:1.4}
 .rule p{font-size:24px;color:var(--sea-d)}
 .rule b{color:var(--ink);font-weight:650}
 
+/* 6 channels: four columns, one input */
+.chans{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:40px}
+.ch-h{display:flex;align-items:center;gap:12px;font-size:30px;font-weight:700}
+.ch-h .logo{width:30px;height:30px;fill:var(--ink)}
+.ch-s{font-size:21px;color:var(--ink2);margin:2px 0 16px}
+.ch .crop{max-height:470px}
+.ch .crop img{width:100%;display:block}
+.ch .cap{font-size:19px}
+.ch code,.s-chan code{font-family:var(--mono);font-size:18px;letter-spacing:-.02em}
+.s-chan>.cap{margin-top:20px}
+
 /* 8 injection */
 .inj .mid{display:flex;align-items:center;gap:16px;margin:24px 0;font-size:26px}
 .inj .mid .ic{color:var(--ink2)}
@@ -301,20 +312,25 @@ body.notes #notes{display:block}
  <aside>Pokaz na żywo: formularz. Wklejamy tekst z dwoma twierdzeniami. Pasek analizy pokazuje kroki, w tym kontrolę ukrytych poleceń i sprawdzenie, czy cytaty są dosłowne. Konto nie jest potrzebne, dane osobowe maskujemy przed analizą, zapis usuwamy po 30 dniach. Drugi obowiązkowy kanał to bot na Discordzie na tym samym rdzeniu: ten sam tekst, ten sam wynik.</aside>
 </section>
 
-<!-- 6. Demo: pod postem -->
-<section class="slide">
- <h2>Ten sam wynik pod postem, po kliknięciu „Sprawdź”</h2>
- <div class="two" style="grid-template-columns:600px 1fr;gap:80px;margin-top:40px">
-  <div class="crop" style="height:660px"><img src="../screenshots/x-02-false.png" width="600" alt="Post o płaskiej Ziemi na makiecie X z kartą wyniku Fałszywe pod spodem"></div>
-  <div><ul class="pts">
-   <li><svg class="ic"><use href="#i-scale"/></svg><b>Werdykt dla twierdzenia, nie dla autora</b><span>„Fałszywe”, z&nbsp;krótkim wyjaśnieniem oznaczonym jako interpretacja AI</span></li>
-   <li><svg class="ic"><use href="#i-quote"/></svg><b>Dosłowny cytat, wydawca, data, link</b><span>fragment sprawdzamy w&nbsp;kodzie, zanim trafi do odpowiedzi</span></li>
-   <li><svg class="ic"><use href="#i-badge-check"/></svg><b>Siła z&nbsp;przesłanek: umiarkowana</b><span>2 niezależnych wydawców, 0 urzędowych, źródła zgodne</span></li>
-   <li><svg class="ic"><use href="#i-scan-search"/></svg><b>Technika i&nbsp;ograniczenia</b><span>„Teoria spiskowa” z&nbsp;podpowiedzią, jak ją rozpoznać; zawsze sekcja „Ograniczenia”</span></li>
-  </ul>
-  <p class="cap">Makieta X z&nbsp;demo/live/x/, odpowiedź z&nbsp;atrapy API. Przykład do pokazu, cytaty ilustracyjne.</p></div>
+<!-- 6. Kanały: one input, the same verdict everywhere -->
+<section class="slide s-chan">
+ <h2>Ten sam tekst daje ten sam werdykt w&nbsp;każdym kanale</h2>
+ <div class="chans">
+  <div class="ch"><p class="ch-h"><svg class="ic"><use href="#i-globe"/></svg>Strona WWW</p><p class="ch-s">kanał podstawowy, bez instalacji</p>
+   <div class="crop"><img src="../screenshots/channel-mobile.png" alt="Formularz Sprawdź informację na telefonie i karta wyniku Fałszywe pod nim"></div>
+   <p class="cap">Wklejasz tekst albo link, karta wyniku pojawia się pod formularzem.</p></div>
+  <div class="ch"><p class="ch-h"><svg class="logo" role="img" aria-label="Discord"><use href="#b-discord"/></svg>Discord</p><p class="ch-s">drugi kanał: serwer i&nbsp;wiadomość prywatna</p>
+   <div class="crop"><img src="../screenshots/channel-discord.png" alt="Bot Meritum na Discordzie odpowiada na /sprawdz werdyktem Fałszywe z cytatem i linkiem"></div>
+   <p class="cap"><code>/sprawdz</code> albo „Sprawdź w&nbsp;Meritum” przy cudzej wiadomości. Odpowiedź widzi tylko pytający.</p></div>
+  <div class="ch"><p class="ch-h"><svg class="logo" role="img" aria-label="Chrome"><use href="#b-googlechrome"/></svg>Wtyczka</p><p class="ch-s">kanał dodatkowy, dla jury opcja</p>
+   <div class="crop"><img src="../screenshots/x-02-false.png" alt="Post o płaskiej Ziemi na makiecie X z kartą wyniku Fałszywe pod spodem"></div>
+   <p class="cap">„Sprawdź” pod postem na X, Facebooku, Instagramie, Reddicie i&nbsp;TikToku.</p></div>
+  <div class="ch"><p class="ch-h"><svg class="ic"><use href="#i-smartphone"/></svg>SMS</p><p class="ch-s">jeśli starczy czasu</p>
+   <div class="crop"><img src="../screenshots/channel-sms.png" alt="SMS z tekstem i odpowiedź: Fałszywe. Wynik: link"></div>
+   <p class="cap">W&nbsp;70 znakach werdykt głównego twierdzenia i&nbsp;link do pełnego wyniku. „USUN” kasuje zapisy z&nbsp;numeru.</p></div>
  </div>
- <aside>Pokaz na żywo: demo/live/x/. Kliknij „Sprawdź” pod postem o płaskiej Ziemi i poczekaj na kartę. Pokaż werdykt, cytaty z wydawcą i datą oraz linijkę z przesłankami pod siłą podstawy. Wtyczka działa też na Facebooku, Instagramie, Reddicie i TikToku, w stylu każdej platformy. Treść posta wysyłamy dopiero po kliknięciu. Wtyczka to kanał dodatkowy: wymóg dwóch kanałów spełniają formularz i Discord.</aside>
+ <p class="cap">Wszystkie kanały wołają to samo API. Spójność kanałów mierzy skrypt ewaluacji; cel z&nbsp;zadania to 100% próby. Makiety, przykład do pokazu; format odpowiedzi bota i&nbsp;link są przykładowe.</p>
+ <aside>Jedno pytanie, cztery kanały, ten sam werdykt: to wymóg spójności kanałów z treści zadania. Pokaz na żywo: ten sam tekst w formularzu i na Discordzie (komenda /sprawdz albo „Sprawdź w Meritum” z menu Aplikacje przy wiadomości; odpowiedź jest prywatna). Wtyczkę na demo/live/x/ pokazujemy, jeśli starczy czasu; dla jury jest opcjonalna. SMS budujemy tylko wtedy, gdy starczy czasu: w 70 znakach werdykt głównego twierdzenia i link, opłaty operatora podane jawnie. Odpowiedź bota w obecnym kodzie to jeszcze komunikat startowy, więc ta makieta pokazuje format docelowy.</aside>
 </section>
 
 <!-- 7. Uczciwa niepewność -->
@@ -360,8 +376,8 @@ body.notes #notes{display:block}
   <div class="layer"><span>Kanały</span><div class="cells">
    <div class="cell"><div class="tech"><svg class="logo" role="img" aria-label="react"><use href="#b-react"/></svg><svg class="logo" role="img" aria-label="typescript"><use href="#b-typescript"/></svg><svg class="logo" role="img" aria-label="tailwindcss"><use href="#b-tailwindcss"/></svg></div><b>Formularz WWW</b><p>kanał podstawowy, bez konta</p></div>
    <div class="cell"><div class="tech"><svg class="logo" role="img" aria-label="discord"><use href="#b-discord"/></svg></div><b>Bot na Discordzie</b><p>drugi kanał, ten sam wynik</p></div>
-   <div class="cell"><div class="tech"><svg class="logo" role="img" aria-label="googlechrome"><use href="#b-googlechrome"/></svg></div><b>Wtyczka „Sprawdź”</b><p>pod postem na 5 platformach, opcja</p></div>
-   <div class="cell"><div class="tech"><svg class="logo" role="img" aria-label="react"><use href="#b-react"/></svg><svg class="logo" role="img" aria-label="shadcnui"><use href="#b-shadcnui"/></svg></div><b>Panel moderatora</b><p>sprawy, role, jakość</p></div></div></div>
+   <div class="cell"><div class="tech"><svg class="logo" role="img" aria-label="googlechrome"><use href="#b-googlechrome"/></svg></div><b>Wtyczka</b><p>„Sprawdź” pod postem na 5 platformach, opcja</p></div>
+   <div class="cell"><div class="tech"><svg class="logo" role="img" aria-label="react"><use href="#b-react"/></svg><svg class="logo" role="img" aria-label="shadcnui"><use href="#b-shadcnui"/></svg></div><b>Panel moderatora</b><p>sprawy, role, jakość</p></div><div class="cell"><div class="tech"><svg class="ic"><use href="#i-smartphone"/></svg></div><b>SMS</b><p>bramka SMS, jeśli starczy czasu</p></div></div></div>
   <div class="layer"><span>Rdzeń weryfikacji</span><div class="cells">
    <div class="cell core"><div class="tech"><svg class="logo" role="img" aria-label="Python"><use href="#b-python"/></svg><span>Python</span><svg class="logo" role="img" aria-label="FastAPI"><use href="#b-fastapi"/></svg><span>FastAPI</span><svg class="logo" role="img" aria-label="Pydantic AI"><use href="#b-pydantic"/></svg><span>Pydantic AI</span><span>DBOS</span></div><b>Workflow DBOS z&nbsp;kontraktami</b><p>kontrola poleceń, twierdzenia, wyszukiwanie, ocena dowodów, weryfikacja cytatów, odpowiedź. Kontrakty z&nbsp;meritum-core; awaria modelu albo wyszukiwania daje „Problem techniczny”, nigdy werdykt.</p></div></div></div>
   <div class="layer"><span>Porty i&nbsp;adaptery</span><div class="cells">

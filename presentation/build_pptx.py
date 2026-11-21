@@ -294,14 +294,28 @@ points(s, 128, 840, 1040, [("globe", "Kanał podstawowy, bez konta", "teksty z c
 shot(s, "widgets-01-steps.png", 1232, 300, 560)
 cap(s, 1232, 870, 560, "Pasek analizy. Agenty szukają równolegle, więc kilka kroków trwa naraz. Przykład do pokazu.")
 
-# 6. Pod postem
-s = slide(5)
-shot(s, "x-02-false.png", 128, 300, 600, 660)
-points(s, 808, 300, 984, [("scale", "Werdykt dla twierdzenia, nie dla autora", "„Fałszywe”, z krótkim wyjaśnieniem oznaczonym jako interpretacja AI"),
-                          ("quote", "Dosłowny cytat, wydawca, data, link", "fragment sprawdzamy w kodzie, zanim trafi do odpowiedzi"),
-                          ("badge-check", "Siła z przesłanek: umiarkowana", "2 niezależnych wydawców, 0 urzędowych, źródła zgodne"),
-                          ("scan-search", "Technika i ograniczenia", "„Teoria spiskowa” z podpowiedzią, jak ją rozpoznać; zawsze sekcja „Ograniczenia”")])
-cap(s, 808, 760, 984, "Makieta X z demo/live/x/, odpowiedź z atrapy API. " + EXAMPLE)
+# 6. Kanały: one input, the same verdict everywhere
+s = slide(5, title_w=1000)
+chans = [("icon", "globe", "Strona WWW", "kanał podstawowy, bez instalacji", "channel-mobile.png",
+          "Wklejasz tekst albo link, karta wyniku pojawia się pod formularzem."),
+         ("brand", "discord", "Discord", "drugi kanał: serwer i wiadomość prywatna", "channel-discord.png",
+          "/sprawdz albo „Sprawdź w Meritum” przy cudzej wiadomości. Odpowiedź widzi tylko pytający."),
+         ("brand", "googlechrome", "Wtyczka", "kanał dodatkowy, dla jury opcja", "x-02-false.png",
+          "„Sprawdź” pod postem na X, Facebooku, Instagramie, Reddicie i TikToku."),
+         ("icon", "smartphone", "SMS", "jeśli starczy czasu", "channel-sms.png",
+          "W 70 znakach werdykt głównego twierdzenia i link do pełnego wyniku. „USUN” kasuje zapisy z numeru.")]
+for k, (kind, ic, name, status, img, note) in enumerate(chans):
+    x = 128 + k * 424
+    if kind == "icon":
+        icon(s, ic, x, 292, 32)
+    else:
+        image(s, ICONS / f"brand-{ic}.png", x, 292, 32, 32)
+    text(s, x + 44, 284, 340, 44, name, size=30, bold=True)
+    text(s, x, 332, 392, 30, status, size=19, color=INK2)
+    pic = shot(s, img, x, 378, 392, 470)
+    cap(s, x, 378 + pic.height / 6350 + 18, 392, note)
+cap(s, 128, 930, 1664, "Wszystkie kanały wołają to samo API. Spójność kanałów mierzy skrypt ewaluacji; cel z zadania to 100% próby. "
+    "Makiety, przykład do pokazu; format odpowiedzi bota i link są przykładowe.")
 
 # 7. Uczciwa niepewność
 s = slide(6)
@@ -330,8 +344,9 @@ points(s, 1016, 342, 740, [("scan-search", "Warstwa kontroli przed każdym wywo�
 s = slide(8)
 layers = [("Kanały", [(["react", "typescript", "tailwindcss"], "Formularz WWW", "kanał podstawowy, bez konta"),
                       (["discord"], "Bot na Discordzie", "drugi kanał, ten sam wynik"),
-                      (["googlechrome"], "Wtyczka „Sprawdź”", "pod postem na 5 platformach, opcja"),
-                      (["react", "shadcnui"], "Panel moderatora", "sprawy, role, jakość")]),
+                      (["googlechrome"], "Wtyczka", "„Sprawdź” pod postem na 5 platformach, opcja"),
+                      (["react", "shadcnui"], "Panel moderatora", "sprawy, role, jakość"),
+                      ([("smartphone", None)], "SMS", "bramka SMS, jeśli starczy czasu")]),
           ("Rdzeń weryfikacji", [([("python", "Python"), ("fastapi", "FastAPI"), ("pydantic", "Pydantic AI"), (None, "DBOS")], "Workflow DBOS z kontraktami",
                                   "kontrola poleceń, twierdzenia, wyszukiwanie, ocena dowodów, weryfikacja cytatów, odpowiedź. Kontrakty z meritum-core; "
                                   "awaria modelu albo wyszukiwania daje „Problem techniczny”, nigdy werdykt.")]),
@@ -352,8 +367,8 @@ for name, cells in layers:
         tx = x + 22
         for item in tech:
             slug, label = item if isinstance(item, tuple) else (item, None)
-            if slug == "search":
-                icon(s, "search", tx, y + 16, 28)
+            if slug in ("search", "smartphone"):  # Lucide stand-in where no brand logo applies
+                icon(s, slug, tx, y + 16, 28)
             elif slug:
                 image(s, ICONS / f"brand-{slug}.png", tx, y + 16, 28, 28)
             tx += 40 if slug else 0

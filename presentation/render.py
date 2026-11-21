@@ -77,6 +77,8 @@ def shots(b, out):
     pg.locator("#form").screenshot(path=out / "web-01-form.png")
     pg.locator("#inj-in").screenshot(path=out / "web-02-injection-input.png")
     pg.locator("#inj-log").screenshot(path=out / "web-03-injection-log.png")
+    for part in ("mobile", "discord", "sms"):  # slide 6: one input, the same verdict in every channel
+        pg.locator(f"#{part}").screenshot(path=out / f"channel-{part}.png")
     ctx.close()
 
 
