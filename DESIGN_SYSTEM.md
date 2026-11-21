@@ -123,8 +123,8 @@ Kod React (shadcn/ui, Tailwind v4) leży w `components/meritum/`, wersja dla Sha
 ### 6.1 Formularz „Sprawdź informację” (strona WWW, kanał podstawowy)
 Jedna kolumna, działa od 320 px szerokości.
 1. Tytuł „Sprawdź informację” i jedno zdanie, co się stanie.
-2. Pole „Tekst albo link” (do 4000 znaków), przyjmuje wklejony tekst albo pełny adres zaczynający się od http:// albo https://. Pod nim drugorzędny przycisk „Albo nagranie (plik audio)” (`form.audio_label`). Nad polem jedno zdanie, że odpowiada system AI (`ai_notice.first_contact`).
-3. Przycisk główny „Sprawdź”, aktywny od 3 znaków albo poprawnego linku. W trakcie: „Sprawdzamy…” i pasek analizy (6.3).
+2. Pole „Tekst albo link” (do 4000 znaków), przyjmuje wklejony tekst albo pełny adres zaczynający się od http:// albo https:// (do 2083 znaków, jak `CheckRequest.url`). Pod nim drugorzędny przycisk „Albo nagranie (plik audio)” (`form.audio_label`). Nad polem jedno zdanie, że odpowiada system AI (`ai_notice.first_contact`).
+3. Przycisk główny „Sprawdź”, aktywny zawsze poza wysyłką. Za krótki tekst, za długi albo błędny link dają po kliknięciu komunikat pod polem (`errors`). W trakcie: „Sprawdzamy…” i pasek analizy (6.3).
 4. Pod przyciskiem informacja o prywatności: konto nie jest potrzebne, maskowanie oczywistych danych osobowych, termin usunięcia zapisu, link „Usuń moje sprawdzenia”.
 5. Pod formularzem lista „Twoje sprawdzenia” (`history`): sprawdzenia z tej rozmowy, od najnowszego; kliknięcie otwiera kartę wyniku. Bez logowania lista pochodzi z sessionStorage, a notatka mówi, że zniknie po zamknięciu karty. Pusta lista pokazuje `history.empty`.
 6. Przy liście opcjonalne logowanie (`account`): dwa przyciski drugorzędne „Zaloguj się kontem Google” i „Zaloguj się kontem Microsoft” oraz zdanie, że logowanie nie jest potrzebne. Po zalogowaniu historia jest na serwerze, a w miejscu przycisków są „Usuń moją historię”, „Usuń konto i historię” i „Wyloguj się”.
