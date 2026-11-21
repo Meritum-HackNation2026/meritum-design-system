@@ -44,7 +44,7 @@
       explanation: 'W zatwierdzonych źródłach nie ma wypowiedzi tej osoby o takiej inwestycji. Nie rozstrzygamy, czy reklama kłamie, dopóki źródło tego nie potwierdzi.',
       unresolved: 'Czy Tomasz Rewiński wypowiadał się o tej inwestycji w swoich oficjalnych kanałach.',
       technique: 'impersonation',
-      incident: { incident_id: 'cert-inwestycje', matched_on: 'domain', title: 'Fałszywe inwestycje z wizerunkiem znanych osób', date: '2025-06-10', url: 'https://cert.pl/lista-ostrzezen/', similarity: 0.82 },
+      incident: { incident_id: 'cert-inwestycje', matched_on: 'domain', match_basis: ['domain', 'topic'], title: 'Fałszywe inwestycje z wizerunkiem znanych osób', date: '2025-06-10', url: 'https://cert.pl/lista-ostrzezen/', similarity: 0.82 },
     }],
     escalation: { state: 'created', case_id: '#S-4' },
     limitations: ['Nie oceniamy samej reklamy ani firmy, tylko twierdzenie o wypowiedzi.', EXAMPLE],
