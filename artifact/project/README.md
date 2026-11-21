@@ -34,7 +34,7 @@ Znak **„Dwa łuki”**: małe „m” z dwóch łuków. Łuki to twierdzenie i
 - Pole ochronne: wysokość kropki nad „m” z każdej strony.
 - Trzon i kropka zawsze w kolorze akcentu (`#1D6A86` jasno, `#5DB3CF` ciemno). Łuki w kolorze tekstu.
 - W widżecie na platformach znak ma 14 px i stoi przed słowem „Meritum” w małym nagłówku.
-- Gotowe pliki PNG (512, 1024), ikony 16 do 512 px i poziomy logotyp z podtytułem są w `brand/exports/`. Pliki z podtytułem pokazują jeszcze stary tekst „oraz scamu” i trzeba je wygenerować ponownie.
+- Gotowe pliki PNG (512, 1024), ikony 16 do 512 px i poziomy logotyp z podtytułem są w `brand/exports/`. Logotyp z podtytułem ma tekst „obywatelski radar dezinformacji”.
 
 **Nie wolno:** obracać znaku, dodawać cienia ani gradientu, zmieniać koloru trzonu na inny niż akcent, umieszczać znaku obok logotypów platform tak, jakby był ich częścią, ani rozciągać go.
 
