@@ -12,14 +12,25 @@ Framework-agnostic React (Vite + TanStack Router in the panel, a content script 
 
 ## Components
 
-| Component | Use |
+Meritum now targets only the MSZ "Prawdowid" challenge: a citizen pastes text or a link in the web form (or clicks "Sprawdź" under a post in the extension) and gets a per-claim verdict with verbatim citations. The visual spec is section 6 of `../../DESIGN_SYSTEM.md`.
+
+### Used in the MSZ flow
+
+| Component | Use | State |
+|---|---|---|
+| `ContextCard` | Becomes the result card: verdict badge per claim (`confirmed`, `false`, `misleading`, `insufficient_evidence`, `not_verifiable`), explanation labelled as model interpretation, sources with publisher, date and fragment, strength with premises, unresolved, limitations, AI disclosure; non-verdict statuses without a badge. | Needs rework: still has the old `note` / `pending` / `scam` variants. |
+| `AnalysisSteps` | Processing strip between "Sprawdź" and the result; drive it from the DBOS workflow status (`AnalysisStep` codes in the contracts). | Needs the new step list. |
+| `MeritumMark`, `MeritumLabel` | Logo B; the label is mandatory in every injected widget header. | Ready. |
+
+Still to build: the web form ("Sprawdź informację"), the extension "Sprawdź" button and the moderator queue (sections 6.1, 6.2, 6.5 of the spec).
+
+### Legacy (NASK and community notes), not used in the demo
+
+| Component | Was |
 |---|---|
-| `QuickReportPopover` | "Zgłoś" button injected into a post's action bar + the report form. `onSubmit` returns a promise. |
-| `AnalysisSteps` | Processing strip between "Wysłane" and the result; drive it from the DBOS workflow status. |
-| `ContextCard` | `variant="note" | "pending" | "scam"`. `sources` is a non-empty tuple: a card without a source does not type-check. |
-| `BotDefenseTelemetry` | Live Dashboard widget; totals are summed from `series`, so the sum line always closes. |
-| `CampaignRotation` | Campaign view (NASK): domain lifetimes (dead grey, active red, predicted dashed), platform sum that closes, shared traces. |
-| `MeritumMark`, `MeritumLabel` | Logo B; the label is mandatory in every injected widget header. |
+| `QuickReportPopover` | "Zgłoś" button and report form. Replaced by the "Sprawdź" flow. |
+| `BotDefenseTelemetry` | Live Dashboard of a bot attack on a note. |
+| `CampaignRotation` | Campaign view: domain lifetimes, platform sum, shared traces. |
 
 ## In the extension
 
@@ -29,7 +40,7 @@ Set `data-host="x|facebook|instagram|reddit|tiktok"` on the root to pick the pla
 
 ## Contracts
 
-Props mirror the API contracts in `../../contracts/` (Pydantic source of truth, generated `meritum.ts` types and JSON Schema). UI strings come from `../../copy/pl.json`.
+Props should mirror the API contracts in `../../contracts/` (Pydantic source of truth, generated `meritum.ts` types and JSON Schema): `CheckResult`, `ClaimResult`, `Citation`, `Source`, `EvidenceStrength`, `AnalysisStatus`, `ModeratorCase`. The components still declare their own older types; switch them to `meritum.ts` during the rework. UI strings come from `../../copy/pl.json`.
 
 ## Checked
 

@@ -2,13 +2,15 @@
 
 Ten folder jest dla osób, które robią slajdy, posty i grafiki o Meritum, a nie piszą kodu. Wszystko tutaj wygląda tak samo jak produkt: te same kolory, kroje pisma i logo. Zasady, z których to wynika, są w `../DESIGN_SYSTEM.md`, a treść pitchu w `../KEY_SELLING_POINTS.md`.
 
+**Uwaga: Meritum startuje teraz tylko w konkursie MSZ „Prawdowid”.** Szablon `meritum-template.pptx`, `slides/index.html`, zrzuty w `screenshots/`, grafiki w `social/` i logotypy z podtytułem w `../brand/exports/` pokazują jeszcze stary produkt na dwa konkursy (zgłoszenia, kampanie, atak botów, podtytuł „oraz scamu”). Trzeba je wygenerować od nowa według sekcji „Deck na konkurs MSZ” poniżej. Do tego czasu nie wysyłaj ich jury.
+
 ## Co jest w zestawie
 
 | Plik | Do czego |
 |---|---|
-| `meritum-template.pptx` | szablon PowerPoint / Google Slides / Keynote, 10 gotowych slajdów |
-| `slides/index.html` | ta sama prezentacja w przeglądarce, z notatkami prowadzącego |
-| `screenshots/` | zrzuty demo: zgłoszenie, notatka, ostrzeżenie o oszustwie, widżet na 5 platformach |
+| `meritum-template.pptx` | szablon PowerPoint / Google Slides / Keynote (do przerobienia na deck MSZ) |
+| `slides/index.html` | ta sama prezentacja w przeglądarce, z notatkami prowadzącego (do przerobienia) |
+| `screenshots/` | zrzuty demo (stare: zgłoszenie, notatka, ostrzeżenie o oszustwie; do podmiany na formularz, kartę wyniku, wtyczkę i panel) |
 | `social/` | obraz do linków (1200×630), post kwadratowy (1080×1080), story (1080×1920), baner LinkedIn (1584×396): pliki PNG gotowe do wrzucenia |
 | `../brand/exports/` | logo w PNG (znak, ikona aplikacji, logo ze słowem „meritum”) |
 
@@ -26,9 +28,30 @@ Ten folder jest dla osób, które robią slajdy, posty i grafiki o Meritum, a ni
 
 Pliki `.svg` obok to te same logotypy w wersji wektorowej (dla grafików).
 
+## Deck na konkurs MSZ
+
+Wymagania z treści zadania: PDF, najwyżej 12 slajdów, a w nich problem, użytkownicy, architektura, demonstracja, wyniki testów, ryzyka i dalsze kroki. Osobno film demonstracyjny pod linkiem, najwyżej 3 minuty.
+
+Proponowana kolejność (12 slajdów):
+
+1. Tytuł: Meritum, podtytuł „obywatelski radar dezinformacji”, nazwa zespołu.
+2. Problem: pogłoska dociera kanałem, którego używa obywatel, a sprawdzenie wymaga wiedzy i czasu.
+3. Użytkownicy: obywatel (także o niskich kompetencjach cyfrowych) i moderator lub analityk.
+4. Jak to działa: wklejasz tekst albo link, dostajesz werdykt dla każdego twierdzenia z cytatem i źródłem.
+5. Demo, kanał WWW: zrzut formularza i karty wyniku.
+6. Demo, drugi kanał: „Sprawdź” pod postem we wtyczce, ten sam wynik co na stronie.
+7. Uczciwa niepewność: „Brak wystarczających dowodów”, czego nie ustaliliśmy, przekazanie sprawy moderatorom.
+8. Architektura: kanały oddzielone od rdzenia weryfikacji, wymienny model, korpus i wyszukiwanie w zatwierdzonych serwisach, zapis przebiegu.
+9. Źródła: katalog, typy źródeł, licencje, sposób kwalifikacji i aktualizacji.
+10. Wyniki testów: mierniki z sekcji 6 zadania, zmierzone na naszym zestawie, z linkiem do danych.
+11. Ryzyka: halucynacje, stronniczość źródeł, prywatność, prompt injection, dostępność, nadużycia.
+12. Dalsze kroki i koszt: koszt 1 000 zapytań, droga do pilotażu.
+
+Każda liczba na slajdzie 10 musi pochodzić z uruchomionych testów i dać się odtworzyć. Liczby z makiet podpisujemy „dane symulowane”.
+
 ## Szablon PPTX
 
-Slajdy w szablonie (w tej kolejności): tytuł, problem, teza „Jeden fejk, cała kampania”, zrzuty demo, konsensus dwóch grup, kampania #K-118, atak botów, architektura, zespół i prośba, zamknięcie z hasłami. Każdy ma notatki prowadzącego.
+Obecny szablon ma jeszcze 10 slajdów starej wersji. Po przerobieniu będzie miał układ z sekcji wyżej. Każdy slajd ma notatki prowadzącego.
 
 **Najpierw kroje pisma.** Szablon używa Archivo (cały tekst) i Azeret Mono (tylko liczby, godziny, nazwy kont, domeny). Jeśli ich nie ma, program podstawi inny krój i tekst się rozjedzie.
 
@@ -39,35 +62,34 @@ Slajdy w szablonie (w tej kolejności): tytuł, problem, teza „Jeden fejk, ca�
 **Jak pracować z szablonem**
 - Zrób kopię pliku i pracuj na kopii.
 - Nowy slajd = duplikat podobnego slajdu (prawy przycisk → „Duplikuj slajd”), potem podmień tekst. Nie zaczynaj od pustego slajdu.
-- Wykres na slajdzie „Atak odparty” jest edytowalny: prawy przycisk → „Edytuj dane”. Jeśli zmienisz liczby, popraw też sumę pod wykresem, żeby się domykała (oddane = liczone + odrzucone).
-- Na slajdzie „Zespół” wpisz imiona w miejsce „[Imię Nazwisko]”.
+- Wykresy wyników testów wypełniaj tylko liczbami z raportu testów (prawy przycisk → „Edytuj dane”).
+- Na slajdzie tytułowym wpisz imiona w miejsce „[Imię Nazwisko]”.
 - Zrzuty możesz podmienić na nowe (prawy przycisk na obrazku → „Zmień obraz”), zachowując rozmiar.
 
 ## Prezentacja HTML i eksport do PDF
 
 1. Otwórz `slides/index.html` w Chrome (dwuklik na pliku). Potrzebny jest internet, bo kroje ładują się z Google Fonts.
 2. Strzałki ← → (albo spacja, klik) zmieniają slajdy. Klawisz **N** pokazuje notatki prowadzącego na dole ekranu. **F11** (Windows) lub **Ctrl+Cmd+F** (Mac) to pełny ekran.
-3. **PDF:** Ctrl+P (Mac: Cmd+P) → Miejsce docelowe: „Zapisz jako PDF” → Więcej ustawień → Marginesy: „Brak”, zaznacz „Grafika tła” → Zapisz. Wychodzi 10 stron, jeden slajd na stronę, w formacie 16:9.
+3. **PDF:** Ctrl+P (Mac: Cmd+P) → Miejsce docelowe: „Zapisz jako PDF” → Więcej ustawień → Marginesy: „Brak”, zaznacz „Grafika tła” → Zapisz. Wychodzi jeden slajd na stronę, w formacie 16:9. Do jury idzie najwyżej 12 stron.
 
 ## Spójne zrzuty ekranu z demo
 
-Zrzuty w `screenshots/` zrobiono automatycznie. Jeśli robisz nowe ręcznie, trzymaj się tych ustawień, żeby wyglądały tak samo:
+Obecne zrzuty w `screenshots/` pokazują starą wersję. Nowe rób na działającym prototypie, nie na makietach z wpisanymi odpowiedziami. Trzymaj się tych ustawień, żeby wyglądały tak samo:
 
-- **Okno przeglądarki 1440 × 900**, powiększenie strony 100%, Chrome.
-- **Tryb jasny** (w demo przycisk „Tryb jasny/ciemny” albo klawisz T). Jedna prezentacja = jeden tryb.
+- **Okno przeglądarki 1440 × 900**, powiększenie strony 100%, Chrome. Dla wersji na telefon: 390 × 844.
+- **Tryb jasny.** Jedna prezentacja = jeden tryb.
 - Kursor odsuń od kart, żeby nie było podświetleń ani dymków.
-- Demo na X: `http://localhost:52990/demo/x/` (serwer uruchamia ktoś z zespołu technicznego). Klawisz R zaczyna od nowa.
 
 Które stany uchwycić:
 
-| Plik | Co zrobić |
+| Co | Po co |
 |---|---|
-| `x-01-feed.png` | sam feed po otwarciu strony |
-| `x-02-report-popover.png` | kliknij „Zgłoś” pod postem „Prawda o Ziemi”, zaznacz „Teoria spiskowa” |
-| `x-03-analysis.png` | kliknij „Wyślij zgłoszenie”, po ok. 2,5 s widać pasek analizy z krokami |
-| `x-04-context-note.png`, `x-04-card.png` | po ok. 5 s pod postem jest notatka „Kontekst od społeczności” |
-| `x-05-scam-warning.png`, `x-05-card.png` | to samo z reklamą „Finanse Dziś”: „Zgłoś” → „Fałszywy wizerunek znanej osoby” → wyślij, odczekaj ok. 6 s |
-| `widgets-*.png` | strona `http://localhost:52990/demo/widgets/`: ta sama karta na 5 platformach i wszystkie stany |
+| formularz „Sprawdź informację” przed wysłaniem i pasek analizy w trakcie | slajd 5 |
+| karta wyniku z co najmniej dwoma twierdzeniami i cytatami | slajdy 4 i 5 |
+| przycisk „Sprawdź” pod postem we wtyczce i karta wyniku pod postem | slajd 6 |
+| karta z werdyktem „Brak wystarczających dowodów” i informacją o przekazaniu sprawy | slajd 7 |
+| stan „Problem techniczny” | slajd 11 (awaria nie jest werdyktem) |
+| kolejka moderatorów i panel jakości | slajdy 7 i 10 |
 
 Dla zespołu technicznego: wszystkie PNG da się odtworzyć poleceniami z folderu `design-system/`:
 
@@ -82,16 +104,16 @@ uv run --with python-pptx python presentation/build_pptx.py     # szablon PPTX
 
 | Rób tak | Nie rób tak |
 |---|---|
-| Jedna myśl na slajd, tytuł do dwóch linii: „Notatka wychodzi, gdy zgodzą się obie strony” | Trzy akapity i lista punktorów na jednym slajdzie |
+| Jedna myśl na slajd, tytuł do dwóch linii: „Gdy dowodów brakuje, mówimy to wprost” | Trzy akapity i lista punktorów na jednym slajdzie |
 | Tło `#F6F7F5`, białe karty z cienką szarą ramką | Gradienty, fiolet, neonowe poświaty, zielony tekst na czarnym tle |
-| Czerwień `#C8213A` tylko przy oszustwie i ataku, zawsze ze słowem („Oszustwo”) albo znakiem frontu (linia z trzema trójkątami) | Czerwone nagłówki „dla uwagi”, czerwone tło całego slajdu |
-| Prawdziwe zrzuty Meritum z `screenshots/` | Zdjęcia stockowe, ludzie przy laptopach, kłódki i tarcze |
-| Liczby z demo z dopiskiem „dane symulowane” | „Wykrywamy 98% oszustw” albo każda liczba, której nie zmierzyliśmy |
-| „Gotowe do integracji z CERT Polska” | „Współpracujemy z NASK / CERT Polska / MSZ”, dopóki to nieprawda |
-| Fikcyjny prezenter „Tomasz Rewiński” i wymyślone domeny | Twarz albo nazwisko prawdziwej osoby jako oszusta |
-| „Żaden przepis nie zakazuje płacenia gotówką w sklepach.” | „FAŁSZ! Ten post kłamie!” |
-| Nagłówki zdaniowe: „Atak odparty, notatka bez zmian” | NAPISY WERSALIKAMI nad nagłówkami, emoji, wykrzykniki |
-| Wykres z etykietą przy linii i sumą, która się domyka | Kafelki z ikoną i dużą liczbą, legenda daleko od linii |
+| Czerwień `#C8213A` tylko przy werdykcie „Fałszywe”, zawsze ze słowem | Czerwone nagłówki „dla uwagi”, czerwone tło całego slajdu |
+| Prawdziwe zrzuty działającego Meritum | Zdjęcia stockowe, ludzie przy laptopach, kłódki i tarcze |
+| Wyniki testów z raportu, z linkiem do danych; liczby z makiet z dopiskiem „dane symulowane” | „Trafność 98%” albo każda liczba, której nie zmierzyliśmy |
+| Przykłady z prawdziwymi, sprawdzalnymi źródłami z korpusu | Wymyślone źródła, cytaty albo daty |
+| „Gotowe do integracji z OpenCTI” | „Współpracujemy z MSZ”, dopóki to nieprawda |
+| „Fałszywe. Konstytucja pozwala na dwie kadencje prezydenta, nie trzy.” | „FAŁSZ! Ten post kłamie!” |
+| Nagłówki zdaniowe: „Każde ustalenie ma źródło” | NAPISY WERSALIKAMI nad nagłówkami, emoji, wykrzykniki |
+| Wykres z etykietą przy linii i progiem z treści zadania (np. macro-F1 ≥ 0,75) | Kafelki z ikoną i dużą liczbą, legenda daleko od linii |
 | Logo w rogu, 24–32 px na slajdzie | Logo rozciągnięte, obrócone, z cieniem, obok logo platform |
 
 ## Gotowe polecenie dla AI (do nowych slajdów)
@@ -99,26 +121,32 @@ uv run --with python-pptx python presentation/build_pptx.py     # szablon PPTX
 Wklej to do ChatGPT, Claude albo Gemini, a pod spodem napisz, jakiego slajdu potrzebujesz.
 
 ```
-Robisz slajd (16:9, 1920×1080) dla Meritum — obywatelskiego radaru dezinformacji oraz scamu
-(wtyczka do przeglądarki + panel analityka). Język: polski.
+Robisz slajd (16:9, 1920×1080) dla Meritum — obywatelskiego radaru dezinformacji
+(strona WWW do sprawdzania informacji + wtyczka do przeglądarki jako drugi kanał + panel
+moderatora), zgłoszonego w konkursie MSZ „Prawdowid”. Język: polski.
 
+Produkt: obywatel wkleja tekst albo link, system dla każdego twierdzenia podaje werdykt
+(Potwierdzone, Fałszywe, Wprowadzające w błąd, Brak wystarczających dowodów,
+Nie podlega weryfikacji) z dosłownym cytatem, wydawcą, datą, linkiem i siłą podstawy.
+Gdy dowodów brakuje, wstrzymuje się i mówi, czego nie ustalił.
 Styl „Biuletyn synoptyczny”: spokojnie, precyzyjnie, dużo powietrza. Jedna myśl na slajd,
 tytuł zdaniowy do dwóch linii, krój Archivo 700 w rozmiarze 72 px lub większym.
 Kolory: tło #F6F7F5, karty #FFFFFF z obramowaniem 1 px #D9DEDD, bez cieni,
-tekst #14191E, tekst drugorzędny #4C5862, akcent i „zweryfikowane” #1D6A86,
-„w ocenie” #B7791F, oszustwo i atak #C8213A (tylko tam, gdzie jest zagrożenie,
-zawsze ze słowem albo znakiem frontu: linia z trzema trójkątami).
-Kroje: Archivo do wszystkiego, Azeret Mono tylko do liczb, godzin, ID (#K-118), nazw kont i domen.
+tekst #14191E, tekst drugorzędny #4C5862, akcent i „Potwierdzone” #1D6A86,
+„Wprowadzające w błąd” #B7791F, „Fałszywe” #C8213A (tylko tam, zawsze ze słowem),
+brak dowodów i stany techniczne neutralne.
+Kroje: Archivo do wszystkiego, Azeret Mono tylko do liczb, dat, godzin, ID i domen.
 Logo Meritum (małe „m” z dwóch łuków) w lewym dolnym rogu, 30 px, obok słowo „meritum”.
 Zamiast zdjęć: zrzuty interfejsu Meritum.
-Wykresy: etykiety przy liniach, suma, która się domyka (np. „Oddane 6 016 = liczone 1 204 + odrzucone 4 812”).
-Ton: kontekst, nie wyrok; każde twierdzenie ze źródłem; krótkie zdania w stronie czynnej.
+Wykresy: etykiety przy liniach, próg z treści zadania zaznaczony linią.
+Ton: opisujemy twierdzenia, nie ludzi; każde ustalenie ze źródłem; uczciwa niepewność;
+krótkie zdania w stronie czynnej.
 Zakazane: gradienty, fiolet, neon, emoji, wykrzykniki, etykiety WERSALIKAMI nad nagłówkami,
-siatki kart z ikonami, pasek koloru z boku karty, zdjęcia stockowe, prawdziwe osoby jako oszuści
-(w przykładach fikcyjny prezenter „Tomasz Rewiński”), liczby bez dopisku „dane symulowane”,
-twierdzenia o współpracy z NASK, CERT Polska lub MSZ (piszemy „gotowe do integracji z…”).
-Hasła, których możesz użyć: „Jeden fejk, cała kampania. Jeden kontekst, ponad podziałami.”,
-„AI pisze. Ludzie decydują. Źródła są obowiązkowe.”, „Pojedynczy fejk znika. Kolekcja zostaje.”
+siatki kart z ikonami, pasek koloru z boku karty, zdjęcia stockowe, wymyślone źródła i cytaty,
+liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia,
+twierdzenia o współpracy z MSZ (piszemy „gotowe do integracji z…”).
+Hasła, których możesz użyć: „Sprawdź, zanim podasz dalej.”,
+„Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost.”
 
 Slajd, którego potrzebuję:
 ```

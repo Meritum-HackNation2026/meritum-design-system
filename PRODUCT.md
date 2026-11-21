@@ -8,69 +8,73 @@ web
 
 ## Stack
 
-- **Cloud:** GCP and Cloudflare.
+- **Cloud:** GCP (`europe-central2`) and Cloudflare. A public demo for the jury plus `docker compose` to run everything locally.
 - **API:** Python, FastAPI, FastMCP, Pydantic, Pydantic AI, DBOS (durable workflows). Ruff and Ty in strict mode.
-- **Architecture:** vertical slices by core domain with hexagonal architecture inside each; every domain repeats the same subfolders (`models/`, `dtos/`, `ports/`, `adapters/`, …). TDD. Architecture tests with pytestarch, behaviour specs with behave.
-- **Database:** PostgreSQL with pgvector.
+- **Architecture:** vertical slices by core domain with hexagonal architecture inside each; every domain repeats the same subfolders (`models/`, `dtos/`, `ports/`, `adapters/`, …). Channels (web form, extension, MCP, optional Discord) are inbound adapters; the LLM, the web search and the corpus store are outbound adapters behind ports, so a model or provider can be swapped without rebuilding the system. TDD. Architecture tests with pytestarch, behaviour specs with behave.
+- **Database:** PostgreSQL with pgvector and full-text search (hybrid retrieval over the corpus).
+- **Web search:** a `WebSearch` port; first adapter Firecrawl (search and content extraction), restricted to catalogue domains. Scheduled RSS and sitemap ingestion runs as DBOS workflows without any third-party search.
 - **Frontend:** React, shadcn/ui with shadcnblocks, TanStack Router, TanStack Query, Tailwind CSS v4, Biome in strict mode.
-- **Extension:** a Chrome extension that runs both on the demo mocks (design-system/demo/platforms/) and on the real sites; mocks reproduce the real DOM hooks (see demo/platforms/SELECTORS.md). Framework still open (injected UI should render inside Shadow DOM so host-page CSS cannot leak in either direction).
+- **Extension:** Chrome MV3; a „Sprawdź” button under posts and a paste box in the popup, both calling the same API as the web form. It runs on the demo mocks (design-system/demo/platforms/) and on the real sites; injected UI renders in Shadow DOM.
 
 ## Users
 
-- **Social media readers** on X, Instagram, Reddit, Facebook and TikTok who meet a manipulative post or a scam ad in their feed. They spend seconds on it, scrolling, often on a laptop browser. Their job: understand quickly whether the post misleads or the ad is a trap, and why, then move on safely. Older and less digitally confident users are the main victims of investment scams that abuse celebrity likeness.
-- **Contributors**: the same readers when they report a manipulation or a fake ad, or rate a note. Their job: flag content in a few clicks and judge whether a draft note is fair.
-- **Analysts and operators** (fact-checkers, CERT-style incident handlers, the team during the demo) using the admin panel. Their job: see the bigger picture: which scattered ads and posts belong to one campaign, which attacks on consensus were repelled.
-- **Jury** of two challenges: MSZ "Prawdowid" and NASK "Kolekcjoner fejków".
+- **Citizens** who meet a rumour, a post or a forwarded message and want to know quickly whether it holds up. Many have low digital skills: they should not need to learn verification methods or install anything. Their job: paste the text or link, read a short answer in plain Polish, open the sources if they want.
+- **Social media readers** who already use the extension and want to check a post where they see it, with one click.
+- **Moderators and analysts** named by the administrator. Their job: take over questions the system could not settle (missing evidence, high risk, repeated questions), see similar questions grouped into one case, and track quality: abstentions, injection attempts, response time, cost.
+- **Jury** of the MSZ „Prawdowid” challenge, who run the reference set themselves, without the team's help.
 
 ## Product Purpose
 
-An independent, civic trust layer that runs as a browser extension across social platforms and covers two threats: disinformation and manipulation, and scams such as fake ads that abuse celebrity likeness. Users report content; the system links each report to the campaign it belongs to; an AI drafts a context note or a scam warning from user remarks, an analysis of the content, verifiable facts and media coverage from across the political spectrum; a note is published only after people who usually disagree rate it helpful. Success: a reader trusts the note because it visibly did not come from one side, a scam is recognised before money is lost, and a coordinated attack cannot push a note through or bury one.
+A tool that lets a citizen check a claim as easily as sending a message, grounded in an audited set of credible sources. The system extracts the claims worth checking, searches official documents, public data and fact-checkers' corpora (plus fresh publications from catalogue domains), and gives each claim one of five verdicts: confirmed, false, misleading, insufficient evidence, not verifiable. Every finding cites the source (title, publisher, date, link, verbatim fragment); the strength of the answer follows from explicit premises; when evidence is missing the system says so and explains what it could not establish. Technical failure, a request for clarification and out-of-scope input are never shown as verdicts. Instructions found in checked content never change how the system behaves.
 
-The product is entered in two hackathon challenges:
-- **MSZ "Prawdowid"**: an AI prototype that helps users tell fact from manipulation, reach credible sources and assess content consciously.
-- **NASK "Kolekcjoner fejków"**: fake ads abusing celebrity likeness vanish fast, change form and return under new addresses; a single item may be a fragment of a much larger campaign; the task is to see the bigger picture and protect potential victims.
+Success: a citizen gets an honest, sourced answer in under 30 seconds, through the channel they already use; the jury gets the same result through the web and the extension; nobody is shown a model's guess dressed up as a fact.
+
+The product is entered in one hackathon challenge: **MSZ „Prawdowid”** (fast, easy verification based on credible sources). The full brief is in `../konkursy/`.
 
 ## Positioning
 
-Platform-independent (works the same on five networks, owned by none of them), campaign-aware (every report is a specimen linked to the operation behind it, so one sighting reveals the whole campaign) and bridging-based (publication requires agreement across viewpoints, not a majority, which makes bot farms and brigading ineffective). The AI drafts; people decide; evidence is preserved before a scam disappears.
+Honest by construction: the language model reads, searches and writes, but a verdict needs a verbatim citation, its strength is computed from premises by a fixed rule, and abstaining is a first-class answer. Meets people where they read (a web page anyone can open, and a button under the post they are looking at). Auditable: open source catalogue with reasons for inclusion and exclusion, a record of every check, and data processed in the EEA where possible.
 
 ## Operating Context
 
-- The extension injects its UI into third-party feeds it does not control, in both light and dark platform themes. Injected UI must read as native yet clearly separate and trustworthy.
-- Per-platform skins (decided 2026-11-21): the injected widget adapts to each host (X, Facebook, Instagram, Reddit, TikTok): host font and size, corner radius, card surface and border, button style and link colour. Constant everywhere: a small Meritum mark and the name „Meritum” in the widget header, state colours, the two-group consensus bar and mandatory sources. Never a platform logo inside the widget.
-- Main demo for the jury: on X, a context card under a manipulative post and a scam warning on a sponsored fake ad; the dashboard shows the scam campaign behind that ad (variants, rotating domains) and a bot farm attack on a note being rejected in real time.
-- Materials: the extension, an admin panel with the Live Dashboard, and a pitch deck. Non-technical team members generate slides, mocks and marketing with AI agents from DESIGN_SYSTEM.md.
+- Primary channel: a responsive web form. Second channel: the Chrome extension (button under posts plus the popup paste box). Both use the same verification core and must give the same result for the same input and corpus version. We confirm with the MSZ mentors that the extension counts as an equivalent channel; a Discord bot on the same API is the fallback.
+- The extension injects UI into third-party feeds in light and dark themes. Per-platform skins (X, Facebook, Instagram, Reddit, TikTok) adapt font, radius, surface, borders and links; the Meritum mark, the verdict word and colour, and the sources block never change. It sends content only after the user clicks.
+- Demo for the jury: the same question asked in the web form and on an X mock through the extension, a sourced verdict, an honest abstention with a moderator case, an ignored prompt-injection attempt, and the evaluation results on the reference set. Film under 3 minutes, deck under 12 slides.
+- The jury runs it from our instructions, end to end, with no manual help. Nothing in the answer may depend on hard-coded examples.
 
 ## Capabilities and Constraints
 
-- Report a manipulation or a scam / fake ad (quick popover in the extension).
-- AI-generated context note with mandatory source links and a cross-perspective consensus indicator; voting on notes.
-- Scam warning on fake ads, with the campaign it belongs to and preserved evidence (snapshot, URL, redirect chain, time).
-- Campaign view: variants of one operation linked across platforms and rotating domains.
-- Bot and brigading resistance; telemetry of rejected bot votes versus real user votes.
-- UI language: Polish.
-- Working name: **Meritum**, subtitle „obywatelski radar dezinformacji oraz scamu”.
+- Input: text or URL (MVP), screenshot with OCR (bonus). Input validation, length limit, rate limit, automatic masking of obvious personal data.
+- Claim extraction: one or more claims per input, facts separated from opinions.
+- Retrieval: corpus of at least 100 documents from at least 10 domains and at least two source types (primary or official sources and credible secondary sources), each with publication and retrieval timestamps; live web search only on catalogue domains, and every fetched page joins the corpus.
+- Verdict per claim with citations, premises and strength; archival-material warning; neutral source-status warning (for example an EU-sanctioned entity) that never decides the verdict; match to known incidents as context only.
+- Abstention without a fake answer, with what is missing; moderator case for unresolved, high-risk and repeated questions, with deduplication; the UI distinguishes „recommended for hand-off” from „handed off”.
+- Prompt-injection resistance: source text is data, never instructions; detected attempts are logged.
+- Check record: question (masked), time, channel, sources, verdicts, models used, processing region, cost, latency, retrieval errors, injection events; defined retention and a „delete my checks” action for the demo session.
+- Evaluation script on a public test set covering the brief's scenarios A–J, reporting macro-F1, citation coverage and correctness, abstention, injection resistance, median latency and cost per 100 checks.
+- Exports: JSON and CSV of check records and cases; technique codes mapped to DISARM where an equivalent exists.
+- UI language: Polish, plain words. Working name: **Meritum**, subtitle „obywatelski radar dezinformacji”.
 
 ## Brand Commitments
 
-- Working name: **Meritum** — „obywatelski radar dezinformacji oraz scamu”. Logo: mark B „Dwa łuki” (brand/meritum-mark.svg), chosen 2026-11-21.
+- Working name: **Meritum** — „obywatelski radar dezinformacji”. Logo: mark B „Dwa łuki” (brand/meritum-mark.svg), chosen 2026-11-21. Brand exports with the old subtitle („…oraz scamu”) must be regenerated.
 - Visual direction (chosen 2026-11-21): „Biuletyn synoptyczny” palette on clean white bordered surfaces; spec in DESIGN_SYSTEM.md.
-- Binding visual constraints from the brief: "Civic-Tech Intelligence / Modern Editorial" (precision of developer tools such as Linear and Vercel with the gravity and legibility of investigative journalism such as The Economist and Bellingcat). Never: hacker green-on-black, purple-blue AI gradients, heavy governmental/official styling, gratuitous animation. Light and dark modes required.
+- Binding visual constraints: "Civic-Tech Intelligence / Modern Editorial" (precision of developer tools such as Linear and Vercel with the gravity and legibility of investigative journalism such as The Economist and Bellingcat). Never: hacker green-on-black, purple-blue AI gradients, heavy governmental/official styling, gratuitous animation. Light and dark modes required.
 
 ## Evidence on Hand
 
-None yet. No real users, testimonials, partner media, accuracy figures or attack statistics exist. Demo numbers must be labelled as simulated; never present them as real results.
+None yet. No real users, accuracy figures or partner organisations. The only numbers we may show are those our evaluation script measures on the published test set, with the data to reproduce them. Anything else in the demo is labelled as an example.
 
 ## Product Principles
 
-1. Context, not verdicts: notes explain and cite; they never call people liars.
-2. Consensus is the product: show that agreement came from different perspectives, every time.
-3. Transparent machinery: AI drafting and bot filtering are visible and explainable, never magic.
-4. Guest in someone else's feed: be compact, calm and dismissible; never hijack the page.
-5. Resilience on display: an attack is shown as handled, not as panic.
-6. One sighting, whole campaign: never treat a fake as an isolated item; show what it belongs to.
-7. Protect first, then explain: a scam warning stops the risky step before it teaches.
+1. No source, no finding: every claim the system presents as established leads to a verbatim fragment of a named source.
+2. Abstaining is an answer: when evidence is missing or conflicting, say so plainly and say what is missing.
+3. Model interpretation is labelled as such and kept apart from source material.
+4. Strength comes from premises the reader can see: number of independent sources, official or primary sources, recency, agreement.
+5. Never judge by who said it: domain, author, channel, popularity or source status alone never decide a verdict.
+6. Failure is not a verdict: outages, missing keys and limits are reported as technical problems.
+7. Support, not a judge of truth: the answer invites the reader to open the evidence; people handle what the system cannot settle.
 
 ## Accessibility & Inclusion
 
-WCAG 2.2 AA contrast in both themes, including on top of third-party light and dark feeds. States must not rely on colour alone. Respect prefers-reduced-motion. Polish copy runs longer than English; components must survive long labels.
+WCAG 2.2 AA contrast in both themes, including on top of third-party light and dark feeds. Verdicts never rely on colour alone. Respect prefers-reduced-motion. Plain Polish for people without technical knowledge; Polish copy runs longer than English, components must survive long labels. The web form works on a phone without installing anything.

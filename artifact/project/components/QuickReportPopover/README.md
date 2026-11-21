@@ -1,5 +1,7 @@
 # QuickReportPopover
 
+Poza zakresem konkursu MSZ: komponent został z wcześniejszej wersji produktu (wątek NASK i notatek społeczności) i nie jest używany w demo. Opis poniżej dotyczy tamtej wersji.
+
 Przycisk „Zgłoś” wstrzykiwany w pasek akcji posta i okienko szybkiego zgłoszenia, które z niego wyrasta.
 
 - **Kolejność:** przełącznik Manipulacja / Oszustwo (reklamy sponsorowane otwierają się na Oszustwo), pigułki powodów (wiele naraz), opis własnymi słowami, link do źródła (opcjonalny), informacja o automatycznym dowodzie, przycisk.

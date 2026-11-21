@@ -1,197 +1,167 @@
 # Meritum: key selling points
 
-**Meritum — obywatelski radar dezinformacji oraz scamu.** Jeden produkt, dwa konkursy.
+**Meritum — obywatelski radar dezinformacji.** Konkurs MSZ „Prawdowid”.
 
-Dokument roboczy dla całego zespołu. Opisuje, czym się wyróżniamy, jak rozegrać oba konkursy jednym produktem i co pokazać na demo. Robocza nazwa: Meritum.
+Dokument roboczy dla całego zespołu: czym się wyróżniamy, jak odpowiadamy na każde wymaganie z treści zadania i co pokazać na demo. Pełna treść zadania jest w `../konkursy/`.
 
-Wszystkie liczby w demo są symulowane i tak je podpisujemy. Nie obiecujemy skuteczności, której nie zmierzyliśmy.
+Pokazujemy tylko liczby zmierzone naszym skryptem ewaluacji na opublikowanym zestawie testowym, razem z danymi do odtworzenia. Nie obiecujemy skuteczności, której nie zmierzyliśmy.
 
 ---
 
 ## 1. Jednym zdaniem
 
-**Niezależna warstwa zaufania nad mediami społecznościowymi: z jednego zgłoszenia odsłania całą kampanię oszustów lub manipulatorów, a kontekst publikuje dopiero wtedy, gdy zgodzą się ludzie, którzy zwykle się nie zgadzają.**
+**Wklejasz tekst albo link, a Meritum sprawdza każde twierdzenie w opisanych źródłach, cytuje dosłowny fragment i mówi wprost, gdy dowodów brakuje.**
 
-Krócej, na slajd: *Jeden fejk, cała kampania. Jeden kontekst, ponad podziałami.*
-
----
-
-## 2. Dlaczego jeden produkt pasuje do obu konkursów
-
-Oba wyzwania opisują ten sam problem z dwóch stron:
-
-| | MSZ „Prawdowid” | NASK „Kolekcjoner fejków” |
-|---|---|---|
-| Zagrożenie | manipulacja, dezinformacja | fałszywe reklamy z wizerunkiem znanych osób |
-| Co je utrudnia | nadmiar informacji, brak wiarygodnych źródeł | szybko znikają, zmieniają formę, wracają pod nowymi adresami |
-| Czego brakuje | narzędzia do świadomej oceny treści | szerszego obrazu: pojedynczy materiał to fragment kampanii |
-| Czego oczekują | AI, weryfikacja, dotarcie do źródeł | dostrzeżenie skali i ochrona potencjalnych ofiar |
-
-Wspólny rdzeń: **pojedyncza treść jest prawie zawsze fragmentem większej operacji.** Farma botów, która forsuje fałszywą narrację, i sieć domen, która rotuje reklamy z deepfake'iem prezentera, działają tak samo: wiele kopii, krótkie życie, skoordynowane konta. Dlatego budujemy jeden silnik, który:
-
-1. **zbiera** zgłoszenia i ślady (Kolekcjoner),
-2. **łączy** je w kampanie (graf kampanii),
-3. **wyjaśnia** użytkownikowi, co widzi, ze źródłami (Prawdowid),
-4. **chroni** przed kliknięciem i przed manipulacją głosowaniem.
-
-Na każdy konkurs przygotowujemy inny pitch i inną scenę główną demo, ale pokazujemy ten sam działający produkt. To jest argument sam w sobie: jury widzi platformę, a nie jednorazowy prototyp.
+Na slajd: *Sprawdź, zanim podasz dalej. Każde ustalenie ma źródło.*
 
 ---
 
-## 3. Odpowiedź na każde zdanie z wyzwań
+## 2. Odpowiedź na wymagania MSZ
 
-**MSZ „Prawdowid”**
+### Warunek brzegowy (bez niego reszta się nie liczy)
 
-| Zdanie z wyzwania | Nasza odpowiedź |
+| Wymaganie | Nasza odpowiedź |
 |---|---|
-| „Fakt czy manipulacja?” | Notatka kontekstowa pod postem, ze stanem: zweryfikowany kontekst, w trakcie oceny, sporny. |
-| „Wykorzystaj sztuczną inteligencję” | AI pisze szkic notatki z uwag użytkowników, analizy treści i źródeł. Nie decyduje o publikacji. |
-| „Docierać do wiarygodnych źródeł” | Linki do źródeł są obowiązkowe. Notatka bez źródła nie może zostać opublikowana. Pokazujemy, z której strony sporu pochodzą media. |
-| „Świadomie oceniać napotykane treści” | Każda notatka nazywa technikę manipulacji (np. wyrwanie z kontekstu, fałszywy autorytet) i w jednym zdaniu uczy, jak ją rozpoznać następnym razem. |
+| Działanie end-to-end bez ręcznej ingerencji | Jedna ścieżka: przyjęcie, twierdzenia, wyszukiwanie, werdykt, odpowiedź, zapis przebiegu. Workflow DBOS, uruchamiany przez `docker compose` albo na publicznym demo. |
+| Brak sfabrykowanych źródeł | Cytat przechodzi tylko wtedy, gdy fragment występuje dosłownie w tekście źródła z korpusu. Inaczej odpada przed pokazaniem. |
+| Wstrzymanie się przy braku dowodów | Werdykt „brak wystarczających dowodów” z opisem, czego nie ustaliliśmy. Kontrakt odrzuca taki werdykt bez tego opisu. |
+| Dwa kanały | Formularz WWW (podstawowy) i przycisk „Sprawdź” we wtyczce Chrome pod postem oraz okienko do wklejenia w popupie. Ten sam rdzeń, ten sam wynik. Zapas: bot na Discordzie na tym samym API. |
 
-**NASK „Kolekcjoner fejków”**
+### Minimalny zakres (MVP)
 
-| Zdanie z wyzwania | Nasza odpowiedź |
+| Wymaganie | Nasza odpowiedź |
 |---|---|
-| „Wykorzystują wizerunki znanych osób” | Ostrzeżenie na reklamie: czyj wizerunek użyto bez zgody, z linkiem do dementi lub ostrzeżenia CERT Polska. |
-| „Szybko znikają” | Sejf dowodów: wtyczka zapisuje zrzut, adres, łańcuch przekierowań i czas w chwili zobaczenia reklamy. Dowód zostaje, nawet gdy reklama zniknie. |
-| „Zmieniają formę i wracają pod nowymi adresami” | Odciski kampanii: podobieństwo obrazu i wideo, twarz, szablon strony docelowej, rejestracje domen. Nowy wariant trafia do znanej kampanii w kilka sekund. |
-| „Fragment znacznie większej kampanii” | Widok kampanii: wszystkie warianty, domeny i platformy na jednej osi czasu. |
-| „Skuteczniej chronić potencjalne ofiary” | Blokada przed wejściem na stronę z kampanii, tryb opiekuna dla bliskich i eksport zgłoszenia w formacie gotowym dla CERT Polska. |
+| Rozpoznawanie twierdzeń | LLM ze strukturalnym wyjściem oddziela twierdzenia od opinii. |
+| Zbiór źródeł: co najmniej 2 typy | Źródła pierwotne i urzędowe (ISAP, EUR-Lex, dane.gov.pl, gov.pl, BIP) oraz wtórne (fact-checkerzy IFCN/EFCSN, EUvsDisinfo). Co najmniej 100 dokumentów z co najmniej 10 domen, lista do audytu z licencją i powodem kwalifikacji. |
+| Bieżące wydarzenia | Cykliczne pobieranie RSS z katalogu i wyszukiwanie na żywo (Firecrawl) ograniczone do domen z katalogu. Każda pobrana strona trafia do korpusu z datą publikacji i pobrania. |
+| Wynik, uzasadnienie, siła podstawy, ograniczenia | Jeden z pięciu werdyktów na twierdzenie, wyjaśnienie oznaczone jako interpretacja, siła liczona regułą z przesłanek, zawsze sekcja „Ograniczenia”. |
+| Źródło: tytuł, wydawca, data, link, fragment | Wszystkie pięć pól w kontrakcie `Source` i `Citation`. |
+| Prosty polski | Teksty w `copy/pl.json`, pisane dla osoby bez wiedzy technicznej. |
+| Zapis przebiegu | `CheckRecord`: pytanie z zamaskowanymi danymi, czas, kanał, źródła, werdykty, modele, region, koszt, błędy wyszukiwania, próby wstrzyknięcia poleceń. |
+
+### Wymagania techniczne
+
+| Obszar | Nasza odpowiedź |
+|---|---|
+| Architektura | Kanały to adaptery wejściowe, LLM i wyszukiwarka to adaptery za portami (architektura heksagonalna). Model zmieniamy konfiguracją. |
+| Fakty | Werdykty rozstrzygające wymagają cytatu i przesłanek (walidacja kontraktu). Awaria, niejasne pytanie i pytanie poza zakresem to osobne stany bez twierdzeń. |
+| Aktualność | Data publikacji i pobrania przy każdym źródle, preferowanie świeżych, ostrzeżenie o materiale archiwalnym. |
+| Bezpieczeństwo | Walidacja wejścia, treść źródeł oddzielona od instrukcji, model bez narzędzi z efektami ubocznymi, sekrety tylko w zmiennych środowiska, limit zapytań, zapis zdarzeń. |
+| Prywatność | Maskowanie telefonów, e-maili i PESEL-i przed analizą, retencja 30 dni, przycisk „Usuń moje sprawdzenia”. |
+| Obserwowalność | Czas odpowiedzi, modele, błędy wyszukiwania, wstrzymania, koszt każdej odpowiedzi. |
+| Zależności zewnętrzne | Opis kluczy, limitów, kosztów i regionu. Brak klucza albo limit kończą się stanem „Problem techniczny”, nigdy werdyktem. |
+| Pętla informacji | Sprawa moderatora dla nierozstrzygniętych, ryzykownych i powtarzających się pytań, z deduplikacją. Interfejs odróżnia „zalecamy przekazanie” od „przekazano”. |
+
+### Funkcje premiowane, które bierzemy
+
+1. **Łańcuch dowodowy:** od twierdzenia do cytatów potwierdzających, obalających i uzupełniających kontekst.
+2. **Zamknięta pętla informacji:** sprawy moderatora i grupowanie podobnych pytań.
+3. **Otwarty katalog źródeł** z zasadami kwalifikowania, aktualizowania i wykluczania (`CatalogEntry`).
+4. **Wielojęzyczne wyszukiwanie** z odpowiedzią po polsku.
+5. **Dopasowanie do bazy incydentów** od organizatora jako kontekst, nigdy jako werdykt.
+6. **Zrzut ekranu z OCR** (scenariusz F), z jawnymi ograniczeniami.
+7. **Eksport JSON i CSV**, kody technik zmapowane na DISARM.
+8. **Przetwarzanie w EOG** tam, gdzie to możliwe, i opis drogi do samodzielnego hostowania (otwarty model na własnym serwerze z GPU, europejski indeks wyszukiwania).
 
 ---
 
-## 4. Siedem wyróżników
+## 3. Wyróżniki
 
-### 4.1 Konsensus ponad podziałami, odporny na boty
-Notatka publikuje się dopiero, gdy osoby z grup, które zwykle oceniają inaczej, uznają ją za pomocną (algorytm „bridging”, ten sam typ co otwarty algorytm Community Notes, tylko niezależny od platformy). Większość nie wystarcza, więc farma botów nie przepchnie notatki ani jej nie zakopie.
+### 3.1 Uczciwość wbudowana w kontrakt
+Reguły z treści zadania sprawdza walidacja danych, a nie prompt: werdykt bez cytatu, siła niezgodna z przesłankami, „potwierdzone” przy sprzecznych źródłach i awaria pokazana jako werdykt nie przejdą. Każdą regułę sprawdza test (`contracts/export_schema.py`).
 
-- **Czemu unikalne:** żadne narzędzie fact-checkingowe w Polsce nie działa na wszystkich platformach naraz i nie pokazuje publicznie, że zgoda przyszła z obu stron.
-- **Na demo:** atak 312 kont na żywo, wykres pokazuje 4 812 odrzuconych głosów, a status notatki się nie zmienia.
+### 3.2 Cytat sprawdzany dosłownie
+Model może się pomylić w cytacie. Dlatego zanim cytat trafi do odpowiedzi, sprawdzamy w kodzie, że fragment naprawdę jest w źródle. To podnosi oba mierniki: pokrycie i poprawność cytowań.
 
-### 4.2 Graf kampanii: z jednego zgłoszenia do całej operacji
-Każde zgłoszenie to okaz w kolekcji. System porównuje go z już znanymi okazami po:
-- podobieństwie obrazu i klatek wideo (hash percepcyjny, embeddingi w pgvector),
-- twarzy znanej osoby (tylko z rejestru osób, które się zgodziły, patrz 5.2),
-- tekście reklamy i obietnicy (embeddingi),
-- szablonie strony docelowej (odcisk struktury DOM),
-- domenach i przekierowaniach (wspólne serwery, rejestratorzy, certyfikaty).
+### 3.3 Siła odpowiedzi z jawnych przesłanek
+Pod werdyktem czytelnik widzi: ile niezależnych źródeł, ile urzędowych, jak świeże i czy są zgodne. Z tego jedną regułą wynika „mocna”, „umiarkowana” albo „słaba”. Nie ma tu liczby wymyślonej przez model.
 
-- **Czemu unikalne:** zgłoszenia na platformach są osobne i znikają razem z reklamą. My pokazujemy kampanię jako całość: kiedy ruszyła, ile ma wariantów, które domeny już padły, które działają.
-- **Na demo:** użytkownik zgłasza jedną reklamę, a dashboard rozwija kampanię #K-118: 47 wariantów, 23 domeny, 9 dni.
+### 3.4 Sprawdzanie tam, gdzie czytasz
+Formularz działa dla każdego, bez instalacji. Wtyczka dodaje „Sprawdź” pod postem na X, Facebooku, Instagramie, Reddicie i TikToku, w stylu danej platformy. Treść posta wysyłamy dopiero po kliknięciu.
 
-### 4.3 Sejf dowodów
-Fałszywe reklamy żyją godzinami. Wtyczka utrwala dowód w chwili zobaczenia: zrzut ekranu, adres, łańcuch przekierowań, nagłówki, znacznik czasu i hash pliku. Dowód można wyeksportować do zgłoszenia w CERT Polska lub do formularza zgłoszeń reklam na platformie.
+### 3.5 Świeże źródła bez wychodzenia poza katalog
+Bieżące wydarzenia sprawdzamy w publikacjach z zatwierdzonych serwisów. Wyszukiwanie w całym internecie łamałoby zasadę „jasno opisanego zbioru źródeł”, więc go nie robimy.
 
-- **Czemu ważne dla NASK:** CERT Polska działa w strukturach NASK. Dajemy mu materiał, który zwykle przepada.
+### 3.6 Człowiek tam, gdzie system nie rozstrzyga
+Nierozstrzygnięte sprawy trafiają do moderatora, podobne pytania łączą się w jedną sprawę. Tak wygląda tryb wspierania decyzji z pilotażu opisanego w §9 zadania.
 
-### 4.4 Ostrzegamy przed domeną, zanim pojawi się reklama
-Oszuści rejestrują nowe domeny i wystawiają dla nich certyfikaty TLS. Publiczne logi Certificate Transparency widać od razu. Obserwujemy w nich domeny podobne do znanych kampanii (literówki, te same słowa, ten sam wystawca) i oznaczamy je jako „prawdopodobnie następne”, zanim trafią do reklamy.
-
-- **Efekt „wow”:** na osi czasu kampanii widać przerywaną linię „przewidywane domeny”. Jedna z nich zapala się w trakcie demo.
-- **Uczciwie:** to sygnał do weryfikacji, a nie wyrok. Domena trafia do ostrzeżeń dopiero po potwierdzeniu przez ludzi.
-
-### 4.5 Źródła obowiązkowe i spektrum źródeł
-AI nie może opublikować twierdzenia bez linku. Pod notatką pokazujemy, skąd pochodzą cytowane media na osi od lewej do prawej. Kiedy notatka cytuje tylko jedną stronę, system prosi o źródło z drugiej, zanim pozwoli głosować.
-
-- **Czemu ważne dla MSZ:** „docieranie do wiarygodnych źródeł” zamienia się w regułę produktu, a nie w obietnicę.
-
-### 4.6 Uczymy rozpoznawania, a nie tylko podajemy werdykt
-Każda notatka i każde ostrzeżenie nazywa technikę: wyrwanie z kontekstu, fałszywy autorytet, presja czasu („tylko dziś”), podszywanie się. Techniki dezinformacji mapujemy na otwarty framework DISARM, którego używa się w UE do opisu FIMI (zagranicznej manipulacji informacyjnej). Użytkownik po kilku notatkach sam zaczyna widzieć wzorce.
-
-- **Czemu ważne dla MSZ:** to wprost „świadoma ocena treści”, a język DISARM i FIMI to język, którym MSZ i EEAS opisują zagrożenia.
-
-### 4.7 Otwarte API i serwer MCP
-Ten sam silnik weryfikacji wystawiamy jako API i jako serwer MCP (FastMCP). Dziennikarz albo analityk może zapytać swojego asystenta AI: „czy ta domena należy do znanej kampanii?” albo „jakie notatki dotyczą tego zdjęcia?” i dostać odpowiedź ze źródłami.
-
-- **Czemu unikalne:** zamieniamy narzędzie w infrastrukturę. Redakcje, uczelnie i CERT mogą podpiąć się bez instalowania wtyczki.
+### 3.7 Uczymy rozpoznawania
+Odpowiedź nazywa technikę (wyrwanie z kontekstu, nieaktualna informacja, fałszywy autorytet, wybiórcze dane) i w jednym zdaniu mówi, jak ją rozpoznać następnym razem.
 
 ---
 
-## 5. Pomysły, które mogą zrobić różnicę
+## 4. Pitch (scena główna: to samo pytanie w dwóch kanałach)
 
-Uporządkowane od najtańszych do najdroższych na hackathonie.
-
-1. **„Dlaczego to widzę?”** pod każdą notatką: jednym zdaniem, jak powstała (szkic AI z uwag 41 osób, 4 źródła, decyzja ludzi). Koszt: mały. Zaufanie: duże.
-2. **Licznik „Uratowane kliknięcia”** w widoku kampanii: ile osób zobaczyło ostrzeżenie i nie weszło na stronę. W demo podpisany jako symulacja.
-3. **Tryb opiekuna (dla bliskich).** Senior instaluje wtyczkę z kodem od wnuczki. Gdy próbuje wejść na stronę z kampanii inwestycyjnej, wtyczka zatrzymuje go i (za jego zgodą) wysyła powiadomienie zaufanej osobie. Ofiary oszustw „na celebrytę” to często osoby starsze, więc to jest najmocniejsza historia emocjonalna w pitchu NASK.
-4. **Rejestr wizerunków (opt-in).** Znane osoby albo ich agencje zgłaszają swoją twarz i oficjalne kanały. Każda reklama z tą twarzą poza oficjalnymi kanałami dostaje ostrzeżenie automatycznie, a osoba dostaje raport kampanii, które jej używają. Bez zgody nie przetwarzamy twarzy (RODO).
-5. **Predykcja domen z logów certyfikatów** (patrz 4.4).
-6. **Ostrzeżenie w rytmie kampanii.** Kiedy kampania wraca pod nową domeną, wszyscy, którzy kiedyś zgłosili jej wariant, dostają jedno powiadomienie: „wróciła, tym razem jako …”. Kolekcjonerzy widzą, że ich zgłoszenie działa dalej.
-7. **Raport dla platformy i regulatora.** Jeden przycisk generuje paczkę dowodów kampanii w formacie przydatnym dla zaufanych podmiotów sygnalizujących z art. 22 DSA (Digital Services Act). To pokazuje drogę do realnego wdrożenia.
+1. **Problem (20 s):** „Od stycznia nie zapłacisz gotówką” krąży w wiadomościach. Sprostowanie istnieje, ale nie tam, gdzie ludzie czytają, a czat AI odpowie płynnie, choć bez źródła.
+2. **Formularz (40 s):** wklejamy tekst: dwa twierdzenia, dwa werdykty, cytaty z ISAP i fact-checkera, siła podstawy, ograniczenia.
+3. **Wtyczka (30 s):** ten sam tekst pod postem na X, „Sprawdź”, ten sam wynik.
+4. **Uczciwość (30 s):** świeża plotka bez publikacji, system się wstrzymuje i zakłada sprawę moderatora. Strona z ukrytym poleceniem „zignoruj reguły”, system je ignoruje i zapisuje zdarzenie.
+5. **Wyniki (30 s):** tabela mierników z naszego zestawu testowego i koszt 100 sprawdzeń.
+6. **Zamknięcie:** *„Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost.”*
 
 ---
 
-## 6. Dwa pitche na jednym produkcie
-
-### Pitch MSZ „Prawdowid” (scena główna: notatka i atak botów)
-1. **Problem (20 s):** post z fałszywą informacją o zakazie gotówki ma 212 tys. wyświetleń. Fact-check jest gdzieś w sieci, ale nie tam, gdzie ludzie czytają.
-2. **Pokaz (60 s):** ten sam post z naszą notatką: kontekst, 4 źródła, spektrum mediów, konsensus dwóch grup.
-3. **Zwrot (40 s):** farma 312 kont próbuje zakopać notatkę. Dashboard na żywo: głosy odrzucone, status bez zmian.
-4. **Edukacja (20 s):** notatka nazywa technikę manipulacji i uczy, jak ją rozpoznać.
-5. **Skala (20 s):** pięć platform, otwarte API, serwer MCP dla redakcji.
-6. **Zamknięcie:** *„AI pisze. Ludzie decydują. Źródła są obowiązkowe.”*
-
-### Pitch NASK „Kolekcjoner fejków” (scena główna: kampania)
-1. **Problem (20 s):** reklama z deepfake'iem znanego prezentera obiecuje 1 200 zł dziennie. Po zgłoszeniu znika i wraca jutro pod nową domeną.
-2. **Pokaz (40 s):** na Facebooku wtyczka oznacza reklamę jako oszustwo, zanim ktoś kliknie, i zapisuje dowód.
-3. **Szerszy obraz (60 s):** jedno zgłoszenie rozwija kampanię #K-118: 47 wariantów, 23 domeny, 9 dni. Oś czasu pokazuje rotację domen, a przerywana linia pokazuje domeny, które dopiero się pojawią.
-4. **Ochrona (30 s):** tryb opiekuna zatrzymuje seniora przed stroną płatności. Eksport dowodów do CERT Polska.
-5. **Zamknięcie:** *„Pojedynczy fejk znika. Kolekcja zostaje.”*
-
----
-
-## 7. Scenariusz demo (4 minuty, oba konkursy)
+## 5. Scenariusz filmu (do 3 minut)
 
 | Czas | Ekran | Co mówi prowadzący |
 |---|---|---|
-| 0:00 | Feed X, post o gotówce z notatką | „To jest internet, jaki znamy, z jedną warstwą więcej.” |
-| 0:30 | Najechanie na źródła i spektrum | „Każde zdanie ma źródło. Widać, z której strony sporu.” |
-| 1:00 | Feed, reklama sponsorowana z celebrytą, ostrzeżenie | „Ta reklama to oszustwo. Wtyczka już zapisała dowód.” |
-| 1:30 | Szybkie zgłoszenie (popover) | „Zgłoszenie zajmuje trzy kliknięcia, a link do źródła jest wymagany.” |
-| 2:00 | Dashboard, kampania #K-118 | „Jedno zgłoszenie, cała kampania: 47 reklam, 23 domeny.” |
-| 2:40 | Dashboard, atak na notatkę | „A teraz ktoś próbuje nas oszukać. 312 kont, zero wpływu.” |
-| 3:20 | Slajd architektury | „FastAPI, DBOS, pgvector, MCP. Działa dziś, skaluje się jutro.” |
-| 3:40 | Slajd zamykający | Hasło pod konkretny konkurs. |
+| 0:00 | Formularz na telefonie | „Wklejasz to, co dostałeś. Bez konta i bez instalacji.” |
+| 0:20 | Wynik z dwoma twierdzeniami | „Każdy werdykt ma cytat, wydawcę i datę. Siła wynika z tego, co widzisz.” |
+| 0:50 | Makieta X, przycisk „Sprawdź” | „Ten sam rdzeń we wtyczce. Ten sam wynik.” |
+| 1:20 | Brak dowodów, sprawa #S-… | „Nie wiemy, więc nie zgadujemy. Sprawa trafia do moderatora.” |
+| 1:50 | Próba wstrzyknięcia poleceń | „Strona próbuje przejąć model. Zignorowane i zapisane.” |
+| 2:20 | Tabela mierników, koszt, architektura | „Wyniki odtworzysz jednym poleceniem z repozytorium.” |
+| 2:45 | Zamknięcie | Hasło. |
 
-Zasada: demo musi działać bez internetu. Dane kampanii i ataku odtwarzamy z nagranego scenariusza w DBOS, żeby nic nie zależało od Wi-Fi na sali.
-
----
-
-## 8. Pytania jury i odpowiedzi
-
-- **„Kto decyduje, co jest prawdą?”** Nikt sam. AI pisze szkic, ludzie z różnych stron muszą się zgodzić, źródła są publiczne. Pokazujemy, skąd przyszła zgoda.
-- **„Co z fałszywymi alarmami?”** Ostrzeżenie o oszustwie wymaga co najmniej dwóch niezależnych sygnałów (np. domena z listy CERT i podobieństwo do znanej kampanii). Każde ostrzeżenie ma „Zgłoś pomyłkę” i trafia do ponownej oceny.
-- **„A RODO i wizerunek?”** Nie przetwarzamy twarzy osób spoza rejestru opt-in. Dowody przechowujemy minimalnie i z datą usunięcia.
-- **„Co jeśli platforma zablokuje wtyczkę?”** Wtyczka działa po stronie użytkownika i niczego nie publikuje na platformie. Rdzeń (graf kampanii, API, MCP) działa niezależnie od wtyczki.
-- **„Dlaczego to się utrzyma po hackathonie?”** Otwarte API dla redakcji i CERT, model organizacji pozarządowej, droga do statusu zaufanego podmiotu sygnalizującego z DSA.
-- **„Czym różnicie się od Community Notes?”** Działamy na pięciu platformach, łączymy treści w kampanie, obejmujemy oszustwa i reklamy, a źródła są obowiązkowe.
+Demo działa na prawdziwym korpusie i prawdziwym API. Żadna odpowiedź nie jest nagrana ani zaszyta w kodzie, bo jury wpisze własne pytania.
 
 ---
 
-## 9. Czego nie mówimy
+## 6. Pytania jury i odpowiedzi
 
-- Nie podajemy skuteczności („wykrywa 98% oszustw”), której nie zmierzyliśmy.
-- Nie nazywamy prawdziwych osób oszustami. W demo używamy fikcyjnego prezentera i fikcyjnych domen.
-- Nie twierdzimy, że współpracujemy z NASK, CERT Polska, MSZ ani z mediami, dopóki to nieprawda. Mówimy „gotowe do integracji z…”.
-- Nie pokazujemy prawdziwych kont jako botów. Wszystkie nazwy kont w demo są wymyślone.
+- **„Kto decyduje, co jest prawdą?”** Źródła. Model rozumie pytanie, szuka i pisze, ale werdykt wymaga dosłownego cytatu, a siłę liczy reguła. Czego nie da się ustalić, trafia do ludzi.
+- **„Co z halucynacjami?”** Cytat, którego nie ma w źródle, odpada w kodzie przed pokazaniem. Wyjaśnienie modelu jest oznaczone jako interpretacja.
+- **„Stronniczość źródeł?”** Katalog jest jawny, z powodem kwalifikacji i wykluczenia. Nie oceniamy treści po domenie ani autorze. Status źródła (np. sankcje UE) pokazujemy jako osobną, neutralną informację.
+- **„Prompt injection?”** Treść źródeł to dane, nie instrukcje. Model nie ma narzędzi, które coś zmieniają. Próby zapisujemy.
+- **„Gdzie są przetwarzane dane?”** GCP w `europe-central2`. Dostawcę modelu i wyszukiwarki opisujemy z regionem i kosztem, a oba da się wymienić.
+- **„Ile to kosztuje?”** Koszt 1 000 zapytań liczymy z zapisu przebiegu (tokeny, wywołania wyszukiwarki). Podajemy zmierzony koszt 100 testów.
+- **„Dlaczego wtyczka, a nie WhatsApp?”** Wtyczka działa tam, gdzie człowiek widzi treść, i nie wymaga konta firmowego ani opłat operatora. Ten sam rdzeń obsłuży kolejne kanały bez przebudowy.
 
 ---
 
-## 10. Nazwa: Meritum
+## 7. Najważniejsze ryzyka (do README i prezentacji)
 
-Robocza nazwa i podtytuł: **Meritum — obywatelski radar dezinformacji oraz scamu.**
+| Ryzyko | Jak ograniczamy |
+|---|---|
+| Halucynacje | Dosłowna weryfikacja cytatów, werdykt tylko z cytatem, wstrzymanie się przy braku dowodów. |
+| Stronniczość źródeł | Jawny katalog z zasadami, co najmniej dwa typy źródeł, rozbieżności pokazywane wprost. |
+| Prywatność | Maskowanie danych osobowych, retencja 30 dni, usuwanie sesji, brak kont. |
+| Prompt injection | Separacja instrukcji od danych, brak narzędzi z efektami ubocznymi, zapis zdarzeń, testy ze scenariusza E. |
+| Dostępność | WCAG 2.2 AA, prosty język, formularz na telefonie bez instalacji. |
+| Nadużycia | Limit zapytań, walidacja wejścia, brak publikacji bez człowieka. |
+| Awaria dostawcy | Stan „Problem techniczny”, nigdy pozorny werdykt (scenariusz J). |
 
-- **Meritum** to „sedno sprawy”: notatka i ostrzeżenie mówią, o co naprawdę chodzi, bez emocji i bez oceniania ludzi. Słowo zna każdy Polak, a brzmi poważnie bez urzędowości.
-- **Obywatelski**: budują go użytkownicy, nie platforma ani rząd. To odpowiedź na pytanie „kto decyduje, co jest prawdą”.
-- **Radar**: widzimy kampanię, zanim dotrze do ciebie, i pokazujemy ją na mapie. Słowo spina oba konkursy: dezinformację (MSZ) i scam (NASK).
+---
 
-Przed pitchem trzeba sprawdzić znak towarowy i wolne domeny (np. meritum.org.pl, meritum.app). Nazwa „Meritum” bywa używana przez inne firmy, więc w materiałach zawsze idzie z podtytułem.
+## 8. Czego nie mówimy
 
-## 11. Zakres na hackathon
+- Nie podajemy skuteczności, której nie zmierzyliśmy, ani wyników bez danych do odtworzenia.
+- Nie twierdzimy, że współpracujemy z MSZ, NASK ani z fact-checkerami. Mówimy „gotowe do integracji z…”.
+- Nie deklarujemy wyszukiwania odwrotnego obrazu, dopóki go nie ma.
+- Nie nazywamy systemu „sędzią prawdy”.
 
-**Budujemy naprawdę:** wtyczka na X (notatka, ostrzeżenie o oszustwie, zgłoszenie), API z modelem notatek i konsensusu, graf kampanii na pgvector dla przygotowanego zbioru reklam, dashboard z dwoma widokami (kampania, atak), sejf dowodów (zrzut + adres + czas), serwer MCP z dwoma narzędziami.
+---
 
-**Pokazujemy jako makietę:** pozostałe cztery platformy, tryb opiekuna, rejestr wizerunków, predykcję domen z logów certyfikatów, eksport do CERT.
+## 9. Nazwa: Meritum
 
-**Pomijamy:** konta użytkowników z hasłami, panel moderacji, aplikację mobilną.
+**Meritum — obywatelski radar dezinformacji.** „Meritum” to „sedno sprawy”: odpowiedź mówi, o co naprawdę chodzi, i pokazuje, skąd to wiemy. „Obywatelski”, bo służy obywatelowi, a nie platformie. Przed pitchem trzeba sprawdzić znak towarowy i wolne domeny. Nazwa bywa używana przez inne firmy, więc w materiałach zawsze idzie z podtytułem.
+
+## 10. Zakres na hackathon
+
+**Budujemy:** formularz WWW, „Sprawdź” we wtyczce i w popupie, rdzeń weryfikacji (twierdzenia, wyszukiwanie hybrydowe, werdykt, cytaty, przesłanki), korpus z katalogiem, cykliczne RSS i wyszukiwanie Firecrawl w domenach z katalogu, zapis przebiegu, sprawy moderatora z deduplikacją, ochronę przed wstrzykiwaniem poleceń, skrypt ewaluacji, `docker compose`, publiczne demo.
+
+**Jeśli starczy czasu:** OCR zrzutu ekranu, dopasowanie do bazy incydentów, eksport JSON i CSV z kodami DISARM, serwer MCP, bot na Discordzie (obowiązkowo, jeśli mentorzy nie uznają wtyczki za kanał).
+
+**Pomijamy:** konta użytkowników, wyszukiwanie odwrotne obrazu, transkrypcję nagrań, konsensus pomostowy przy publikacji odpowiedzi moderatorów (pomysł na później).
+
+**Otwarte pytanie do mentorów MSZ:** czy wtyczka przeglądarki to „rozwiązanie równoważne” drugiemu kanałowi.

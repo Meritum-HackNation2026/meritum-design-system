@@ -1,8 +1,16 @@
-"""Meritum UI contracts: the data every Meritum surface renders.
+"""Meritum contracts: the data every Meritum surface renders (MSZ "Prawdowid").
 
-Source of truth for the API (FastAPI + Pydantic), the Chrome extension and the panel.
+Source of truth for the API (FastAPI + Pydantic), the web form, the Chrome extension and the moderator panel.
 JSON Schema and TypeScript types are generated from this file: `contracts/generate.sh`.
 User-facing strings live in `copy/pl.json`; this file carries codes, not copy.
+
+Rules from the MSZ brief that the models enforce:
+- a verdict that settles a claim (confirmed, false, misleading) needs at least one citation and explicit premises;
+- the strength of a verdict follows from the premises by a fixed rule, never from the model's say-so;
+- conflicting sources never yield a "strong" verdict;
+- insufficient evidence says what could not be established;
+- technical failure, a request for clarification and out-of-scope input are not verdicts and carry no claims;
+- recommending a hand-off to a moderator is distinct from creating a case.
 """
 
 from __future__ import annotations
@@ -12,31 +20,26 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, model_validator
 
-Platform = Literal["x", "facebook", "instagram", "reddit", "tiktok"]
+Channel = Literal["web", "extension", "discord", "mcp"]
 
-SourceKind = Literal["akt_prawny", "instytucja", "media", "fact_check", "encyklopedia", "oswiadczenie"]
+Verdict = Literal["confirmed", "false", "misleading", "insufficient_evidence", "not_verifiable"]
+SETTLING: frozenset[Verdict] = frozenset({"confirmed", "false", "misleading"})
 
-ReportKind = Literal["manipulation", "scam"]
+# Outcomes that are not verdicts and must be shown separately (MSZ section 2 and 5).
+CheckStatus = Literal["done", "needs_clarification", "out_of_scope", "technical_failure"]
 
-ManipulationReason = Literal[
-    "false_information",
-    "conspiracy_theory",
-    "out_of_context",
-    "false_authority",
-    "manipulated_media",
-]
-ScamReason = Literal[
-    "fake_celebrity_endorsement",
-    "suspicious_investment",
-    "impersonating_bank_or_office",
-    "fake_shop_or_fundraiser",
-]
+SourceKind = Literal["akt_prawny", "dane_publiczne", "instytucja", "fact_check", "media", "encyklopedia"]
+SourceTier = Literal["primary", "secondary"]  # primary: official documents and public data; secondary: fact-checkers, media
+SourceVia = Literal["corpus", "rss", "web_search"]  # how the document reached the corpus
+Stance = Literal["supports", "refutes", "context"]
+Agreement = Literal["consistent", "conflicting"]
+Strength = Literal["strong", "moderate", "weak"]
 
 TechniqueCode = Literal[
     "false_authority",
     "conspiracy_theory",
     "out_of_context",
-    "urgency_pressure",
+    "outdated",
     "fabricated_quote",
     "manipulated_media",
     "impersonation",
@@ -48,190 +51,280 @@ class _Model(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
-class Source(_Model):
-    """A citation. Every published card has at least one."""
+# ---------------------------------------------------------------- input
 
-    title: Annotated[str, Field(min_length=3, max_length=140)]
+
+class CheckRequest(_Model):
+    """What a channel adapter sends to the verification core. The core is channel-agnostic."""
+
+    channel: Channel
+    text: Annotated[str | None, Field(max_length=4000)] = None
+    url: HttpUrl | None = None
+    page_url: Annotated[HttpUrl | None, Field(description="Extension only: the post the text came from.")] = None
+
+    @model_validator(mode="after")
+    def _text_or_url(self) -> CheckRequest:
+        if self.url is None and (self.text is None or len(self.text.strip()) < 3):
+            raise ValueError("send text (3+ characters) or a URL")
+        return self
+
+
+# ---------------------------------------------------------------- sources
+
+
+class Source(_Model):
+    """A document from the audited corpus. Title, publisher, date and link are mandatory to show (MSZ section 2)."""
+
+    id: Annotated[str, Field(min_length=1, max_length=80)]
+    title: Annotated[str, Field(min_length=3, max_length=200)]
+    publisher: Annotated[str, Field(min_length=2, max_length=120)]
     url: HttpUrl
     domain: Annotated[str, Field(min_length=3, max_length=100)]
     kind: SourceKind
-    spectrum: Annotated[
-        float | None,
-        Field(ge=-1, le=1, description="Media only: position from left (-1) to right (1) as rated by users."),
-    ] = None
+    tier: SourceTier
+    published_at: datetime | None = None
+    fetched_at: datetime
+    language: Annotated[str, Field(pattern=r"^[a-z]{2}$")] = "pl"
+    via: SourceVia = "corpus"
 
 
-class Technique(_Model):
-    """Named manipulation technique; the card teaches how to spot it."""
+class Citation(_Model):
+    """A fragment of a source and how it bears on the claim. The pipeline drops fragments it cannot find verbatim."""
 
-    code: TechniqueCode
-
-
-class GroupScore(_Model):
-    label: Annotated[str, Field(max_length=40)]
-    helpful_pct: Annotated[int, Field(ge=0, le=100)]
-    ratings: Annotated[int, Field(ge=0)]
+    source: Source
+    fragment: Annotated[str, Field(min_length=10, max_length=600)]
+    stance: Stance
+    fragment_found_verbatim: Literal[True] = True
 
 
-class Consensus(_Model):
-    """Bridging consensus: published only when BOTH groups pass the threshold."""
+class CatalogEntry(_Model):
+    """One domain in the open source catalogue: why it qualifies, how it is refreshed, whether it is excluded."""
 
-    group_a: GroupScore
-    group_b: GroupScore
-    threshold_pct: Annotated[int, Field(ge=50, le=100)] = 70
-
-    @property
-    def passed(self) -> bool:
-        return min(self.group_a.helpful_pct, self.group_b.helpful_pct) >= self.threshold_pct
-
-
-class NoteCard(_Model):
-    """Community context note under a post (MSZ "Prawdowid")."""
-
-    kind: Literal["note"] = "note"
-    status: Literal["verified", "pending"]
-    body: Annotated[str, Field(min_length=20, max_length=600)]
-    sources: Annotated[list[Source], Field(min_length=1)]
-    technique: Technique | None = None
-    consensus: Consensus
-    drafted_from_reports: Annotated[int, Field(ge=1, description="How many user remarks the AI draft used.")]
+    domain: Annotated[str, Field(min_length=3, max_length=100)]
+    publisher: Annotated[str, Field(min_length=2, max_length=120)]
+    kind: SourceKind
+    tier: SourceTier
+    license: Annotated[str, Field(min_length=2, max_length=120)]
+    ingest: Literal["static", "rss", "sitemap", "web_search"]
+    refresh_hours: Annotated[int | None, Field(ge=1)] = None
+    qualified_because: Annotated[str, Field(min_length=10, max_length=300)]
+    excluded: bool = False
+    exclusion_reason: Annotated[str | None, Field(max_length=300)] = None
 
     @model_validator(mode="after")
-    def _verified_needs_consensus(self) -> NoteCard:
-        if self.status == "verified" and not self.consensus.passed:
-            raise ValueError("a verified note needs both groups above the threshold")
+    def _exclusion_has_reason(self) -> CatalogEntry:
+        if self.excluded and not self.exclusion_reason:
+            raise ValueError("an excluded source needs a reason")
         return self
 
 
-class CampaignRef(_Model):
-    id: Annotated[str, Field(pattern=r"^#K-\d+$")]
-    ads: Annotated[int, Field(ge=1)]
-    domains: Annotated[int, Field(ge=1)]
-    days: Annotated[int, Field(ge=1)]
+# ---------------------------------------------------------------- verdict
 
 
-class Evidence(_Model):
-    """What the extension saved before the ad could vanish."""
+class Premises(_Model):
+    """Explicit premises behind a verdict (MSZ: strength must follow from quality, recency, agreement, independence)."""
 
-    saved_at: datetime
-    screenshot: bool
-    redirects: Annotated[int, Field(ge=0)]
-    final_domain: str
-
-
-class ScamWarningCard(_Model):
-    """Fake ad / scam warning (NASK "Kolekcjoner fejków"). Requires two independent signals."""
-
-    kind: Literal["scam"] = "scam"
-    body: Annotated[str, Field(min_length=20, max_length=600)]
-    sources: Annotated[list[Source], Field(min_length=1)]
-    technique: Technique | None = None
-    campaign: CampaignRef | None = None
-    evidence: Evidence
-    signals: Annotated[list[Literal["cert_warning_list", "known_campaign", "celebrity_registry", "user_reports"]], Field(min_length=2)]
+    independent_sources: Annotated[int, Field(ge=0)]
+    primary_sources: Annotated[int, Field(ge=0)]
+    newest_source_age_days: Annotated[int | None, Field(ge=0)] = None
+    agreement: Agreement
 
 
-InjectedCard = Annotated[NoteCard | ScamWarningCard, Field(discriminator="kind")]
+def strength_for(p: Premises) -> Strength:
+    """The one rule that turns premises into strength. Shown to the user next to the premises."""
+    if p.agreement == "consistent" and p.independent_sources >= 2 and p.primary_sources >= 1:
+        return "strong"
+    if p.agreement == "consistent" and p.independent_sources >= 1:
+        return "moderate"
+    return "weak"
 
 
-class ReportPayload(_Model):
-    """Sent by the Quick Report Popover."""
-
-    platform: Platform
-    post_url: HttpUrl
-    post_handle: Annotated[str, Field(max_length=60)]
-    kind: ReportKind
-    reasons: list[ManipulationReason | ScamReason] = []
-    note: Annotated[str, Field(max_length=1000)] = ""
-    source_url: HttpUrl | None = None
+class EvidenceStrength(_Model):
+    level: Strength
+    premises: Premises
 
     @model_validator(mode="after")
-    def _reason_or_note(self) -> ReportPayload:
-        if not self.reasons and len(self.note.strip()) < 3:
-            raise ValueError("pick at least one reason or describe the problem (3+ characters)")
+    def _level_follows_premises(self) -> EvidenceStrength:
+        if self.level != strength_for(self.premises):
+            raise ValueError(f"strength must be {strength_for(self.premises)!r} for these premises")
         return self
+
+
+class IncidentMatch(_Model):
+    """Similarity to a known incident. Context only: never a basis for the verdict by itself."""
+
+    incident_id: Annotated[str, Field(min_length=1, max_length=80)]
+    title: Annotated[str, Field(max_length=200)]
+    date: datetime
+    url: HttpUrl
+    similarity: Annotated[float, Field(ge=0, le=1)]
+
+
+class SourceStatusWarning(_Model):
+    """Neutral note about who published the checked content (e.g. an EU-sanctioned entity). Never a verdict."""
+
+    code: Literal["eu_sanctioned_entity", "state_controlled_media"]
+    entity: Annotated[str, Field(max_length=120)]
+    basis_url: HttpUrl
+
+
+class ClaimResult(_Model):
+    """One checked claim. Citations (source material) are kept apart from `explanation` (model interpretation)."""
+
+    claim: Annotated[str, Field(min_length=5, max_length=500)]
+    verdict: Verdict
+    strength: EvidenceStrength | None = None
+    citations: list[Citation] = []
+    explanation: Annotated[str, Field(min_length=10, max_length=800)]
+    unresolved: Annotated[str | None, Field(max_length=500, description="What could not be established.")] = None
+    archival: Annotated[bool, Field(description="Newest evidence is older than the claim's context needs.")] = False
+    technique: TechniqueCode | None = None
+    incident: IncidentMatch | None = None
+
+    @model_validator(mode="after")
+    def _verdict_rules(self) -> ClaimResult:
+        stances = {c.stance for c in self.citations}
+        if self.verdict in SETTLING:
+            if not self.citations or self.strength is None:
+                raise ValueError(f"verdict {self.verdict!r} needs citations and premises")
+            if self.verdict == "confirmed" and "supports" not in stances:
+                raise ValueError("'confirmed' needs a supporting citation")
+            if self.verdict == "false" and "refutes" not in stances:
+                raise ValueError("'false' needs a refuting citation")
+        if self.verdict == "insufficient_evidence" and not self.unresolved:
+            raise ValueError("'insufficient_evidence' must say what could not be established")
+        if self.verdict == "confirmed" and self.strength and self.strength.premises.agreement == "conflicting":
+            raise ValueError("conflicting sources cannot confirm a claim")
+        return self
+
+
+class Escalation(_Model):
+    """Hand-off to the moderator queue. 'recommended' means nobody was notified yet."""
+
+    state: Literal["recommended", "created", "updated"]
+    case_id: Annotated[str | None, Field(pattern=r"^#S-\d+$")] = None
+
+    @model_validator(mode="after")
+    def _case_only_when_handed_off(self) -> Escalation:
+        if (self.state == "recommended") != (self.case_id is None):
+            raise ValueError("a case id exists only after the case was created or updated")
+        return self
+
+
+class CheckResult(_Model):
+    """The answer every channel renders. Same request, same corpus version: same result on every channel."""
+
+    check_id: Annotated[str, Field(min_length=1, max_length=40)]
+    status: CheckStatus
+    claims: list[ClaimResult] = []
+    message: Annotated[str | None, Field(max_length=400, description="For non-verdict statuses: what to do next.")] = None
+    limitations: list[Annotated[str, Field(max_length=300)]] = []
+    source_warning: SourceStatusWarning | None = None
+    escalation: Escalation | None = None
+    corpus_version: Annotated[str, Field(min_length=1, max_length=40)]
+    ai_disclosure: Literal[True] = True
+
+    @model_validator(mode="after")
+    def _status_rules(self) -> CheckResult:
+        if self.status == "done":
+            if not self.claims:
+                raise ValueError("a finished check has at least one claim")
+            if not self.limitations:
+                raise ValueError("a finished check states its limitations")
+        elif self.claims or not self.message:
+            raise ValueError(f"{self.status!r} is not a verdict: no claims, and a message instead")
+        return self
+
+
+# ---------------------------------------------------------------- progress
 
 
 class AnalysisStep(_Model):
     code: Literal[
-        "link_similar_reports",
-        "collect_sources",
-        "draft_and_rate",
-        "save_evidence",
-        "match_campaigns",
-        "check_cert_list",
-        "store_report",
+        "receive",
+        "extract_claims",
+        "search_corpus",
+        "search_web",
+        "assess_evidence",
+        "verify_citations",
+        "write_answer",
+        "save_record",
     ]
-    status: Literal["pending", "active", "done", "failed"]
+    status: Literal["pending", "active", "done", "skipped", "failed"]
 
 
 class AnalysisStatus(_Model):
-    """Polled (or streamed) by the extension after a report; mirrors the DBOS workflow."""
+    """Polled (or streamed) by every channel while a check runs; mirrors the DBOS workflow."""
 
-    report_id: str
+    check_id: str
     steps: Annotated[list[AnalysisStep], Field(min_length=1)]
-    outcome: Literal["running", "note_published", "note_pending", "scam_flagged", "collected", "failed"]
-    card: InjectedCard | None = None
+    result: CheckResult | None = None
 
 
-class VoteMinute(_Model):
-    t: Annotated[str, Field(pattern=r"^\d{2}:\d{2}$")]
-    counted: Annotated[int, Field(ge=0)]
-    rejected: Annotated[int, Field(ge=0)]
+# ---------------------------------------------------------------- audit and moderation
 
 
-class RejectedAccount(_Model):
-    at: datetime
-    handle: str
-    reason: Literal["same_cluster", "timing_pattern", "new_account", "rating_graph"]
+class ModelUsage(_Model):
+    provider: Annotated[str, Field(max_length=60)]
+    model: Annotated[str, Field(max_length=80)]
+    region: Annotated[str, Field(max_length=40, description="Where the data was processed.")]
+    input_tokens: Annotated[int, Field(ge=0)]
+    output_tokens: Annotated[int, Field(ge=0)]
+    cost_usd: Annotated[float, Field(ge=0)]
 
 
-class BotDefenseSnapshot(_Model):
-    """Live Dashboard telemetry. Totals are derived from `series`, never sent separately."""
+class InjectionEvent(_Model):
+    """Instructions found in the input or a source. Logged and ignored."""
 
-    note_id: Annotated[str, Field(pattern=r"^#N-\d+$")]
-    cluster_size: Annotated[int, Field(ge=1)]
-    attack_from: Annotated[str, Field(pattern=r"^\d{2}:\d{2}(:\d{2})?$")]
-    status_changed: bool
-    series: Annotated[list[VoteMinute], Field(min_length=1)]
-    rejected_accounts: list[RejectedAccount]
-    simulated: bool = True
+    location: Literal["input", "source"]
+    source_url: HttpUrl | None = None
+    excerpt: Annotated[str, Field(max_length=300)]
+
+
+class CheckRecord(_Model):
+    """Audit log of one check (MSZ MVP: question, time, sources, result; plus observability)."""
+
+    check_id: str
+    channel: Channel
+    received_at: datetime
+    answered_at: datetime
+    question_masked: Annotated[str, Field(max_length=4000, description="Input with obvious personal data masked.")]
+    status: CheckStatus
+    verdicts: list[Verdict]
+    source_ids: list[str]
+    corpus_version: str
+    models: list[ModelUsage]
+    web_search_calls: Annotated[int, Field(ge=0)] = 0
+    retrieval_errors: list[Annotated[str, Field(max_length=200)]] = []
+    injection_events: list[InjectionEvent] = []
+    escalation: Escalation | None = None
+    retention_until: datetime
 
     @property
-    def counted_total(self) -> int:
-        return sum(m.counted for m in self.series)
+    def latency_ms(self) -> int:
+        return int((self.answered_at - self.received_at).total_seconds() * 1000)
 
     @property
-    def rejected_total(self) -> int:
-        return sum(m.rejected for m in self.series)
+    def cost_usd(self) -> float:
+        return sum(m.cost_usd for m in self.models)
+
+    @property
+    def abstained(self) -> bool:
+        return self.status == "done" and all(v in ("insufficient_evidence", "not_verifiable") for v in self.verdicts)
 
 
-class CampaignDomain(_Model):
-    domain: str
-    state: Literal["active", "dead", "predicted"]
+class ModeratorCase(_Model):
+    """One case per group of similar unresolved checks. Repeated questions update it instead of opening new ones."""
+
+    id: Annotated[str, Field(pattern=r"^#S-\d+$")]
+    state: Literal["open", "answered", "closed"]
+    reason: Literal["insufficient_evidence", "high_risk", "repeated_unanswered"]
+    summary: Annotated[str, Field(min_length=5, max_length=300)]
+    check_ids: Annotated[list[str], Field(min_length=1)]
     first_seen: datetime
-    last_seen: datetime | None = None
-    ads: Annotated[int, Field(ge=0)]
+    last_seen: datetime
+    assignee_role: Literal["moderator", "analyst"] = "moderator"
 
-
-class SharedTrace(_Model):
-    code: Literal["celebrity_face", "landing_template", "cert_issuer_pattern", "payment_gateway", "advertiser_accounts", "ad_copy"]
-    ads: Annotated[int, Field(ge=1)]
-
-
-class Campaign(_Model):
-    """Campaign view: one sighting, the whole operation."""
-
-    id: Annotated[str, Field(pattern=r"^#K-\d+$")]
-    title: Annotated[str, Field(max_length=80)]
-    ads_total: Annotated[int, Field(ge=1)]
-    ads_by_platform: dict[Platform, Annotated[int, Field(ge=0)]]
-    domains: Annotated[list[CampaignDomain], Field(min_length=1)]
-    shared_traces: list[SharedTrace]
-    simulated: bool = True
-
-    @model_validator(mode="after")
-    def _sum_closes(self) -> Campaign:
-        if sum(self.ads_by_platform.values()) != self.ads_total:
-            raise ValueError("ads_by_platform must add up to ads_total (the sum on screen has to close)")
-        return self
+    @property
+    def similar_count(self) -> int:
+        return len(self.check_ids)

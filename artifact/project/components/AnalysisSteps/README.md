@@ -1,8 +1,8 @@
 # AnalysisSteps
 
-Pasek pod postem, który pokazuje, co dzieje się ze zgłoszeniem między „Wysłane” a opublikowaną notatką lub ostrzeżeniem.
+Pasek, który pokazuje, co dzieje się ze sprawdzeniem między kliknięciem „Sprawdź” a kartą wyniku. Ten sam na stronie WWW i pod postem we wtyczce.
 
-- Trzy kroki, każdy w stanie: czeka (puste kółko), w toku (kręcące się kółko w kolorze verified), gotowe (pełne kółko z ptaszkiem).
-- Kroki dla manipulacji: łączenie z podobnymi zgłoszeniami, zbieranie źródeł, szkic AI i ocena dwóch grup. Dla oszustwa: zapis dowodu, porównanie z kampaniami, sprawdzenie domeny na liście CERT Polska.
-- W produkcji stany pochodzą ze statusu przepływu DBOS; w demo czas jest przyspieszony.
-- **Kod:** `components/meritum/analysis-steps.tsx`.
+- Każdy krok jest w stanie: czeka (puste kółko), w toku (kręcące się kółko w kolorze verified), gotowe (pełne kółko z ptaszkiem), pominięty albo nieudany (słowo obok kółka).
+- Kroki z kontraktu `AnalysisStep`: przyjęcie pytania, wyodrębnienie twierdzeń, szukanie w bazie źródeł, szukanie świeżych publikacji w zatwierdzonych serwisach (tylko gdy baza nie wystarczyła), porównanie źródeł z twierdzeniami, sprawdzenie dosłowności cytatów, odpowiedź prostym językiem, zapis przebiegu. Teksty w `copy/pl.json`, `analysis.steps`.
+- Stany pochodzą ze statusu workflowu DBOS, nie z odliczania czasu.
+- **Kod:** `components/meritum/analysis-steps.tsx` (do dostosowania do nowej listy kroków).

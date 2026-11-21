@@ -1,5 +1,7 @@
 # BotDefenseTelemetry
 
+Poza zakresem konkursu MSZ: komponent został z wcześniejszej wersji produktu (wątek NASK i notatek społeczności) i nie jest używany w demo. Opis poniżej dotyczy tamtej wersji.
+
 Karta Live Dashboard, która odpowiada na jedno pytanie: czy atak farmy botów zmienił wynik notatki.
 
 - **Tytuł to odpowiedź** („Atak odparty, notatka bez zmian”) ze znakiem frontu: linia z trzema trójkątami w kolorze scam.
