@@ -18,9 +18,12 @@ const PRESS = "transition-transform duration-150 ease-out-meritum active:scale-9
 const FOCUS = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
 
 function Time({ at }: { at: string }) {
+  const date = new Date(at)
+  // a damaged history entry must not break the whole thread
+  if (Number.isNaN(date.getTime())) return null
   return (
     <time dateTime={at} className="font-mono text-meta tabular-nums text-muted-foreground">
-      {TIME.format(new Date(at))}
+      {TIME.format(date)}
     </time>
   )
 }
@@ -30,13 +33,14 @@ function Time({ at }: { at: string }) {
  * raised surface, right-aligned, the tail corner towards them, an opening „ hanging in the margin and the time
  * under it. The speaker is named for screen readers only.
  *
- * @param props - The question as `children`, the time it was sent (`at`, ISO 8601) and an optional class.
+ * @param props - The question as `children`, the time it was sent (`at`, ISO 8601), `isNew` for the entry motion of a
+ *   question just sent (not one restored from history) and an optional class.
  * @returns The question.
  * @feature US-SPR-01, US-SPR-09, F-01
  */
-export function Question({ children, at, className }: { children: ReactNode; at?: string | undefined; className?: string }) {
+export function Question({ children, at, isNew = false, className }: { children: ReactNode; at?: string | undefined; isNew?: boolean; className?: string }) {
   return (
-    <div className={cn("ml-10 grid min-w-0 justify-items-end gap-1 font-sans animate-enter motion-reduce:animate-none sm:ml-24", className)}>
+    <div className={cn("ml-10 grid min-w-0 justify-items-end gap-1 font-sans sm:ml-24", isNew && "animate-enter motion-reduce:animate-none", className)}>
       <p className="sr-only">{t.conversation.you}</p>
       <blockquote className="relative min-w-0 rounded-xl rounded-br-sm bg-secondary px-4 py-3 text-body text-secondary-foreground whitespace-pre-line break-words text-pretty">
         <span aria-hidden="true" className="pointer-events-none absolute -left-5 top-1 select-none text-title leading-none font-bold text-muted-foreground">
@@ -180,6 +184,7 @@ export function Composer({
   const id = useId()
   const [error, setError] = useState<ErrorKey | null>(null)
   const shown = attachment ? null : (error ?? serverError ?? null)
+  const counted = value.length > 0 ? `${id}-count` : undefined
 
   function submit(e: FormEvent) {
     e.preventDefault()
@@ -217,7 +222,7 @@ export function Composer({
               rows={1}
               enterKeyHint="send"
               aria-invalid={shown !== null}
-              aria-describedby={shown ? `${id}-error` : value.length > 0 ? `${id}-count` : undefined}
+              aria-describedby={shown ? `${id}-error` : counted}
               className="max-h-48 min-h-11 resize-none border-0 bg-transparent px-2 text-base shadow-none focus-visible:ring-0 sm:text-body dark:bg-transparent"
             />
           </>
