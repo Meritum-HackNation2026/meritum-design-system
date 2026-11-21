@@ -21,7 +21,10 @@
     "audio_label": "Albo nagranie (plik audio)",
     "audio_note": "Nagranie zamienimy na tekst w regionie UE i pokażemy transkrypcję obok wyniku.",
     "audio_limits": "Plik do {max_mb} MB i {max_minutes} min nagrania. Formaty: {formats}.",
-    "audio_transcription_warning": "System z użyciem AI zamieni nagranie na tekst. Może się pomylić, więc porównaj transkrypcję z nagraniem."
+    "audio_transcription_warning": "System z użyciem AI zamieni nagranie na tekst. Może się pomylić, więc porównaj transkrypcję z nagraniem.",
+    "audio_provider": "Transkrypcję robi {name} ({region}).",
+    "audio_cost": "Zamiana nagrania na tekst jest bezpłatna.",
+    "audio_retention": "Plik nagrania i transkrypcję usuwamy razem z zapisem sprawdzenia, najpóźniej po {days} dniach."
   },
   "history": {
     "title": "Twoje sprawdzenia",
