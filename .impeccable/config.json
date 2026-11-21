@@ -10,7 +10,7 @@
           "demo/x/index.html"
         ],
         "createdAt": "2026-11-21T08:05:50.168Z",
-        "reason": "Claude: flagged element is the host X tab bar mock, copied from measured x.com layout (53px tabs, flush underline)"
+        "reason": "flagged element is the host X tab bar mock, copied from measured x.com layout (53px tabs, flush underline)"
       },
       {
         "rule": "low-contrast",
@@ -19,7 +19,7 @@
           "demo/platforms/**"
         ],
         "createdAt": "2026-11-21T09:20:57.210Z",
-        "reason": "Claude: fixtures reproducing third-party host chrome (X/FB/IG/Reddit/TikTok) measured from the real sites for the live demo; Meritum UI is injected separately"
+        "reason": "fixtures reproducing third-party host chrome (X/FB/IG/Reddit/TikTok) measured from the real sites for the live demo; Meritum UI is injected separately"
       },
       {
         "rule": "cramped-padding",
@@ -28,7 +28,7 @@
           "demo/platforms/**"
         ],
         "createdAt": "2026-11-21T09:20:57.248Z",
-        "reason": "Claude: fixtures reproducing third-party host chrome (X/FB/IG/Reddit/TikTok) measured from the real sites for the live demo; Meritum UI is injected separately"
+        "reason": "fixtures reproducing third-party host chrome (X/FB/IG/Reddit/TikTok) measured from the real sites for the live demo; Meritum UI is injected separately"
       },
       {
         "rule": "low-contrast",
@@ -37,7 +37,7 @@
           "demo/x/index.html"
         ],
         "createdAt": "2026-11-21T09:20:57.290Z",
-        "reason": "Claude: X host chrome colours (#1d9bf0 hashtags, disabled composer button) copied from x.com; Meritum widget colours pass AA"
+        "reason": "X host chrome colours (#1d9bf0 hashtags, disabled composer button) copied from x.com; Meritum widget colours pass AA"
       },
       {
         "rule": "low-contrast",
@@ -46,7 +46,7 @@
           "demo/live/**"
         ],
         "createdAt": "2026-11-21T09:41:32.174Z",
-        "reason": "Claude: demo/live copies the measured third-party host chrome of demo/platforms for the stage demo; Meritum widget styles live in extension/widget.css"
+        "reason": "demo/live copies the measured third-party host chrome of demo/platforms for the stage demo; Meritum widget styles live in extension/widget.css"
       },
       {
         "rule": "cramped-padding",
@@ -55,7 +55,7 @@
           "demo/live/**"
         ],
         "createdAt": "2026-11-21T09:41:32.194Z",
-        "reason": "Claude: demo/live copies the measured third-party host chrome of demo/platforms for the stage demo; Meritum widget styles live in extension/widget.css"
+        "reason": "demo/live copies the measured third-party host chrome of demo/platforms for the stage demo; Meritum widget styles live in extension/widget.css"
       },
       {
         "rule": "oversized-h1",
@@ -64,7 +64,7 @@
           "presentation/social/story-1080x1920.html"
         ],
         "createdAt": "2026-11-21T09:41:32.215Z",
-        "reason": "Claude: 1080x1920 story poster whose only content is the 6-word tagline; display size is the intent"
+        "reason": "1080x1920 story poster whose only content is the 6-word tagline; display size is the intent"
       },
       {
         "rule": "oversized-h1",
@@ -73,7 +73,7 @@
           "presentation/slides/index.html"
         ],
         "createdAt": "2026-11-21T10:04:31.975Z",
-        "reason": "Claude: title and closing slides carry only the tagline as a poster"
+        "reason": "title and closing slides carry only the tagline as a poster"
       },
       {
         "rule": "cramped-padding",
@@ -82,7 +82,79 @@
           "presentation/slides/index.html"
         ],
         "createdAt": "2026-11-21T10:04:31.994Z",
-        "reason": "Claude: 52px timeline rows with centred text; detector misreads border-top rows"
+        "reason": "52px timeline rows with centred text; detector misreads border-top rows"
+      },
+      {
+        "rule": "undersized-ui-text",
+        "value": "*",
+        "files": [
+          "demo/live/**"
+        ],
+        "createdAt": "2026-11-21T10:12:33.965Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          "demo/live/**"
+        ],
+        "createdAt": "2026-11-21T10:12:33.986Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "demo/live/**"
+        ],
+        "createdAt": "2026-11-21T10:12:34.006Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          "demo/live/**"
+        ],
+        "createdAt": "2026-11-21T10:12:34.028Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
+      },
+      {
+        "rule": "undersized-ui-text",
+        "value": "*",
+        "files": [
+          "demo/platforms/**"
+        ],
+        "createdAt": "2026-11-21T10:12:34.048Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
+      },
+      {
+        "rule": "tight-leading",
+        "value": "*",
+        "files": [
+          "demo/platforms/**"
+        ],
+        "createdAt": "2026-11-21T10:12:34.068Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "demo/platforms/**"
+        ],
+        "createdAt": "2026-11-21T10:12:34.087Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
+      },
+      {
+        "rule": "skipped-heading",
+        "value": "*",
+        "files": [
+          "demo/platforms/**"
+        ],
+        "createdAt": "2026-11-21T10:12:34.106Z",
+        "reason": "host-chrome fixtures copied from the real platforms (type sizes, leading, headings) for the stage demo"
       }
     ]
   }
