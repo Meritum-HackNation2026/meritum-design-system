@@ -105,6 +105,12 @@
     "superseded": "Ten dowód zastąpił nowszy dokument z {date}.",
     "timeline_title": "Oś czasu dowodów",
     "what_would_change": "Co zmieniłoby werdykt",
+    "stance": {
+      "$comment": "Citation.stance: headings of the citation groups on the evidence timeline (DESIGN_SYSTEM.md 6.4). Never a verdict word.",
+      "supports": "Wspierają twierdzenie",
+      "refutes": "Przeczą twierdzeniu",
+      "context": "Dają kontekst"
+    },
     "transcript": "Transkrypcja nagrania",
     "transcript_hint": "Transkrypcję przygotował system automatycznie. Może zawierać błędy.",
     "claim_review": "Według {publisher}: „{rating}”.",
