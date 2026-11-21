@@ -62,7 +62,7 @@ REQUIRED_KEYS = (
     "form.audio_transcription_warning",
     "errors.audio_too_large",
     "errors.audio_too_long",
-    "status_hint.out_of_scope_audio_format",
+    "out_of_scope_code.audio",
     # extension popup: connection to the API (design-system#16)
     "extension.popup_connecting",
     "extension.popup_api_ok",

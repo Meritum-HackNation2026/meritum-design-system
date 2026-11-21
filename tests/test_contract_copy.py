@@ -1,6 +1,6 @@
 """Checks that every code in the contract copy (contracts/meritum.schema.json) has text in copy/pl.json.
 
-Features: US-ZRD-06, US-SPR-06, US-SPR-02, US-POW-01, US-ZRD-11, US-BEZ-03, F-17, F-18, F-26, ADR-29, design-system#10, design-system#66
+Features: US-ZRD-06, US-SPR-06, US-SPR-02, US-POW-01, US-ZRD-11, US-BEZ-03, F-17, F-18, F-26, ADR-29, design-system#10, design-system#66, design-system#89
 Run: python3 -m unittest discover -s tests
 """
 
@@ -20,7 +20,6 @@ NOT_IN_CONTRACT = {
     "moderation.role.admin",
     "notifications.kind.eval_run_done",
     "status_hint.out_of_scope_image",
-    "status_hint.out_of_scope_audio_format",
     "status_hint.technical_failure_url",
 }
 PROVIDERS = ("google", "gemini", "anthropic", "claude", "openai", "brave", "speech-to-text", "chirp")
@@ -31,6 +30,8 @@ ENUM_COPY = (
     ("CheckResult", "status", ("status", "status_hint"), ("done",)),
     ("CheckResult", "failure_code", ("failure_code",), ()),
     ("CheckResult", "limitation_codes", ("limitation_code",), ()),
+    ("CheckResult", "out_of_scope_code", ("out_of_scope_code",), ()),
+    ("CachedResult", "out_of_scope_code", ("out_of_scope_code",), ()),
     ("ClaimResult", "would_change_verdict", ("would_change_verdict",), ()),
     ("ClaimResult", "claim_date_source", ("result.claim_date_source",), ()),
     ("AnalysisStep", "code", ("analysis.steps",), ()),
@@ -118,6 +119,17 @@ class FailureTexts(unittest.TestCase):
         self.assertIn("indeksu Google", text)
         self.assertIn("błędu dostępu", text)
         self.assertIn("nie znaczy, że", text)
+
+
+class OutOfScopeTexts(unittest.TestCase):
+    def test_audio_text_leaves_the_reason_to_limitation_codes(self) -> None:
+        # design-system#89: formats and length limit come from limitation_code, not repeated here
+        text = str(lookup("out_of_scope_code.audio")).lower()
+        for word in ("format", "min", "{"):
+            self.assertNotIn(word, text)
+
+    def test_audio_text_moved_out_of_status_hint(self) -> None:
+        self.assertIsNone(lookup("status_hint.out_of_scope_audio_format"))
 
 
 class JuryScenarioAnswers(unittest.TestCase):
