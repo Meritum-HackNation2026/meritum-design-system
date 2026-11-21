@@ -12,14 +12,15 @@ HISTORY = json.loads((Path(__file__).parent.parent / "copy" / "pl.json").read_te
 
 
 class HistoryNote(unittest.TestCase):
+    """The note under the history list without sign-in (`history.session_note`)."""
+
     def test_note_does_not_promise_a_single_tab(self) -> None:
         # Gherkin "notatka pod historią mówi prawdę o tym, gdzie żyje historia" from design-system#84:
         # the browser copies sessionStorage into tabs opened from the page and restores closed tabs
         note = HISTORY["session_note"].lower()
         self.assertNotIn("tylko w tej karcie", note)
         self.assertNotIn("zniknie", note)
-        self.assertIn("przeglądar", note)
-        self.assertIn("kart", note)
+        self.assertIn("w kartach z niej otwartych", note)
 
 
 if __name__ == "__main__":
