@@ -49,7 +49,7 @@ REQUIRED_PROCESSORS = (
 # AI Act art. 50 notice at first contact in every channel, plus the result card line
 AI_NOTICE_KEYS = ("ai_notice.first_contact", "ai_notice.discord", "ai_notice.sms", "ai_notice.mcp", "result.ai_disclosure")
 SMS_UCS2_CHARS = 70
-# team answers on PR #20: candidates and the SMS gateway are planned, not active
+# team answers on PR #20: ADR-35 reranking/injection candidates stay planned; sms_gateway is active (#48)
 PLANNED_PROCESSORS = ("cloudflare_workers_ai", "vertex_ai_ranking")
 
 
