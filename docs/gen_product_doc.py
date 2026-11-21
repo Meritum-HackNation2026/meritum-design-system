@@ -829,7 +829,7 @@ WEB_SEARCH_OPTIONS = [
     ("Staan (Qwant i Ecosia)", "brak publicznej dokumentacji", "brak publicznego cennika", "indeks europejski", "brak samoobsługowego API", "Droga migracji na później"),
 ]
 PROCESSORS = [
-    ("Serwer zespołu", "serwer zespołu w Polsce", "API, worker, PostgreSQL z zapisami przebiegu, sprawami i korpusem", "demo na czas hackathonu (meritum.gburek.app)"),
+    ("Serwer zespołu", "serwer zespołu w Polsce", "API, worker, PostgreSQL z zapisami przebiegu, sprawami i korpusem. Telefon zespołu z kartą prepaid i SMS Gateway for Android jako bramka SMS", "demo na czas hackathonu (meritum.gburek.app)"),
     ("Cloudflare", "USA", "całe żądania i odpowiedzi, w tym treść pytań i adresy IP, bo tunel kończy TLS", "tunel do serwera zespołu, TLS, ochrona przed DDoS i limity"),
     ("GCP europe-central2", "UE (Warszawa)", "przesłane pliki i wywołania modeli wektorów, transkrypcji i maskowania danych; aplikacja i baza tu nie działają", "magazyn plików i modele wektorów Vertex AI (ADR-14)"),
     ("OpenRouter (pośrednik do modelu językowego)", "USA (OpenRouter, Inc.), poza EOG; standardowe klauzule umowne (moduł 2) w umowie powierzenia OpenRouter", "zamaskowane twierdzenia, fragmenty źródeł, odpowiedzi modelu; ustawienie ZDR: zapytania i odpowiedzi nie są rutynowo przechowywane (wyjątki: kontrola CSAM, obowiązki prawne)", "dostęp do głównego modelu językowego (ADR-11)"),
@@ -846,7 +846,7 @@ PROCESSORS = [
     ("Mistral w Vertex AI (opcja)", "GCP europe-west4", "zamaskowane pytanie, fragmenty źródeł, odpowiedzi modelu", "opcjonalny model od dostawcy z UE (ADR-11)"),
     ("Google Fact Check Tools API", "Google, region do sprawdzenia", "zapytania z twierdzeniami", "znajdowanie artykułów fact-checkerów i ocena ClaimReview jako kontekst (ADR-24)"),
     ("Discord", "USA", "nazwa i identyfikator użytkownika, treść wiadomości do bota, wiadomości głosowe i odpowiedź", "kanał Discord (US-WTY-06)"),
-    ("Bramka SMS", "do wyboru", "numer telefonu, treść SMS-a i odpowiedź", "kanał SMS, jeśli starczy czasu (US-WTY-07)"),
+    ("SMS Gateway for Android, sms-gate.app (tryb Cloud)", "api.sms-gate.app; dostawca nie podaje regionu, poza gwarancją EOG", "numer telefonu, treść SMS-a i odpowiedź", "kanał SMS (US-WTY-07)"),
     ("Google i Microsoft (logowanie)", "USA", "identyfikator konta", "opcjonalne logowanie, jeśli starczy czasu (US-SPR-10)"),
     ("Google Speech-to-Text v2 (Chirp 3)", "GCP, multi-region eu", "pliki audio i transkrypcje", "weryfikacja nagrań (ADR-30)"),
     ("Vertex AI (embeddingi)", "GCP europe-central2 (Warszawa)", "zamaskowane twierdzenia, fragmenty źródeł, opisy incydentów", "wyszukiwanie, podobieństwo spraw i incydentów (ADR-04)"),
