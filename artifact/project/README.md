@@ -269,7 +269,7 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 - `extension/popup/`, `extension/onboarding/`, `extension/icons/`. Opis techniczny po angielsku: `extension/README.md`.
 
 ### Backend (FastAPI)
-- `contracts/` (`examples.json`, `meritum.schema.json`, `meritum.ts`): kopia wygenerowanych kontraktów z meritum-core (pakiet `src/meritum_core/checks/contracts/`), odświeżana przez `contracts/sync.sh`, nie edytować ręcznie. Modele Pydantic v2 dla API, strony, wtyczki i panelu (zapytanie, wynik sprawdzenia, twierdzenie, cytat, źródło, przesłanki, status analizy, zapis przebiegu, sprawa moderatora, wpis katalogu źródeł). Reguły z treści zadania MSZ są w modelach:
+- `contracts/` (`examples.json`, `meritum.schema.json`, `meritum.ts`): kopia wygenerowanych kontraktów z meritum-core (pakiet `src/meritum_core/checks/contracts/`), odświeżana przez `contracts/sync.sh`, nie edytować ręcznie. W meritum-core są to modele Pydantic v2 dla API, strony, wtyczki i panelu (zapytanie, wynik sprawdzenia, twierdzenie, cytat, źródło, przesłanki, status analizy, zapis przebiegu, sprawa moderatora, wpis katalogu źródeł). Reguły z treści zadania MSZ są w modelach:
   - werdykt rozstrzygający (potwierdzone, fałszywe, wprowadzające w błąd) wymaga cytatu i jawnych przesłanek;
   - siła podstawy wynika z przesłanek według jednej stałej reguły, nie z deklaracji modelu, i mają ją tylko werdykty rozstrzygające;
   - zgodność wynika z wymowy cytatów; sprzeczne wiarygodne źródła dają „brak wystarczających dowodów” z cytatami obu stron i bez siły;
