@@ -17,7 +17,7 @@ Kto czego używa (wtyczka, backend, panel, prezentacje, pokaz): sekcja 13 w [DES
 |---|---|
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
 | `components/meritum/` | komponenty React (shadcn/ui) typowane kontraktami: formularz, historia, przycisk „Sprawdź”, pasek analizy, karta wyniku, kolejka moderatorów. Komponenty z poprzedniego zakresu (NASK, notatki) są w `components/legacy/` i nie należą do produktu dla MSZ |
-| `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (Pydantic, JSON Schema, TypeScript): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia, powiadomienie. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
+| `contracts/` | kopia kontraktów danych z meritum-core, odświeżana skryptem `sync.sh` (JSON Schema, TypeScript, przykłady): zapytanie, werdykty, cytaty z przesłankami, katalog źródeł, sprawa moderatora, zapis przebiegu sprawdzenia, powiadomienie. Źródłem prawdy jest repozytorium meritum-core; design system korzysta z wygenerowanych JSON Schema i typów TS |
 | `copy/pl.json` | teksty interfejsu: werdykty, statusy, kroki sprawdzenia, techniki manipulacji, historia sprawdzeń, logowanie obywatela i personelu, administracja kontami i tematami, link jury, przesyłanie nagrania, SMS, Discord, informacja o AI, prywatność kanałów, panel moderatora, powiadomienia, strona ewaluacji, błędy. Test `tests/test_copy.py` pilnuje wymaganych kluczy i tonu |
 | `copy/privacy.json` | polityki prywatności strony, Discorda, wtyczki i SMS oraz rejestr podmiotów przetwarzających (ADR-14), wspólne dla frontendu, bota i README. Test `tests/test_privacy.py` pilnuje sekcji polityk, rejestru i tonu |
 | `extension/` | zestaw wtyczki Chrome (kanał dodatkowy; drugim kanałem jest bot na Discordzie): style Shadow DOM, skrypt referencyjny MV3, popup, onboarding, ikony |
@@ -63,7 +63,7 @@ Potem otwórz http://localhost:52990/demo/live/ (makiety na pokaz) albo http://l
 
 Wdrożone makiety platform (te same strony co `demo/platforms/`, z repo [meritum-mocks](https://github.com/Meritum-HackNation2026/meritum-mocks)) są pod https://meritum-x.gburek.app, https://meritum-facebook.gburek.app, https://meritum-instagram.gburek.app, https://meritum-reddit.gburek.app i https://meritum-tiktok.gburek.app. Makiety wdrażają się tylko z `main`, więc nie mają już aktualnej wersji dev.
 
-Kontrakty zmienia się w [meritum-core](https://github.com/Meritum-HackNation2026/meritum-core) (`src/meritum_core/checks/contracts.py`), nie tutaj. Po zmianie kontraktów na gałęzi main workflow `bump-dependents.yml` w meritum-core otwiera tu PR z odświeżoną kopią (ADR-33). Ręcznie kopię w `contracts/` odświeża:
+Kontrakty zmienia się w [meritum-core](https://github.com/Meritum-HackNation2026/meritum-core) (pakiet `src/meritum_core/checks/contracts/`), nie tutaj. Po zmianie kontraktów na gałęzi main workflow `bump-dependents.yml` w meritum-core otwiera tu PR z odświeżoną kopią (ADR-33). Ręcznie kopię w `contracts/` odświeża:
 
 ```bash
 contracts/sync.sh

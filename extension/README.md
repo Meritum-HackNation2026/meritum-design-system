@@ -2,7 +2,7 @@
 
 The extension is Meritum's second channel for the MSZ "Prawdowid" challenge. The primary channel is the web form, where a citizen pastes text or a link. The extension adds the same check where people meet the content: a „Sprawdź” (Check) button under posts on X, Facebook, Instagram, Reddit and TikTok, and the same paste box in the toolbar popup.
 
-Both channels call the same verification API with the same `CheckRequest` (`../contracts/meritum_contracts.py`, a synced copy that is never edited by hand; the single source of truth is the meritum-core repository) and render the same `CheckResult`. The extension holds no verification logic of its own, so the same request with the same corpus version gives the same verdicts and citations on both channels (MSZ scenario G).
+Both channels call the same verification API with the same `CheckRequest` (`../contracts/meritum.ts` and `meritum.schema.json`, a synced copy that is never edited by hand; the single source of truth is the meritum-core repository) and render the same `CheckResult`. The extension holds no verification logic of its own, so the same request with the same corpus version gives the same verdicts and citations on both channels (MSZ scenario G).
 
 Rules for this channel:
 
