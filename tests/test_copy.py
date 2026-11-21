@@ -1,6 +1,6 @@
 """Checks copy/pl.json: required screen keys and the tone of DESIGN_SYSTEM.md section 8.
 
-Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39
+Features: US-MOD-05, US-OBS-06, US-SPR-10, US-SPR-11, F-25, F-28, F-31, F-08, design-system#16, design-system#22, design-system#39, US-ZRD-12, F-29
 Run: python3 -m unittest discover -s tests
 """
 
@@ -87,6 +87,31 @@ REQUIRED_KEYS = (
     "discord.claims.other",
     # daily recording upload limit, apart from the per-minute one (design-system#43)
     "errors.rate_limited_daily",
+    # page „Jak działa Meritum” (meritum-frontend#20)
+    "method.lead",
+    "method.sources.title",
+    "method.verdict.title",
+    "method.team.title",
+    "method.catalog.title",
+    "method.catalog.lead",
+    "method.catalog.columns.source",
+    "method.catalog.columns.kind",
+    "method.catalog.columns.license",
+    "method.catalog.columns.qualified_because",
+    "method.catalog.columns.exclusion_reason",
+    "method.catalog.excluded_title",
+    "method.catalog.excluded_lead",
+    "method.catalog.unavailable",
+    "method.metrics.title",
+    "method.metrics.lead",
+    "method.metrics.run_date",
+    "method.metrics.reproduce",
+    "method.metrics.no_run",
+    "method.corrections.title",
+    "method.report_error.title",
+    "method.pilot.title",
+    "method.metrics.names.macro_f1",
+    "method.metrics.names.latency_median_s",
 )
 
 
@@ -120,6 +145,16 @@ class RequiredKeys(unittest.TestCase):
                 value = lookup(key)
                 self.assertIsInstance(value, str, f"{key} is missing")
                 self.assertTrue(value.strip(), f"{key} is empty")
+
+
+class MethodPage(unittest.TestCase):
+    def test_every_text_section_has_paragraphs(self) -> None:
+        # meritum-frontend#20 renders method.<section>.text as paragraphs
+        for section in ("sources", "verdict", "team", "corrections", "report_error", "pilot"):
+            with self.subTest(section=section):
+                paragraphs = lookup(f"method.{section}.text")
+                self.assertIsInstance(paragraphs, list)
+                self.assertTrue(paragraphs)
 
 
 class Tone(unittest.TestCase):
