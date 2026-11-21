@@ -372,5 +372,100 @@
       "done": "gotowy",
       "failed": "nieudany"
     }
+  },
+  "method": {
+    "$comment": "Page „Jak działa Meritum” (US-ZRD-12, F-29, meritum-frontend#20). Page title: result.how_it_works. The data controller block comes from privacy.json (controller). Source kinds and tiers: source_kind, source_tier. Facts only from the product document; numbers only from a measured evaluation run.",
+    "lead": "Tu opisujemy, jak Meritum sprawdza informacje, skąd bierze źródła i jak mierzymy jakość odpowiedzi. Metodę opisujemy według zasad IFCN i EFCSN, międzynarodowej i europejskiej sieci fact-checkerów.",
+    "sources": {
+      "title": "Jak wybieramy i sprawdzamy źródła",
+      "text": [
+        "Dowodów szukamy tylko w jawnym katalogu źródeł. Każda pozycja ma powód kwalifikacji, licencję albo podstawę prawną i sposób odświeżania.",
+        "Źródła urzędowe i pierwotne to serwisy gov.pl i agencji z listy organizatora konkursu, ISAP, EUR-Lex, dane.gov.pl i BIP.",
+        "Źródła wtórne to artykuły fakenews.pl i pravda.org.pl, sygnatariuszy IFCN, oraz teksty fact z EUvsDisinfo.",
+        "Oceny fact-checkerów z IFCN albo EFCSN, na przykład Demagogu i AFP Sprawdzam, znajdujemy w Google Fact Check Tools API. Podajemy wtedy nazwę fact-checkera, ocenę, tytuł, datę i link.",
+        "Dla każdej domeny sprawdzamy robots.txt i zastrzeżenie eksploracji tekstów i danych. Źródło wtórne z takim zastrzeżeniem wypada z katalogu.",
+        "Każdy cytat to dosłowny fragment źródła z tytułem, wydawcą, datą i linkiem. Fragment, którego nie ma w źródle, odpada przed pokazaniem."
+      ]
+    },
+    "verdict": {
+      "title": "Jak liczymy werdykt i siłę",
+      "text": [
+        "Z jednego zapytania wyodrębniamy najwyżej pięć twierdzeń o faktach. Pozostałe wymieniamy w ograniczeniach.",
+        "Każde twierdzenie dostaje jeden z pięciu werdyktów. Potwierdzone, fałszywe i wprowadzające w błąd wymagają co najmniej jednego cytatu.",
+        "Gdy dowodów brakuje albo wiarygodne źródła są sprzeczne, nie rozstrzygamy. Mówimy wtedy, czego nie ustaliliśmy.",
+        "Siłę podstawy liczy jedna reguła w kodzie, bez oceny modelu. Liczymy tylko niezależnych wydawców, których cytaty zgadzają się z werdyktem.",
+        "Mocna: co najmniej dwóch wydawców, w tym jeden urzędowy lub pierwotny, i świeże dowody. Umiarkowana: dwóch wydawców albo jeden urzędowy lub pierwotny. Słaba: jeden wydawca spoza źródeł urzędowych albo nieaktualny dowód.",
+        "Wyjaśnienie przygotowuje model AI, a jego podstawą są cytaty. Treść pytania i źródeł trafia do modelu tylko jako dane do analizy."
+      ]
+    },
+    "team": {
+      "title": "Kto prowadzi projekt",
+      "text": [
+        "Meritum buduje Zespół Meritum na HackNation 2026, w konkursie MSZ „Prawdowid”.",
+        "Projekt nie ma partnerstw z MSZ ani z organizacjami fact-checkingowymi.",
+        "Aplikacja działa na serwerze zespołu w Polsce. Modele Vertex AI, także model wektorów gemini-embedding-001, działają w Google Cloud w Warszawie (europe-central2).",
+        "Wyszukiwanie na żywo w Vertex AI Search działa poza gwarancją UE. Pełny wykaz dostawców jest w polityce prywatności.",
+        "Na koniec prac udostępnimy publicznie wszystkie repozytoria i system."
+      ]
+    },
+    "catalog": {
+      "title": "Katalog źródeł",
+      "lead": "Tu są wszystkie źródła, w których szukamy dowodów. Przy każdym podajemy powód kwalifikacji i licencję.",
+      "columns": {
+        "source": "Źródło",
+        "kind": "Rodzaj",
+        "license": "Licencja lub podstawa prawna",
+        "qualified_because": "Powód kwalifikacji",
+        "exclusion_reason": "Powód wykluczenia"
+      },
+      "excluded_title": "Źródła wykluczone",
+      "excluded_lead": "Z tych źródeł nie korzystamy. Przy każdym podajemy powód.",
+      "unavailable": "Katalog źródeł nie jest jeszcze opublikowany. Pokażemy go tutaj, gdy będzie gotowy."
+    },
+    "metrics": {
+      "title": "Mierniki jakości",
+      "lead": "Pokazujemy tylko liczby zmierzone naszym skryptem ewaluacji na golden secie, czyli zestawie deweloperskim. Zestaw jury jest dla nas ukryty, więc nie stroimy na nim progów.",
+      "run_date": "Ostatni przebieg ewaluacji: {date}.",
+      "reproduce": "Paczka do odtworzenia przebiegu",
+      "no_run": "Nie ma jeszcze zakończonego przebiegu ewaluacji, więc nie pokazujemy liczb.",
+      "names": {
+        "$comment": "Keys follow the metrics listed in meritum-core#36 (EvalMetrics); rename them when the contract lands.",
+        "macro_f1": "Trafność werdyktów (macro-F1)",
+        "citation_coverage": "Pokrycie twierdzeń cytatami",
+        "citation_accuracy": "Poprawność cytatów",
+        "abstention": "Trafne wstrzymanie się od werdyktu",
+        "injection_robustness": "Odporność na prompt injection",
+        "latency_median_s": "Mediana czasu odpowiedzi (s)",
+        "latency_max_s": "Najdłuższy czas odpowiedzi (s)",
+        "cost_per_100": "Koszt 100 testów",
+        "channel_consistency": "Spójność odpowiedzi w kanałach",
+        "feedback_loop": "Pętla informacji"
+      }
+    },
+    "corrections": {
+      "title": "Polityka poprawek",
+      "text": [
+        "Błędny wynik poprawia człowiek. Moderator odpowiada cytatami ze źródeł z katalogu, a my sprawdzamy je dosłownie, jak w odpowiedzi systemu.",
+        "Odpowiedź moderatora trafia jako powiadomienie do osób, które pytały o to samo.",
+        "Gdy nowszy dokument zastępuje starszy albo wydawca publikuje korektę, starszy dowód oznaczamy jako zastąpiony. Nie liczy się do siły, ale zostaje widoczny na osi czasu."
+      ]
+    },
+    "report_error": {
+      "title": "Co się dzieje po kliknięciu „Zgłoś błąd”",
+      "text": [
+        "Przycisk jest przy każdym twierdzeniu na karcie wyniku. Możesz dopisać, co jest nie tak, ale nie musisz.",
+        "Dane osobowe w tym opisie maskujemy tak samo jak w pytaniu.",
+        "Zgłoszenie tworzy sprawę dla moderatora albo dołącza do sprawy o to samo twierdzenie. Dostajesz numer sprawy.",
+        "Dopóki moderator nie rozpatrzy zgłoszenia, wynik dla innych osób się nie zmienia. Odpowiedź moderatora przyjdzie jako powiadomienie."
+      ]
+    },
+    "pilot": {
+      "title": "Droga do pilotażu",
+      "text": [
+        "Na hackathonie nie publikujemy odpowiedzi. Pytania bez odpowiedzi trafiają do kolejki moderatora.",
+        "W pilotażu odpowiedź publiczną zatwierdzi człowiek przed publikacją. Opcjonalnie zatwierdzą ją wspólnie osoby o różnych poglądach.",
+        "Po hackathonie planujemy też model językowy na własnym serwerze, żeby mniej zależeć od dostawców spoza EOG."
+      ]
+    }
   }
 }
