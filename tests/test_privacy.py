@@ -122,6 +122,28 @@ class Policies(unittest.TestCase):
         self.assertIn("powiadomienia", retention.lower())
         self.assertIn("do kliknięcia „Usuń konto”", retention)
 
+    def test_web_sign_in_names_oauth_scopes_and_account_data(self) -> None:
+        # Gherkin "polityka strony opisuje logowanie kontem Google albo Microsoft" from design-system#28
+        text = " ".join(str(t) for _, t in texts(POLICIES["web"]["sign_in"])).lower()
+        for phrase in ("dobrowolne", "openid, email i profile", "imię i nazwisko", "adres e-mail", "identyfikator konta",
+                       "nie dostajemy hasła", "poczty, plików czy kontaktów", "sesji logowania", "historii",
+                       "ról", "nie używamy do reklam", "dopóki masz konto",
+                       "cofnąć w ustawieniach konta google albo microsoft"):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, text)
+
+    def test_account_data_is_the_same_everywhere(self) -> None:
+        for where, text in (
+            ("processors.sign_in", ACTIVE["sign_in"]["data"]),
+            ("policies.web.data", POLICIES["web"]["data"]),
+            ("policies.web.sign_in.scopes", POLICIES["web"]["sign_in"]["scopes"]),
+            ("account.stored", str(lookup("account.stored"))),
+        ):
+            with self.subTest(where=where):
+                self.assertIn("imię i nazwisko", text.lower())
+                self.assertIn("adres e-mail", text)
+                self.assertIn("identyfikator", text)
+
     def test_extension_explains_why_no_manual_deletion(self) -> None:
         deletion = POLICIES["extension"]["deletion"]
         self.assertIn("identyfikatora", deletion)
