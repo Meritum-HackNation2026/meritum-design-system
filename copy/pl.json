@@ -1,5 +1,5 @@
 {
-  "$comment": "Meritum UI copy (pl). Keys mirror codes in the meritum-core contracts (src/meritum_core/checks/contracts.py; read-only copy in contracts/). Tone: DESIGN_SYSTEM.md section 8. Plain language for people without technical knowledge.",
+  "$comment": "Meritum UI copy (pl). Keys mirror codes in the meritum-core contracts (package src/meritum_core/checks/contracts/; read-only copy in contracts/). Tone: DESIGN_SYSTEM.md section 8. Plain language for people without technical knowledge.",
   "brand": {
     "name": "Meritum",
     "subtitle": "obywatelski radar dezinformacji",

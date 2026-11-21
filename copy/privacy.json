@@ -83,10 +83,10 @@
     "items": [
       {
         "id": "team_server",
-        "name": "Serwer zespołu (on-prem)",
-        "region": "GCP europe-central2 (Warszawa, Polska)",
-        "data": "Wszystko, co dziś przetwarza demo: API, worker, PostgreSQL z zapisami przebiegu, sprawami i korpusem",
-        "purpose": "Obecne demo (meritum.gburek.app) do czasu migracji do GCP"
+        "name": "Serwer zespołu",
+        "region": "Serwer zespołu w Polsce",
+        "data": "API, worker, PostgreSQL z zapisami przebiegu, sprawami i korpusem",
+        "purpose": "Demo na czas hackathonu (meritum.gburek.app)"
       },
       {
         "id": "cloudflare",
@@ -97,15 +97,15 @@
       },
       {
         "id": "gcp_europe_central2",
-        "name": "GCP europe-central2 (docelowo)",
+        "name": "GCP europe-central2",
         "region": "UE (Warszawa)",
-        "data": "API, worker, PostgreSQL z zapisami przebiegu, sprawami i korpusem",
-        "purpose": "Docelowe demo"
+        "data": "Przesłane pliki i wywołania modeli; aplikacja i baza tu nie działają",
+        "purpose": "Magazyn plików i modele Vertex AI"
       },
       {
         "id": "vertex_ai",
         "name": "Vertex AI",
-        "region": "GCP, region UE, w którym jest dostępny wybrany model",
+        "region": "GCP europe-central2 (Warszawa)",
         "data": "Zamaskowane pytanie, fragmenty źródeł, odpowiedzi modelu",
         "purpose": "Wyodrębnianie twierdzeń, ocena wymowy, odpowiedź"
       },
@@ -203,7 +203,7 @@
       {
         "id": "vertex_ai_embeddings",
         "name": "Vertex AI (embeddingi)",
-        "region": "GCP, region UE (docelowo europe-central2 albo inny dostępny region UE)",
+        "region": "GCP europe-central2 (Warszawa)",
         "data": "Zamaskowane twierdzenia, fragmenty źródeł, opisy incydentów",
         "purpose": "Wyszukiwanie, podobieństwo spraw i incydentów"
       },
