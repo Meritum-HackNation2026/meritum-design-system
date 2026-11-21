@@ -110,6 +110,8 @@ REQUIRED_KEYS = (
     "method.corrections.title",
     "method.report_error.title",
     "method.pilot.title",
+    "method.metrics.names.macro_f1",
+    "method.metrics.names.latency_median_s",
 )
 
 
@@ -143,6 +145,16 @@ class RequiredKeys(unittest.TestCase):
                 value = lookup(key)
                 self.assertIsInstance(value, str, f"{key} is missing")
                 self.assertTrue(value.strip(), f"{key} is empty")
+
+
+class MethodPage(unittest.TestCase):
+    def test_every_text_section_has_paragraphs(self) -> None:
+        # meritum-frontend#20 renders method.<section>.text as paragraphs
+        for section in ("sources", "verdict", "team", "corrections", "report_error", "pilot"):
+            with self.subTest(section=section):
+                paragraphs = lookup(f"method.{section}.text")
+                self.assertIsInstance(paragraphs, list)
+                self.assertTrue(paragraphs)
 
 
 class Tone(unittest.TestCase):

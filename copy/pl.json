@@ -381,8 +381,8 @@
       "text": [
         "Dowodów szukamy tylko w jawnym katalogu źródeł. Każda pozycja ma powód kwalifikacji, licencję albo podstawę prawną i sposób odświeżania.",
         "Źródła urzędowe i pierwotne to serwisy gov.pl i agencji z listy organizatora konkursu, ISAP, EUR-Lex, dane.gov.pl i BIP.",
-        "Źródła wtórne to artykuły fakenews.pl i pravda.org.pl, sygnatariuszy IFCN, oraz teksty fact z EUvsDisinfo.",
-        "Oceny fact-checkerów z IFCN albo EFCSN, na przykład Demagogu i AFP Sprawdzam, znajdujemy w Google Fact Check Tools API. Podajemy wtedy nazwę fact-checkera, ocenę, tytuł, datę i link.",
+        "Źródła wtórne to artykuły z fakenews.pl i pravda.org.pl, których wydawcy podpisali kodeks IFCN. Do tego teksty z bazy EUvsDisinfo, które prostują fałszywe twierdzenia.",
+        "Oceny fact-checkerów z IFCN albo EFCSN, takich jak Demagog i AFP Sprawdzam, znajdujemy w Google Fact Check Tools API. Podajemy wtedy nazwę fact-checkera, ocenę, tytuł, datę i link.",
         "Dla każdej domeny sprawdzamy robots.txt i zastrzeżenie eksploracji tekstów i danych. Źródło wtórne z takim zastrzeżeniem wypada z katalogu.",
         "Każdy cytat to dosłowny fragment źródła z tytułem, wydawcą, datą i linkiem. Fragment, którego nie ma w źródle, odpada przed pokazaniem."
       ]
@@ -394,7 +394,7 @@
         "Każde twierdzenie dostaje jeden z pięciu werdyktów. Potwierdzone, fałszywe i wprowadzające w błąd wymagają co najmniej jednego cytatu.",
         "Gdy dowodów brakuje albo wiarygodne źródła są sprzeczne, nie rozstrzygamy. Mówimy wtedy, czego nie ustaliliśmy.",
         "Siłę podstawy liczy jedna reguła w kodzie, bez oceny modelu. Liczymy tylko niezależnych wydawców, których cytaty zgadzają się z werdyktem.",
-        "Mocna: co najmniej dwóch wydawców, w tym jeden urzędowy lub pierwotny, i świeże dowody. Umiarkowana: dwóch wydawców albo jeden urzędowy lub pierwotny. Słaba: jeden wydawca spoza źródeł urzędowych albo nieaktualny dowód.",
+        "Mocna: co najmniej dwóch wydawców, w tym jeden urzędowy lub pierwotny, i świeże dowody. Umiarkowana: co najmniej dwóch wydawców albo jeden urzędowy lub pierwotny. Słaba: jeden wydawca spoza źródeł urzędowych albo nieaktualny dowód.",
         "Wyjaśnienie przygotowuje model AI, a jego podstawą są cytaty. Treść pytania i źródeł trafia do modelu tylko jako dane do analizy."
       ]
     },
@@ -403,8 +403,8 @@
       "text": [
         "Meritum buduje Zespół Meritum na HackNation 2026, w konkursie MSZ „Prawdowid”.",
         "Projekt nie ma partnerstw z MSZ ani z organizacjami fact-checkingowymi.",
-        "Aplikacja działa na serwerze zespołu w Polsce. Modele Vertex AI, także model wektorów gemini-embedding-001, działają w Google Cloud w Warszawie (europe-central2).",
-        "Wyszukiwanie na żywo w Vertex AI Search działa poza gwarancją UE. Pełny wykaz dostawców jest w polityce prywatności.",
+        "Aplikacja działa na serwerze zespołu w Polsce. Główny model językowy i model wektorów gemini-embedding-001 działają w Vertex AI w Warszawie (Google Cloud, europe-central2).",
+        "Część dostawców działa poza UE, na przykład Cloudflare, przez który przechodzi ruch do aplikacji, i wyszukiwarka Vertex AI Search. Pełny wykaz jest w polityce prywatności.",
         "Na koniec prac udostępnimy publicznie wszystkie repozytoria i system."
       ]
     },
@@ -423,6 +423,7 @@
       "unavailable": "Katalog źródeł nie jest jeszcze opublikowany. Pokażemy go tutaj, gdy będzie gotowy."
     },
     "metrics": {
+      "$comment": "The page shows the last finished run on the golden set only. {date} in run_date: a long Polish date, e.g. „20 listopada 2026”.",
       "title": "Mierniki jakości",
       "lead": "Pokazujemy tylko liczby zmierzone naszym skryptem ewaluacji na golden secie, czyli zestawie deweloperskim. Zestaw jury jest dla nas ukryty, więc nie stroimy na nim progów.",
       "run_date": "Ostatni przebieg ewaluacji: {date}.",
@@ -434,7 +435,7 @@
         "citation_coverage": "Pokrycie twierdzeń cytatami",
         "citation_accuracy": "Poprawność cytatów",
         "abstention": "Trafne wstrzymanie się od werdyktu",
-        "injection_robustness": "Odporność na prompt injection",
+        "injection_robustness": "Odporność na wstrzyknięcie poleceń",
         "latency_median_s": "Mediana czasu odpowiedzi (s)",
         "latency_max_s": "Najdłuższy czas odpowiedzi (s)",
         "cost_per_100": "Koszt 100 testów",
@@ -445,9 +446,9 @@
     "corrections": {
       "title": "Polityka poprawek",
       "text": [
-        "Błędny wynik poprawia człowiek. Moderator odpowiada cytatami ze źródeł z katalogu, a my sprawdzamy je dosłownie, jak w odpowiedzi systemu.",
-        "Odpowiedź moderatora trafia jako powiadomienie do osób, które pytały o to samo.",
-        "Gdy nowszy dokument zastępuje starszy albo wydawca publikuje korektę, starszy dowód oznaczamy jako zastąpiony. Nie liczy się do siły, ale zostaje widoczny na osi czasu."
+        "Gdy nowszy dokument zastępuje starszy albo wydawca publikuje korektę, starszy dowód oznaczamy jako zastąpiony. Nie liczy się do siły, ale zostaje widoczny na osi czasu.",
+        "Zgłoszony błąd rozpatruje moderator, czyli człowiek. Planujemy, że odpowie cytatami ze źródeł z katalogu, sprawdzanymi dosłownie jak odpowiedź systemu.",
+        "Odpowiedzi moderatora nie publikujemy. Trafi jako powiadomienie do osób, które pytały o to samo."
       ]
     },
     "report_error": {
