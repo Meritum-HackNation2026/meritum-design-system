@@ -223,7 +223,7 @@
     "no_publications": "Nie znaleźliśmy publikacji na ten temat ani w naszej bazie, ani w wyszukiwarce."
   },
   "escalation": {
-    "$comment": "Escalation.state: recommended, created and updated match the contract. not_saved is shown on HTTP 503 when „Przekaż moderatorom” or „Zgłoś błąd” could not persist the case (no case_id, no case number). Backend will send it instead of escalation.recommended once meritum-backend picks up this key. updated has the same text as created and the frontend shows created in both states, so the citizen never learns that someone else asked the same (meritum-frontend#23).",
+    "$comment": "Escalation.state: recommended, created and updated match the contract. not_saved is shown whenever „Przekaż moderatorom” or „Zgłoś błąd” could not persist the case: any 5xx (not only 503), an unreadable response, or a response without a case number (no case_id). Backend will send it instead of escalation.recommended once meritum-backend picks up this key. updated has the same text as created and the frontend shows created in both states, so the citizen never learns that someone else asked the same (meritum-frontend#23).",
     "recommended": "Ta sprawa nadaje się do sprawdzenia przez moderatora. Nie została jeszcze przekazana.",
     "created": "Przekazaliśmy sprawę moderatorom (sprawa {case}).",
     "updated": "Przekazaliśmy sprawę moderatorom (sprawa {case}).",
