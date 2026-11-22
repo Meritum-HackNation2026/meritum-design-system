@@ -9,7 +9,7 @@ name: Copy
 on:
   push:
     branches: ["**"]
-    paths: ["copy/**", "contracts/**", "docs/**", "extension/reference/**", "tests/**", "presentation/**/*.py", ".github/workflows/copy.yml"]
+    paths: ["copy/**", "contracts/**", "docs/**", "extension/reference/**", "tokens/**", "tests/**", "presentation/**/*.py", ".github/workflows/copy.yml"]
 
 permissions:
   contents: read

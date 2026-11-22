@@ -21,11 +21,15 @@ def block(selector: str) -> dict[str, str]:
 LIGHT = block(":root {")
 DARK = block(".dark,")
 THEME = block("@theme inline {")
-GROUNDS = ("--background", "--card", "--popover", "--secondary", "--muted", "--accent", "--sidebar")
+SKIN = block("[data-host] {")
+SKIN_DARK = block(':is(.dark, [data-theme="dark"]) [data-host],')
+GROUNDS = ("--background", "--card", "--popover", "--secondary", "--muted", "--accent", "--sidebar", "--sidebar-accent")
+AA_TEXT = 4.5  # WCAG 2.2 AA, normal text
 
 
 def rgb(colour: str) -> tuple[int, int, int]:
-    return tuple(int(colour[i : i + 2], 16) for i in (1, 3, 5))  # type: ignore[return-value]
+    red, green, blue = (int(colour[i : i + 2], 16) for i in (1, 3, 5))
+    return red, green, blue
 
 
 def luminance(colour: str) -> float:
@@ -46,7 +50,8 @@ class OneWhiteSurface(unittest.TestCase):
         self.assertEqual(LIGHT["--card"], "#FFFFFF")
 
     def test_light_greys_have_no_warm_tint(self) -> None:
-        for name in ("--muted", "--secondary", "--border", "--input"):
+        self.assertEqual(LIGHT["--sidebar"], "#FFFFFF")
+        for name in ("--muted", "--secondary", "--accent", "--sidebar-accent", "--border", "--input"):
             red, _, blue = rgb(LIGHT[name])
             self.assertLessEqual(red, blue, f"{name} {LIGHT[name]} leans warm")
 
@@ -58,8 +63,8 @@ class BlackDarkMode(unittest.TestCase):
 
     def test_no_dark_ground_leans_blue(self) -> None:
         for name in GROUNDS:
-            red, green, blue = rgb(DARK[name])
-            self.assertLessEqual(blue, max(red, green), f"{name} {DARK[name]} leans blue")
+            red, _, blue = rgb(DARK[name])
+            self.assertLessEqual(blue, red, f"{name} {DARK[name]} leans blue")
 
 
 class GreenConfirmed(unittest.TestCase):
@@ -76,6 +81,9 @@ class Contrast(unittest.TestCase):
         ("--foreground", "--background"),
         ("--muted-foreground", "--background"),
         ("--muted-foreground", "--muted"),
+        ("--muted-foreground", "--secondary"),
+        ("--muted-foreground", "--popover"),
+        ("--accent-foreground", "--accent"),
         ("--secondary-foreground", "--secondary"),
         ("--primary-foreground", "--primary"),
         ("--verified-foreground", "--verified-surface"),
@@ -87,14 +95,14 @@ class Contrast(unittest.TestCase):
         for label, mode in (("light", LIGHT), ("dark", DARK)):
             for text, ground in self.PAIRS:
                 ratio = contrast(mode[text], mode[ground])
-                self.assertGreaterEqual(ratio, 4.5, f"{label} {text} on {ground}: {ratio:.2f}:1")
+                self.assertGreaterEqual(ratio, AA_TEXT, f"{label} {text} on {ground}: {ratio:.2f}:1")
 
     def test_verdict_words_read_on_the_page(self) -> None:
         # the verdict word is set in the *-foreground colour straight on the page (DESIGN_SYSTEM.md 6.4)
         for label, mode in (("light", LIGHT), ("dark", DARK)):
             for name in ("--verified-foreground", "--contested-foreground", "--scam-foreground"):
                 ratio = contrast(mode[name], mode["--background"])
-                self.assertGreaterEqual(ratio, 4.5, f"{label} {name} on the page: {ratio:.2f}:1")
+                self.assertGreaterEqual(ratio, AA_TEXT, f"{label} {name} on the page: {ratio:.2f}:1")
 
 
 class InkInsteadOfAccent(unittest.TestCase):
@@ -126,13 +134,23 @@ class Shape(unittest.TestCase):
         self.assertEqual(LIGHT["--radius"], "0.5rem")
 
 
-class WidgetKeepsItsLook(unittest.TestCase):
-    def test_host_skins_still_link_in_the_verdict_colour(self) -> None:
-        # the widget and the platform mocks change in a later issue (meritum-monorepo#39, Out of scope)
+class SkinsKeepTheOldLook(unittest.TestCase):
+    """Everything under [data-host] (platform mocks, the Discord mock) stays as it was before Atrament."""
+
+    OLD_LIGHT = {"--background": "#F6F7F5", "--card": "#FFFFFF", "--foreground": "#14191E", "--link": "#1D6A86", "--verified": "#1D6A86"}
+    OLD_DARK = {"--background": "#0B0F12", "--card": "#0B0F12", "--foreground": "#E7ECEE", "--link": "#5DB3CF", "--verified": "#5DB3CF"}
+
+    def test_a_skin_pins_the_old_values_in_light_and_dark(self) -> None:
+        for label, skin, old in (("light", SKIN, self.OLD_LIGHT), ("dark", SKIN_DARK, self.OLD_DARK)):
+            for name, value in old.items():
+                self.assertEqual(skin[name], value, f"{label} {name}")
+
+    def test_skin_links_still_follow_the_sea_accent(self) -> None:
+        # --host-link stays var(--verified), which the skin pins to the old sea colour
         self.assertIn("--host-link: var(--verified)", TOKENS)
 
-    def test_file_says_the_widget_waits(self) -> None:
-        self.assertIn("extension/widget.css", TOKENS)
+    def test_file_says_the_extension_has_its_own_copy(self) -> None:
+        self.assertIn("own copy of the old\n  values in extension/widget.css", TOKENS)
 
 
 if __name__ == "__main__":
