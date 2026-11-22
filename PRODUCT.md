@@ -96,7 +96,7 @@ What is processed in the EU and what is not. The same register is in ADR-14 of t
 | Jasnopis (if used via API) | to verify | a sample of answers from evaluation | readability check |
 | Discord | USA | username and user id, message or voice message to the bot and the answer | Discord channel |
 | SMS gateway | to be chosen | phone number, SMS text and the answer | SMS channel, if time allows |
-| Google and Microsoft sign-in | USA | account id | optional sign-in, if time allows |
+| Google and Microsoft sign-in | USA | name, e-mail address and account id | optional citizen sign-in (history on the server) and team sign-in (moderators, administrators) |
 
 ## Brand Commitments
 

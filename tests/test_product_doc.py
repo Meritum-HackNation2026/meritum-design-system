@@ -59,6 +59,23 @@ class ProductDocMatchesPrivacy(unittest.TestCase):
             self.assertIn(CONTROLLER["contact"], text)
         self.assertIn(CONTROLLER["no_partnership"], story("US-ZRD-12"))
 
+    def test_sign_in_account_data_is_the_same_everywhere(self) -> None:
+        """Product doc, KEY_SELLING_POINTS.md, PRODUCT.md and the register name the same sign-in data (design-system#30)."""
+        register = next(i for i in PRIVACY["processors"]["items"] if i["id"] == "sign_in")
+        self.assertIn("Imię i nazwisko, adres e-mail i identyfikator konta", register["data"])
+        self.assertNotIn("starczy czasu", register["purpose"])
+        for name in ("KEY_SELLING_POINTS.md", "PRODUCT.md"):
+            text = (ROOT / name).read_text(encoding="utf-8")
+            row = next(line for line in text.splitlines() if line.startswith("| Google") and ("sign-in" in line or "(logowanie)" in line))
+            self.assertNotIn("starczy czasu", row)
+            self.assertNotIn("if time allows", row)
+            self.assertTrue(
+                "imię i nazwisko, adres e-mail i identyfikator konta" in row or "name, e-mail address and account id" in row,
+                name,
+            )
+        self.assertIn("imię i nazwisko, adres e-mail i identyfikator konta", story("US-SPR-10"))
+        self.assertIn("imię i nazwisko, adres e-mail i identyfikator konta", DOC)
+
 
 if __name__ == "__main__":
     unittest.main()
