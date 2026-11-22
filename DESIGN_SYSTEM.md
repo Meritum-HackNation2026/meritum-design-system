@@ -10,6 +10,10 @@ Ten dokument opisuje, jak Meritum wygląda i jak mówi. Przekaż go agentowi AI,
 
 Meritum pozwala sprawdzić informację tak łatwo, jak wysłać wiadomość. Obywatel wkleja tekst albo link w formularzu na stronie (kanał podstawowy) albo wysyła go botowi na Discordzie (drugi kanał, także w wiadomości prywatnej). Wtyczka do przeglądarki dodaje „Sprawdź” pod postem i pole do wklejenia tekstu w okienku. Jeśli starczy czasu, dojdzie SMS. Jeden rdzeń weryfikacji wyodrębnia twierdzenia, szuka w opisanym i audytowalnym zbiorze źródeł oraz w świeżych publikacjach z zatwierdzonych serwisów, a potem dla każdego twierdzenia podaje werdykt z dosłownym cytatem, jawnymi przesłankami i siłą podstawy. Gdy dowodów brakuje, wstrzymuje się i mówi, czego nie ustalił; sprawy nierozstrzygnięte i powtarzające się trafiają do kolejki moderatorów. Wygląd łączy precyzję narzędzi dla analityków (Linear, Vercel) z powagą dziennikarstwa śledczego (The Economist, Bellingcat). Metafora przewodnia to **biuletyn synoptyczny**: spokojny komunikat, jasno podane źródła pomiaru i uczciwie zaznaczona niepewność.
 
+### Idea przewodnia: cytat jest dowodem
+
+Meritum nie wygląda jak czat. Wygląda jak sprawdzona wypowiedź: najpierw werdykt, duży, w kolorze werdyktu, potem twierdzenie w cudzysłowie, jedno zdanie wyjaśnienia i dosłowne cytaty ze źródeł. Znakiem rozpoznawczym jest polski cudzysłów „ wysunięty na margines w kolorze `--verified`: stoi przy każdym cytacie ze źródła, przy pytaniu obywatela i przy przykładowych twierdzeniach na pustej stronie. Cudzysłów zastępuje ramkę: cytat nie leży w pudełku. Hierarchię budują skala i tło, nie obrysy. Informacja o AI pada raz na widok.
+
 **Hasła:** „Sprawdź, zanim podasz dalej.” oraz „Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost.”
 
 ---
@@ -84,7 +88,7 @@ Pierwsza wartość dotyczy trybu jasnego, druga ciemnego. Wszystkie pary tekst/t
 | Krój | Rola | Źródło |
 |---|---|---|
 | **Archivo** (wagi 400–800, szerokość 75–125) | cały interfejs, odpowiedzi, slajdy, logotyp | Google Fonts |
-| **Azeret Mono** (400–600) | wyłącznie dane: ID sprawdzeń i spraw (c_01, #S-1), domeny w tabelach, daty, godziny, liczby w metrykach | Google Fonts |
+| **Azeret Mono** (400–600) | wyłącznie kod i identyfikatory: ID sprawdzeń i spraw (c_01, #S-1), domeny w tabelach panelu, liczby w metrykach panelu. Daty i godziny w rozmowie i na karcie wyniku są w Archivo z cyframi tabelarycznymi | Google Fonts |
 
 Oba kroje mają polskie znaki. Mono nigdy nie służy do dekoracji, etykiet ani nagłówków.
 
@@ -93,11 +97,12 @@ Oba kroje mają polskie znaki. Mono nigdy nie służy do dekoracji, etykiet ani 
 | Styl | Rozmiar / interlinia | Grubość | Gdzie |
 |---|---|---|---|
 | Display | 40 px / 1,05 | 700, szerokość 108% | tylko slajdy |
-| Tytuł | 22 px / 28 px | 700 | nagłówek strony i panelu |
-| Powitanie | 30 px / 36 px | 700, szerokość 112,5%, światło −0,025 em | tylko hasło na pustej stronie rozmowy (6.8) |
-| Tytuł karty | 15 px | 700 | treść twierdzenia na karcie wyniku |
-| Tekst | 15 px / 22 px | 400 | wyjaśnienie, cytat |
-| Mały | 13 px / 20 px | 400–600 | wydawca, data, przesłanki |
+| Werdykt | 28 px / 32 px | 700, szerokość 112,5% | słowo werdyktu na karcie wyniku, pierwsze, co karta mówi (6.4) |
+| Tytuł | 22 px / 28 px | 700 | nagłówek strony i panelu, przykładowe twierdzenia na pustej stronie |
+| Powitanie | 30 px / 36 px (od 1024 px: 40 px) | 700, szerokość 112,5%, światło −0,025 em | tylko hasło na pustej stronie rozmowy (6.8) |
+| Twierdzenie | 16 px / 24 px | 600 | treść twierdzenia pod werdyktem, w cudzysłowie |
+| Tekst | 16 px / 24 px | 400 | wyjaśnienie, cytat |
+| Mały | 14 px / 20 px | 400–600 | wydawca, data, przesłanki |
 | Meta | 12 px / 16 px | 600 | nagłówek widżetu „Meritum”, osie wykresu |
 
 Nic poniżej 12 px. Nagłówki zdaniowe (wielka litera tylko na początku), bez rozstrzelonych WERSALIKÓW, bez etykiet nad nagłówkami.
@@ -112,7 +117,7 @@ Nic poniżej 12 px. Nagłówki zdaniowe (wielka litera tylko na początku), bez 
 - **Wnętrze kart:** 14 px w poziomie, 12 px u góry, 14 px na dole.
 - **Strona i panel:** marginesy 24 px (16 px na telefonie), odstęp między blokami 12–16 px. Formularz i wynik w jednej kolumnie do 720 px.
 - **Promienie:** karty 12 px (w widżecie zgodnie z platformą: X 16, Facebook 8, Instagram 0, Reddit 16, TikTok 8), okienka 14 px, przyciski i plakietki w pełni zaokrąglone (pigułki), pola formularzy 10 px.
-- **Głębia:** karty leżą płasko, mają obramowanie 1 px i nie mają cienia. Cień dostaje tylko to, co się unosi: okienko wtyczki, podpowiedź (tooltip), powiadomienie.
+- **Głębia:** karty leżą płasko i nie mają cienia. Samodzielna karta (widżet, okienko wtyczki) ma obramowanie 1 px; karta w odpowiedzi w rozmowie (6.8) obramowania nie ma, odróżnia ją tło `--card` od tła strony. W środku karty nie ma ramek: cytat nie leży w pudełku, twierdzenia dzieli odstęp i jedna cienka linia. Cień dostaje tylko to, co się unosi: okienko wtyczki, podpowiedź (tooltip), powiadomienie.
 - **Zakazane:** pasek koloru wzdłuż jednego boku karty, siatki identycznych kart z ikoną na górze, szkło i rozmycie tła, ozdobne kształty.
 
 ---
@@ -139,18 +144,19 @@ Znak Meritum 18 px + słowo „Sprawdź” w pasku akcji posta. Stany: spoczynek
 Pokazuje kroki workflowu: kółko czeka, kręci się, gotowe, pominięte albo nieudane. Każdy stan czytnik ekranu dostaje słowem z `analysis.step_status`; przy pominiętym i nieudanym kroku to słowo jest też widoczne obok nazwy, więc przekreślenie, znak i kolor nie są jedyną informacją. Kody i teksty kroków: `receive`, `fetch_url`, `transcribe_audio`, `screen_injection`, `extract_claims`, `search_corpus`, `search_web`, `search_fact_checks`, `assess_evidence`, `verify_citations`, `write_answer`, `save_record` (`copy/pl.json`, `analysis.steps`). „Pobieramy stronę z linku” jest pominięte, gdy wklejono sam tekst, a „Zamieniamy nagranie na tekst”, gdy nie ma nagrania. „Szukamy świeżych publikacji w zatwierdzonych serwisach” rusza zawsze, razem z bazą źródeł; gdy baza wystarczy, odpowiedź na ten krok nie czeka. Agenty badawcze działają równolegle, więc kilka kółek może się kręcić naraz. Odpowiedź przychodzi strumieniem: wersja wstępna ma dopisek `analysis.draft` i nie pokazuje werdyktu, dopóki cytaty nie przejdą weryfikacji.
 
 ### 6.4 Karta wyniku
-Jedna karta na sprawdzenie, a w niej jeden blok na każde twierdzenie. Białe tło, obramowanie 1 px, w widżecie promień platformy.
-- **Nagłówek:** znak 14 px + „Meritum”.
-- **Twierdzenie i plakietka werdyktu:** treść twierdzenia jako tytuł karty, obok plakietka („Potwierdzone”, „Fałszywe”, „Wprowadzające w błąd”, „Brak wystarczających dowodów”, „Nie podlega weryfikacji”) i jedno zdanie podpowiedzi z `verdict_hint`.
-- **Wyjaśnienie:** 1–3 zdania z podpisem „To nasze wyjaśnienie, przygotowane z pomocą AI. Podstawą są cytaty ze źródeł poniżej.” Wyjaśnienie jest wizualnie oddzielone od cytatów.
-- **Na czym się opieramy:** każde źródło jako wiersz: tytuł (link), wydawca, data publikacji, rodzaj i poziom (urzędowe lub pierwotne, wtórne), a pod spodem dosłowny fragment na podniesionym tle. Źródło z wyszukiwania w sieci ma dopisek „znalezione w wyszukiwaniu w zatwierdzonych serwisach”.
+Jedna karta na sprawdzenie, a w niej jeden blok na każde twierdzenie. Tło `--card`; obramowanie 1 px tylko poza rozmową (sekcja 5), w widżecie promień platformy. Blok czyta się od werdyktu.
+- **Nagłówek:** znak 14 px + „Meritum” (poza rozmową; w odpowiedzi podpis mówi, kto odpowiada).
+- **Werdykt:** pierwszy i największy element bloku: słowo („Potwierdzone”, „Fałszywe”, „Wprowadzające w błąd”, „Brak wystarczających dowodów”, „Nie podlega weryfikacji”) w stylu Werdykt, w kolorze tekstu werdyktu (`*-foreground`; dwa nierozstrzygające w kolorze tekstu), bez pigułki. Pigułka (`VerdictBadge` sm/md) zostaje dla list i tabel.
+- **Twierdzenie:** pod werdyktem, w cudzysłowie, w stylu Twierdzenie; werdykt i twierdzenie tworzą razem nagłówek bloku. Pod nimi jedno zdanie podpowiedzi z `verdict_hint`.
+- **Wyjaśnienie:** 1–3 zdania. Bez podpisu o AI przy każdym twierdzeniu: informacja o AI pada raz (stopka karty albo, w rozmowie, nad polem wiadomości). `result.explanation_hint` nie jest już pokazywany.
+- **Na czym się opieramy:** każde źródło jako dowód: najpierw dosłowny fragment w stylu Tekst, z cudzysłowem „ wysuniętym na margines w kolorze `--verified`, bez tła i ramki; pod nim przypis: tytuł (link), wydawca, data publikacji, rodzaj i poziom (urzędowe lub pierwotne, wtórne). Źródło z wyszukiwania w sieci ma dopisek „znalezione w wyszukiwaniu w zatwierdzonych serwisach”.
 - **Siła podstawy:** tylko przy werdyktach rozstrzygających. Słowo i trzy kreski poziomu, pod nimi przesłanki słowami: liczba niezależnych wydawców zgodnych z werdyktem, ile z nich urzędowych, data najnowszego źródła i data, której dotyczy twierdzenie (`result.newest`), czy źródła są zgodne. Przy sprzecznych źródłach nie ma siły: werdykt to „Brak wystarczających dowodów”, cytaty obu stron stoją obok siebie, a nad nimi jest jedno zdanie, czym się różnią (`result.conflict`).
 - **Czego nie udało się ustalić:** obowiązkowe przy „Brak wystarczających dowodów”.
 - **Oś czasu dowodów:** cytaty według wymowy w trzech grupach z nagłówkami `result.stance` (wspierają, przeczą, dają kontekst), z datą twierdzenia i datami publikacji (wiersz `CitationItem` z `showDate={false}`: linia wydawcy podaje wydawcę, rodzaj i poziom źródła bez daty, bo oś pokazuje ją sama); dowód zastąpiony nowszym jest na osi oznaczony (`result.superseded` z datą nowszego dokumentu, `result.superseded_undated`, gdy wynik jej nie podaje). Pod osią „Co zmieniłoby werdykt” (`result.what_would_change`).
 - **Kontekst:** ocena fact-checkera z ClaimReview z linkiem (`result.claim_review`), zawsze jako kontekst, nigdy jako cytat. Przy nagraniu transkrypcja z podpisem (`result.transcript_hint`).
 - **Ostrzeżenia:** dowód nieaktualny, podobieństwo do znanego incydentu z bazy organizatora albo EUvsDisinfo, z nazwą bazy, albo link do serwisu z takiej bazy (jako kontekst, nie podstawa oceny; przy EUvsDisinfo zastrzeżenie `result.euvsdisinfo_disclaimer`) i neutralna informacja, że treść pochodzi od podmiotu z oficjalnej listy sankcji UE. Każde w osobnym wierszu, bez czerwieni. Żadne nie zmienia werdyktu.
 - **Technika:** nazwa techniki manipulacji + podpowiedź „jak rozpoznać?”, gdy dotyczy.
-- **Stopka:** „Ograniczenia” (zawsze), stan przekazania moderatorom (`escalation`: zalecane, przekazane, dołączone do sprawy; przy nieudanym zapisie sprawy — `escalation.not_saved`, bez numeru sprawy), informacja o użyciu AI, przycisk drugorzędny „Zgłoś błąd” (`result.report_error`) i link „Jak działa Meritum”.
+- **Stopka:** „Ograniczenia” (zawsze), stan przekazania moderatorom (`escalation`: zalecane, przekazane, dołączone do sprawy; przy nieudanym zapisie sprawy — `escalation.not_saved`, bez numeru sprawy), informacja o użyciu AI, „Zgłoś błąd” (`result.report_error`) i link „Jak działa Meritum”. W rozmowie stopka nie powtarza informacji o AI, a „Zgłoś błąd” jest dyskretną akcją (link albo menu karty), nie przyciskiem przy każdej karcie.
 - **Pojawienie się:** karta rozwija się z wysokości 0 i unosi o 8 px w 0,5 s.
 
 Gdy wynik nie jest werdyktem (doprecyzuj, poza zakresem, problem techniczny), karta ma tylko ikonę, tytuł stanu i komunikat z `status_hint`. Żadnej plakietki, żadnych źródeł.
@@ -166,11 +172,11 @@ W aplikacji WWW i w panelu powiadomienie pojawia się od razu jako toast (Sonner
 
 ### 6.8 Widok rozmowy (strona WWW)
 Strona główna i strona wyniku to jeden widok: rozmowa obywatela z Meritum. Wzór to rubryka „Czytelnicy pytają, redakcja odpowiada”: pytanie jest cytowanym listem, odpowiedź ma podpis redakcji i podstawę. Komponenty: `Question`, `Reply`, `Welcome`, `Attachment`, `Composer` (`components/meritum/conversation.tsx`), teksty `conversation`.
-- **Układ:** jedna kolumna do 720 px. Na górze cienki nagłówek, potem wątek, na dole przyklejone pole wiadomości (`Composer`). Pole leży na pasku w kolorze tła strony, sama ramka pola unosi się, więc ma cień `--shadow-float` i promień okienka (14 px). Wątek kończy się informacją o AI, zdaniem o prywatności z „Usuń moje sprawdzenia” i notatką `history.session_note`, tuż nad polem.
-- **Pytanie (`Question`):** słowa obywatela bez zmian, wyrównane do prawej, na podniesionym tle, promień 14 px z jednym ostrzejszym rogiem (6 px) po stronie pytającego. Otwierający cudzysłów „ wisi na marginesie po lewej, w kolorze tekstu drugorzędnego. Pod pytaniem godzina w Azeret Mono. Mówiącego („Ty”) słyszy tylko czytnik ekranu. Nagranie stoi w wątku jako `conversation.audio_question` z nazwą pliku.
-- **Odpowiedź (`Reply`):** podpis jak logotyp: znak 20 px, „Meritum” w Archivo 600 o szerokości 112,5%, obok godzina w mono. Pod podpisem pasek analizy (6.3), a potem karta wyniku (6.4), bez dodatkowej ramki wokół. Karta w odpowiedzi nie powtarza nagłówka „Meritum”, bo podpis już mówi, kto odpowiada.
+- **Układ:** wątek w jednej kolumnie do 720 px; pusta strona (`Welcome`) od 1024 px zajmuje szerokość do 1120 px w dwóch kolumnach. Na górze cienki nagłówek, potem wątek, na dole przyklejone pole wiadomości (`Composer`). Pole leży na pasku w kolorze tła strony, sama ramka pola unosi się, więc ma cień `--shadow-float` i promień okienka (14 px). Wątek kończy się informacją o AI (jedyną na ekranie), zdaniem o prywatności z „Usuń moje sprawdzenia” i notatką `history.session_note`, tuż nad polem.
+- **Pytanie (`Question`):** słowa obywatela bez zmian, wyrównane do prawej, na podniesionym tle, promień 14 px z jednym ostrzejszym rogiem (6 px) po stronie pytającego. Otwierający cudzysłów „ wisi na marginesie po lewej, w kolorze tekstu drugorzędnego. Pod pytaniem godzina w Archivo z cyframi tabelarycznymi. Mówiącego („Ty”) słyszy tylko czytnik ekranu. Nagranie stoi w wątku jako `conversation.audio_question` z nazwą pliku.
+- **Odpowiedź (`Reply`):** podpis jak logotyp: znak 20 px, „Meritum” w Archivo 600 o szerokości 112,5%, obok godzina. Pod podpisem pasek analizy (6.3), a potem karta wyniku (6.4), bez dodatkowej ramki wokół. Karta w odpowiedzi nie powtarza nagłówka „Meritum”, bo podpis już mówi, kto odpowiada.
 - **Historia to wątek:** sprawdzenia z tej karty (sessionStorage) stoją jako kolejne pary pytanie–odpowiedź, od najstarszego u góry do najnowszego nad polem. Osobnej tabelki „Twoje sprawdzenia” na stronie WWW nie ma; `CheckHistory` zostaje dla historii po zalogowaniu i dla wtyczki.
-- **Puste wejście (`Welcome`):** hasło „Sprawdź, zanim podasz dalej.” w stylu Powitanie (sekcja 4), zdanie `form.lead`, informacja o AI i 2–3 przykładowe twierdzenia z `conversation.examples` jako przyciski w cudzysłowie. Kliknięcie wysyła twierdzenie jak wpisane pytanie.
+- **Puste wejście (`Welcome`):** po lewej hasło „Sprawdź, zanim podasz dalej.” w stylu Powitanie (sekcja 4) i zdanie `form.lead`; po prawej (pod spodem na telefonie) 2–3 przykładowe twierdzenia z `conversation.examples` w stylu Tytuł, każde z cudzysłowem „ w kolorze `--verified` wysuniętym na margines, bez ramki. Przykłady to twierdzenia, które system sprawdza i rozstrzyga (np. płaca minimalna 2026), nigdy takie, które kończą się „Nie podlega weryfikacji”. Informacji o AI tu nie ma: stoi raz, nad polem wiadomości. Kliknięcie wysyła twierdzenie jak wpisane pytanie.
 - **Pole wiadomości (`Composer`):** pole rośnie z treścią do ok. 8 wierszy, Enter wysyła, Shift+Enter dodaje wiersz. Licznik znaków pojawia się dopiero przy pisaniu. Na telefonie pole ma 16 px, żeby przeglądarka nie powiększała strony, i rośnie najwyżej do ok. 4 wierszy. Placeholder z przykładem (`form.input_placeholder`) jest domyślny; po pierwszym sprawdzeniu aplikacja podaje `conversation.next_placeholder` przez prop `placeholder`. Przycisk nagrania (ikona mikrofonu z etykietą `conversation.attach_audio`) aplikacja wstawia w miejsce `tools` i otwiera nim wybór pliku; wybrany plik zastępuje pole jako `Attachment`: nazwa, „Usuń nagranie” i zdania o dostawcy, koszcie, retencji, limitach i ostrzeżeniu AI z `form`, zanim cokolwiek wyślemy.
 - **Ruch:** tylko nowo wysłane pytanie wchodzi z 8 px w 0,24 s (`--animate-enter`, `Question` z `isNew`); pytania odtworzone z historii stoją od razu, przyciski przy wciśnięciu zmniejszają się do 97% w 0,15 s. Po wysłaniu wątek przewija się do nowej wymiany; przy „ogranicz ruch” bez animacji i bez płynnego przewijania.
 - **Dostępność:** wątek to lista (`ol`) nazwana `conversation.label`, którą buduje aplikacja z par `Question` i `Reply`; stronę otwiera ukryty nagłówek h1 `form.title`; wynik ogłasza region `aria-live` karty, nie cały wątek. Pole wiadomości ma ukrytą etykietę `form.input_label`, a ramka pokazuje pierścień fokusu 2 px. Pole nigdy nie zasłania elementu z fokusem: strona ma `scroll-padding-bottom` co najmniej o wysokości pola, a nowa odpowiedź dostaje fokus tylko wtedy, gdy nic innego go nie ma.
