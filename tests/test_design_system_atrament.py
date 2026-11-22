@@ -56,7 +56,9 @@ class ColoursMatchTokens(unittest.TestCase):
         self.assertFalse(set(TABLE_TOKENS) - seen, "tokens missing from the colour tables")
 
     def test_measured_contrast_is_written_down(self) -> None:
-        self.assertRegex(section("3"), r"\d,\d:1")
+        # figures of the Atrament palette, not the ones the old document quoted
+        for figure in ("19,8:1", "16,9:1", "6,6:1", "7,7:1"):
+            self.assertIn(figure, section("3"))
 
 
 class Bans(unittest.TestCase):
@@ -66,7 +68,7 @@ class Bans(unittest.TestCase):
         for part in ("kremowe", "kolorowe tło", "granatowy tryb ciemny"):
             with self.subTest(part=part):
                 self.assertIn(part, colours)
-        for part in ("linii między sekcjami", "ramki w ramce"):
+        for part in ("linii pod belką", "nad stopką", "linii między sekcjami", "ramki w ramce"):
             with self.subTest(part=part):
                 self.assertIn(part, shapes)
 
@@ -81,14 +83,16 @@ class Typeface(unittest.TestCase):
     def test_schibsted_grotesk_is_the_interface_face(self) -> None:
         text = section("4")
         self.assertIn("Schibsted Grotesk", text)
-        self.assertRegex(text, r"Archivo[^|]*\|[^|]*logotyp")
+        archivo = next(row for row in text.splitlines() if row.startswith("| **Archivo**"))
+        self.assertIn("tylko słowo „meritum” w logotypie", archivo)
+        self.assertNotIn("cały interfejs", archivo)
         self.assertIn("Azeret Mono", text)
 
 
 class Layout(unittest.TestCase):
     def test_one_surface_with_a_column_and_a_rail(self) -> None:
         text = section("5")
-        for part in ("jedna powierzchnia", "720 px", "320 px", "szyn"):
+        for part in ("jedna powierzchnia", "720 px", "320 px", "przyklejoną szynę"):
             with self.subTest(part=part):
                 self.assertIn(part, text.lower() if part == "jedna powierzchnia" else text)
 
@@ -99,6 +103,12 @@ class Components(unittest.TestCase):
         for part in ("lista twierdzeń", "domyślnie rozwinięt", "`Accordion`", "trzy kreski"):
             with self.subTest(part=part):
                 self.assertIn(part, text)
+
+    def test_quote_mark_and_links_are_ink_not_the_verdict_colour(self) -> None:
+        # --verified is green and means "Potwierdzone" only; a green quote mark under "Fałszywe" would lie
+        evidence = next(line for line in section("6.4").splitlines() if line.startswith("- **Na czym się opieramy:**"))
+        self.assertIn("w kolorze atramentu", evidence)
+        self.assertNotIn("--verified", evidence)
 
     def test_progress_is_a_bar_with_steps_on_request(self) -> None:
         text = section("6.3")
@@ -130,14 +140,23 @@ class Components(unittest.TestCase):
 class MotionAndAccess(unittest.TestCase):
     def test_icons_answer_a_press(self) -> None:
         text = section("9")
-        self.assertIn("ugina", text)
-        self.assertIn("ogranicz ruch", text)
+        for part in ("ugina", "strzałka", "ogranicz ruch"):
+            with self.subTest(part=part):
+                self.assertIn(part, text)
 
     def test_display_menu_is_part_of_accessibility(self) -> None:
         text = section("10")
         for part in ("„Wygląd”", "150%", "320 px", "wysokim kontraście"):
             with self.subTest(part=part):
                 self.assertIn(part, text)
+
+    def test_wcag_criteria_are_quoted_for_what_they_require(self) -> None:
+        text = section("10")
+        self.assertRegex(text, r"WCAG 1\.4\.4[^\n]*200%")
+        self.assertRegex(text, r"WCAG 1\.4\.10[^\n]*320 px")
+        self.assertRegex(text, r"Warunek Meritum[^\n]*150% na szerokości 320 px")
+        for criterion in ("WCAG 2.4.11", "WCAG 1.4.13"):
+            self.assertIn(criterion, text)
 
 
 class AgentPrompt(unittest.TestCase):
@@ -147,6 +166,8 @@ class AgentPrompt(unittest.TestCase):
             with self.subTest(part=part):
                 self.assertIn(part, text)
         self.assertNotIn("#1D6A86", text)
+        self.assertIn("brand/meritum-mark-mono.svg", text)
+        self.assertNotIn("brand/meritum-mark.svg", text)
 
 
 class Mark(unittest.TestCase):

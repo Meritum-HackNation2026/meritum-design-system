@@ -2,7 +2,7 @@
 
 **Meritum — obywatelski radar dezinformacji.**
 
-Ten dokument opisuje, jak Meritum wygląda i jak mówi. Przekaż go agentowi AI, który robi slajdy, makiety albo materiały marketingowe, razem z poleceniem z sekcji 12. Wszystkie wartości są ostateczne, chyba że ten plik powie inaczej.
+Ten dokument opisuje, jak Meritum wygląda i jak mówi. Przekaż go agentowi AI, który buduje widok strony albo panelu, razem z poleceniem z sekcji 12; przy slajdach, makietach i materiałach marketingowych obowiązują sekcje 7 i 11, które zostają przy dotychczasowym wyglądzie. Wszystkie wartości są ostateczne, chyba że ten plik powie inaczej.
 
 ---
 
@@ -132,7 +132,7 @@ Nic poniżej 12 px. Nagłówki zdaniowe (wielka litera tylko na początku), bez 
 ## 5. Odstępy, siatka, kształty
 
 - **Siatka 4 px.** Typowe odstępy: 4, 8, 12, 16, 24, 32, 40, 64 px.
-- **Jedna powierzchnia.** Strona jest biała i wszystko leży bezpośrednio na niej. Wynik nie jest kartą: to tekst na stronie. Jedyne pola z tłem to wiersz pod kursorem i ciche pole (`--muted`) z wersją wstępną odpowiedzi.
+- **Jedna powierzchnia.** Strona jest biała i wszystko leży bezpośrednio na niej. Wynik nie jest kartą: to tekst na stronie. Tło mają tylko małe elementy: plakietki, tor paska postępu, wiersz pod kursorem i ciche pole (`--muted`) z wersją wstępną odpowiedzi.
 - **Układ strony.** Treść ma szerokość do 1152 px z marginesem 24 px (16 px na telefonie). Strony robocze mają kolumnę do 720 px od lewej krawędzi belki i przyklejoną szynę 320 px po prawej na to, co należy do strony: historię sprawdzeń albo spis treści. Na telefonie szyna schodzi pod treść.
 - **Odstępy zamiast linii.** Sekcje dzieli odstęp (40–64 px), a bloki w sekcji 16–24 px. Nie ma linii pod belką, nad stopką ani linii między sekcjami czy wierszami list.
 - **Promienie:** pola i wiersze 8 px, okienka 10 px, przyciski i plakietki w pełni zaokrąglone (pigułki). W widżecie promień zgodny z platformą (sekcja 7).
@@ -151,7 +151,7 @@ Jedna kolumna, działa od 320 px szerokości. Na stronie WWW formularz jest pole
 2. Pole „Tekst albo link” (do 4000 znaków), przyjmuje wklejony tekst albo pełny adres zaczynający się od http:// albo https:// (do 2083 znaków, jak `CheckRequest.url`). Pod nim drugorzędny przycisk „Albo nagranie (plik audio)” (`form.audio_label`). Nad polem jedno zdanie, że odpowiada system AI (`ai_notice.first_contact`).
 3. Przycisk główny „Sprawdź”, aktywny zawsze poza wysyłką. Za krótki tekst, za długi albo błędny link dają po kliknięciu komunikat pod polem (`errors`). W trakcie: „Sprawdzamy…” i pasek analizy (6.3).
 4. Pod przyciskiem informacja o prywatności: konto nie jest potrzebne, maskowanie oczywistych danych osobowych, termin usunięcia zapisu, link „Usuń moje sprawdzenia”.
-5. Pod formularzem lista „Twoje sprawdzenia” (`history`): sprawdzenia z tej karty przeglądarki, od najnowszego; kliknięcie otwiera kartę wyniku. Bez logowania lista pochodzi z sessionStorage, a notatka mówi, że historia jest tylko w tej przeglądarce: w tej karcie i w kartach z niej otwartych (przeglądarka kopiuje sessionStorage do takich kart). Pusta lista pokazuje `history.empty`.
+5. W okienku wtyczki pod formularzem, a na stronie WWW w szynie (6.8), lista „Twoje sprawdzenia” (`history`): sprawdzenia z tej karty przeglądarki, od najnowszego; kliknięcie otwiera kartę wyniku. Bez logowania lista pochodzi z sessionStorage, a notatka mówi, że historia jest tylko w tej przeglądarce: w tej karcie i w kartach z niej otwartych (przeglądarka kopiuje sessionStorage do takich kart). Pusta lista pokazuje `history.empty`.
 6. Przy liście opcjonalne logowanie (`account`): dwa przyciski drugorzędne „Zaloguj się kontem Google” i „Zaloguj się kontem Microsoft” oraz zdanie, że logowanie nie jest potrzebne. Po zalogowaniu historia jest na serwerze, a w miejscu przycisków są „Usuń moją historię”, „Usuń konto i historię” i „Wyloguj się”.
 
 Błędy pod polem, słowami z `copy/pl.json` (`errors`), bez czyszczenia wpisanej treści.
@@ -170,7 +170,7 @@ Jeden wynik na sprawdzenie, a w nim lista twierdzeń. Na stronie WWW wynik nie m
 - **Lista twierdzeń:** shadcn `Accordion`, wszystkie wiersze domyślnie rozwinięte. Wiersz to plakietka werdyktu (`VerdictBadge` sm) w stałej kolumnie, twierdzenie w cudzysłowie w stylu Twierdzenie i strzałka. Plakietka stoi obok wyzwalacza, nie w nim, żeby mogła się objaśnić (6.10). Wiersz podświetla się przy najechaniu (`--muted`) i ma kursor wskazujący; między wierszami nie ma linii. Od 576 px szerokości listy treść rozwinięcia wyrównuje się do tekstu twierdzenia, węziej stoi pod plakietką.
 - **Werdykt:** słowo („Potwierdzone”, „Fałszywe”, „Wprowadzające w błąd”, „Brak wystarczających dowodów”, „Nie podlega weryfikacji”) w plakietce w kolorach werdyktu; dwa nierozstrzygające są neutralne. Objaśnienie z `verdict_hint` pokazuje się po najechaniu, fokusie albo dotknięciu plakietki. We wtyczce werdykt zostaje słowem w stylu Werdykt, bez pigułki.
 - **Wyjaśnienie:** 1–3 zdania. Bez podpisu o AI przy każdym twierdzeniu: informacja o AI pada raz (pod przełącznikiem ograniczeń albo na stronie nowego sprawdzenia). `result.explanation_hint` nie jest już pokazywany.
-- **Na czym się opieramy:** każde źródło jako dowód: najpierw dosłowny fragment w stylu Tekst, z cudzysłowem „ wysuniętym na margines w kolorze `--verified`, bez tła i ramki; pod nim przypis: tytuł (link), wydawca, data publikacji, rodzaj i poziom (urzędowe lub pierwotne, wtórne). Źródło z wyszukiwania w sieci ma dopisek „znalezione w wyszukiwaniu w zatwierdzonych serwisach”.
+- **Na czym się opieramy:** każde źródło jako dowód: najpierw dosłowny fragment w stylu Tekst, z cudzysłowem „ wysuniętym na margines w kolorze atramentu, bez tła i ramki; pod nim przypis: tytuł (link w kolorze atramentu, podkreślony), wydawca i data publikacji, a rodzaj i poziom źródła jako plakietki, które się objaśniają (6.10). We wtyczce cudzysłów i link zostają w kolorze morskim. Źródło z wyszukiwania w sieci ma dopisek „znalezione w wyszukiwaniu w zatwierdzonych serwisach”.
 - **Siła podstawy:** tylko przy werdyktach rozstrzygających. Słowo i trzy kreski poziomu; objaśnienie poziomu (`strength_hint`) pokazuje się jak przy plakietkach. Przesłanki słowami są dostępne na żądanie: liczba niezależnych wydawców zgodnych z werdyktem, ile z nich urzędowych, data najnowszego źródła i data, której dotyczy twierdzenie (`result.newest`), czy źródła są zgodne. Przy sprzecznych źródłach nie ma siły: werdykt to „Brak wystarczających dowodów”, cytaty obu stron stoją obok siebie, a nad nimi jest jedno zdanie, czym się różnią (`result.conflict`).
 - **Czego nie udało się ustalić:** obowiązkowe przy „Brak wystarczających dowodów”.
 - **Oś czasu dowodów:** cytaty według wymowy w trzech grupach z nagłówkami `result.stance` (wspierają, przeczą, dają kontekst), z datą twierdzenia i datami publikacji (wiersz `CitationItem` z `showDate={false}`: linia wydawcy podaje wydawcę, rodzaj i poziom źródła bez daty, bo oś pokazuje ją sama); dowód zastąpiony nowszym jest na osi oznaczony (`result.superseded` z datą nowszego dokumentu, `result.superseded_undated`, gdy wynik jej nie podaje). Pod osią „Co zmieniłoby werdykt” (`result.what_would_change`).
@@ -195,7 +195,7 @@ W aplikacji WWW i w panelu powiadomienie pojawia się od razu jako toast (Sonner
 Jedno sprawdzenie to jedna strona z własnym adresem, który można wysłać dalej. Strona nie jest rozmową: jest bez dymków, bez podpisów mówiących i bez pola przyklejonego do dołu ekranu. Komponenty: nagłówek-cytat, `Composer`, `CheckHistory` (`components/meritum/`), teksty `check_page`, `conversation` i `form`.
 - **Układ:** kolumna do 720 px i szyna 320 px (sekcja 5). W kolumnie od góry: nagłówek-cytat, pasek analizy (6.3) albo wynik (6.4), a pod gotowym wynikiem pole „Sprawdź kolejną informację” (`check_page.next`).
 - **Nagłówek-cytat:** słowa obywatela bez zmian jako nagłówek h1 w stylu Tytuł, wyrównany do lewej, z otwierającym cudzysłowem „ wiszącym na marginesie w kolorze atramentu. Nagranie i obraz stoją tu jako `conversation.audio_question` i `conversation.image_question` z nazwą pliku.
-- **Nowe sprawdzenie:** osobna strona z tytułem `form.title`, zdaniem `form.lead`, polem i 2–3 przykładowymi twierdzeniami z `conversation.examples` jako przyciskami. Przykłady to twierdzenia, które system sprawdza i rozstrzyga, nigdy takie, które kończą się „Nie podlega weryfikacji”. Pod przykładami stoi informacja o AI (`ai_notice.first_contact`), jedyna na ekranie. Wysłanie twierdzenia otwiera stronę nowego sprawdzenia.
+- **Nowe sprawdzenie:** osobna strona z tytułem `form.title`, zdaniem `form.lead`, polem i 2–3 przykładowymi twierdzeniami z `conversation.examples` jako przyciskami. Przykłady to twierdzenia, które system sprawdza i rozstrzyga, nigdy takie, które kończą się „Nie podlega weryfikacji”. Pod przykładami stoi informacja o AI (`ai_notice.first_contact`), jedyna na ekranie. Wysłanie twierdzenia przenosi na stronę tego sprawdzenia, pod jego własny adres.
 - **Pole wiadomości (`Composer`):** zwykłe pole w treści strony z obrysem 1 px i promieniem pola; nie jest przyklejone do ekranu i przewija się razem z treścią. Rośnie z treścią do ok. 8 wierszy, Enter wysyła, Shift+Enter dodaje wiersz. Licznik znaków pojawia się dopiero przy pisaniu. Na telefonie pole ma 16 px, żeby przeglądarka nie powiększała strony, i rośnie najwyżej do ok. 4 wierszy. Placeholder z przykładem (`form.input_placeholder`) jest domyślny; pod gotowym wynikiem aplikacja podaje `conversation.next_placeholder`. Przycisk nagrania i obrazu aplikacja wstawia w miejsce `tools`; wybrany plik zastępuje pole jako `Attachment` ze zdaniami o dostawcy, koszcie, retencji, limitach i ostrzeżeniu AI z `form`, zanim cokolwiek wyślemy.
 - **Historia w szynie (`CheckHistory`):** nad listą przycisk „Nowe sprawdzenie” (`check_page.new`). Każde sprawdzenie z tej karty przeglądarki (sessionStorage) to wiersz: treść pytania w dwóch liniach, pod nią plakietka werdyktu głównego twierdzenia i godzina; sprawdzenie w toku pokazuje stan słowem. Wiersze nie mają linii między sobą i podświetlają się przy najechaniu. Pod listą notatka `history.session_note`. Blok logowania zostaje opcjonalny.
 - **Ruch:** wynik wchodzi z 8 px w 0,5 s (`--animate-rise`), przyciski przy wciśnięciu ustępują o 1 px. Przy „ogranicz ruch” bez animacji i bez płynnego przewijania.
@@ -209,7 +209,7 @@ Jedno sprawdzenie to jedna strona z własnym adresem, który można wysłać dal
 - **Ikony:** Lucide, obrys 2 px, w kolorze tekstu: przy pozycjach belki, w przyciskach i przed nagłówkami sekcji. Nigdy jako kafelek nad tekstem.
 
 ### 6.10 Etykiety, które się objaśniają
-Każda mała etykieta tłumaczy się jednym zdaniem: werdykt (`verdict_hint`), rodzaj źródła (`source_kind_hint`), poziom źródła (`source_tier_hint`) i siła podstawy (`strength_hint`). Objaśnienie otwiera się po najechaniu, po fokusie z klawiatury i po dotknięciu, a zamyka po opuszczeniu, klawiszem Esc i po dotknięciu obok. Komponent stoi na shadcn `Popover`, bo `Tooltip` nie otwiera się dotykiem. Etykieta jest przyciskiem z kursorem pomocy; nie wolno jej wkładać do innego przycisku ani linku.
+Każda mała etykieta tłumaczy się jednym zdaniem: werdykt (`verdict_hint`), rodzaj źródła (`source_kind_hint`), poziom źródła (`source_tier_hint`) i siła podstawy (`strength_hint`). Objaśnienie otwiera się po najechaniu, po fokusie z klawiatury i po dotknięciu, a zamyka po opuszczeniu, klawiszem Esc i po dotknięciu obok. Komponent stoi na shadcn `Popover`, bo `Tooltip` nie otwiera się dotykiem. Objaśnienie nie znika, gdy wskaźnik przejdzie na nie z etykiety (WCAG 1.4.13). Etykieta jest przyciskiem i jako jedyny element klikalny ma kursor pomocy zamiast wskazującego; nie wolno jej wkładać do innego przycisku ani linku.
 
 ---
 
@@ -251,7 +251,7 @@ Nigdy nie wstawiamy logotypu platformy do widżetu i nigdy nie udajemy treści p
 
 - Ruch tylko jako odpowiedź na działanie użytkownika albo pokazanie zmiany danych.
 - Krzywa `cubic-bezier(0.16, 1, 0.3, 1)` (szybki start, miękkie wyhamowanie), czas 150–550 ms.
-- Animujemy przezroczystość, przesunięcie i skalę; wyjątek to rozwijanie karty (wysokość od 0).
+- Animujemy przezroczystość, przesunięcie i skalę; wyjątek to rozwijanie wiersza listy (wysokość od 0).
 - Wciśnięcie przycisku i rozwinięcie wiersza trwają krócej (0,15 s i 0,2 s), bo widać je przy każdym sprawdzeniu (6.8).
 - Wszystko klikalne ma kursor wskazujący i przejście koloru w 0,15 s. Ikona w przycisku ugina się przy wciśnięciu (skala 0,82), a strzałka w przycisku głównym przesuwa się o 3 px w stronę, w którą prowadzi.
 - Bez pulsujących kropek, bez animacji w pętli (poza kółkiem „w toku”).
@@ -264,10 +264,15 @@ Nigdy nie wstawiamy logotypu platformy do widżetu i nigdy nie udajemy treści p
 WCAG 2.2 AA w obu trybach, także na tle cudzych feedów. Werdykty oznaczone słowem, nie tylko kolorem. Widoczny pierścień fokusu (2 px, kolor atramentu). Klawisz Esc zamyka okienko i oddaje fokus przyciskowi. Wynik ogłasza region `aria-live`. Formularz działa na telefonie bez przewijania w poziomie. Polskie teksty są dłuższe niż angielskie, więc komponenty muszą wytrzymać długie etykiety, np. „Brak wystarczających dowodów”.
 
 **Menu „Wygląd”** w belce (`display` w `copy/pl.json`) daje dwa ustawienia bez szukania ich w przeglądarce:
-- **Motyw:** jasny, ciemny albo ciemny o wysokim kontraście. Bez zapisanego wyboru strona idzie za systemem, a tryb ciemny bierze wartości wysokiego kontrastu, gdy system prosi o większy kontrast. W wysokim kontraście okienka mają obrys 1 px, a fokus obrys 3 px. Tokeny obu ustawień są w `tokens/display.css`, importowanym po `tokens/meritum.css`.
-- **Rozmiar tekstu:** domyślny, 112,5%, 125% albo 150%, jako procent na elemencie `html` (`data-text`). Procent mnoży rozmiar ustawiony w przeglądarce i skaluje wszystko w `rem`: tekst, odstępy i szerokości, jak Ctrl i plus. Rozmiarów nie podajemy w pikselach.
+- **Motyw:** jasny, ciemny albo ciemny o wysokim kontraście. Bez zapisanego wyboru strona idzie za systemem, a tryb ciemny bierze wartości wysokiego kontrastu, gdy system prosi o większy kontrast. W wysokim kontraście okienka mają obrys 1 px, a fokus obrys 3 px. Tokeny obu ustawień są w `tokens/display.css` (powstaje w design-system#147), importowanym po `tokens/meritum.css`.
+- **Rozmiar tekstu:** domyślny, 112,5%, 125% albo 150%, jako procent na elemencie `html` (`data-text`). Procent mnoży rozmiar ustawiony w przeglądarce i skaluje wszystko w `rem`: tekst, odstępy i szerokości, jak Ctrl i plus. W kodzie rozmiary tekstu i odstępy podajemy w `rem`, nie w pikselach; piksele w tym dokumencie to wartości przy domyślnym rozmiarze.
 
-Wybór zapisuje się w przeglądarce. Punkty łamania układu nie zależą od rozmiaru tekstu, więc każda strona musi mieścić się bez przewijania w poziomie przy 150% na szerokości 320 px (WCAG 1.4.4 i 1.4.10).
+Wybór zapisuje się w przeglądarce. Co musi wytrzymać każda strona:
+- **WCAG 1.4.4 (zmiana rozmiaru tekstu):** tekst powiększony do 200% powiększeniem przeglądarki albo rozmiarem czcionki, bez utraty treści i funkcji. 150% z menu to nie jest górna granica.
+- **WCAG 1.4.10 (dopasowanie do ekranu):** brak przewijania w poziomie przy szerokości 320 px.
+- **Warunek Meritum, ostrzejszy od obu:** punkty łamania układu nie zależą od rozmiaru tekstu z menu, więc strona mieści się bez przewijania w poziomie także przy 150% na szerokości 320 px.
+- **WCAG 2.4.11 (fokus niezasłonięty):** belka jest przyklejona, więc strona ma `scroll-padding-top` co najmniej o jej wysokości i element z fokusem nigdy nie chowa się pod belką.
+- **WCAG 1.4.13 (treść po najechaniu):** objaśnienie etykiety (6.10) nie znika, gdy wskaźnik przejdzie z etykiety na objaśnienie, i zamyka się klawiszem Esc.
 
 ---
 
@@ -305,7 +310,8 @@ przycisk główny, linki i fokus w kolorze tekstu. „Potwierdzone” #0B7A4B,
 „Wprowadzające w błąd” #B7791F, „Fałszywe” #C8213A (tylko tam), brak dowodów i stany
 techniczne neutralne.
 Kroje: Schibsted Grotesk (cały interfejs), Azeret Mono (tylko ID, domeny, liczby w panelu).
-Logo: brand/meritum-mark.svg (małe „m” z dwóch łuków) i słowo „meritum” w Archivo.
+Logo: brand/meritum-mark-mono.svg (małe „m” z dwóch łuków, całe w kolorze tekstu) i słowo
+„meritum” w Archivo.
 Układ: kolumna 720 px i szyna 320 px; przyciski to pigułki; cień tylko na tym, co się unosi.
 Komponenty: Meritum, potem shadcn/ui, czasem darmowy blok shadcnblocks. Ikony Lucide.
 Ton: opisujemy twierdzenia, nie ludzi; każde ustalenie ze źródłem; uczciwa niepewność;
@@ -321,7 +327,7 @@ wymyślone źródła i cytaty, liczby bez dopisku „dane symulowane” albo bez
 
 ### Strona WWW i panel (React)
 - `components/meritum/`: komponenty React (shadcn/ui) typowane kontraktami: `CheckForm` i `CheckHistory` (6.1), `Composer`, nagłówek-cytat i `Attachment` (6.8; `Question`, `Reply` i `Welcome` znikają razem z widokiem rozmowy w design-system#150), `CheckButton` (6.2), `AnalysisSteps` (6.3), `ResultCard` z `VerdictBadge`, `CitationItem` i `StrengthMeter` (6.4), `ModerationQueue` (6.5). Instalacja i podgląd: `components/meritum/README.md`.
-- `tokens/meritum.css`: te same tokeny dla strony, panelu i wtyczki.
+- `tokens/meritum.css`: tokeny strony i panelu; skórki platform pod `[data-host]` trzymają w nim dawne wartości, a wtyczka ma własne w `extension/widget.css`.
 
 ### Wtyczka Chrome (programista)
 - `extension/widget.css`: style widżetu dla Shadow DOM (`:host`), tokeny jasne i ciemne, skórki platform przez `:host([data-host=…])`. Karta ma tę samą tożsamość co komponenty React: werdykt jako słowo `.m-verdict` w skali 28 px, cytat `.m-frag` z wiszącym „ i bez pola, tekst 16 px, informacja o AI raz w stopce.
