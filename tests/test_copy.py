@@ -78,6 +78,10 @@ REQUIRED_KEYS = (
     "errors.url_too_long",
     # Discord mock: author of the user's message, reply templates, claim plurals (design-system#39)
     "discord.user_author",
+    # one embed with a link button, public option (meritum-backend#102)
+    "discord.result_title",
+    "discord.card_button",
+    "discord.public_option",
     "discord.claim_undated",
     "discord.claim_no_strength",
     "discord.claim_undated_no_strength",

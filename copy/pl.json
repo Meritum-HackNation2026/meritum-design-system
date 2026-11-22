@@ -420,7 +420,7 @@
     "mcp": "Wynik przygotował system AI Meritum. Sprawdza informacje w opisanych źródłach i podaje cytaty, ale może się mylić."
   },
   "discord": {
-    "$comment": "Message content max 2000 characters (API limit for bots). First message: summary with a link; then one message per claim. Never split inside a citation.",
+    "$comment": "Message content max 2000 characters (API limit for bots). One embed: title, a field per claim (verdict, claim, quote, strength), link button card_button. Quotes are shortened to fit 6000 characters, claims never.",
     "summary": "Wynik sprawdzenia: {claims}. Pełna karta: {link}",
     "claims": {
       "$comment": "{claims} in summary: pick the form with Intl.PluralRules('pl').select(count).",
@@ -429,7 +429,10 @@
       "many": "{count} twierdzeń",
       "other": "{count} twierdzenia"
     },
-    "user_author": "Ty",
+    "result_title": "Wynik sprawdzenia: {claims}",
+ "card_button": "Pełna karta",
+ "public_option": "Pokaż wynik wszystkim na kanale",
+ "user_author": "Ty",
     "summary_line": "{verdict}: {claim}",
     "claim": "{verdict}: {claim}\n„{fragment}” ({publisher}, {date})\nSiła podstawy: {strength}",
     "claim_undated": "{verdict}: {claim}\n„{fragment}” ({publisher}, data publikacji nieznana)\nSiła podstawy: {strength}",
