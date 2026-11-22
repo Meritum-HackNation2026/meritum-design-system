@@ -117,7 +117,8 @@ export function Welcome({
                   FOCUS,
                 )}
               >
-                <span aria-hidden="true" className="absolute top-2 left-3 select-none text-headline leading-none font-bold text-verified">
+                {/* not aria-hidden: the button's name keeps both quotes, „claim” */}
+                <span className="absolute top-2 left-3 select-none text-headline leading-none font-bold text-verified">
                   „
                 </span>
                 {claim}”
