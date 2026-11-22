@@ -131,7 +131,7 @@
         "id": "model_armor",
         "name": "Model Armor (kandydat)",
         "region": "GCP, multi-region eu",
-        "data": "Treść każdego wywołania modelu przed wysłaniem",
+        "data": "Wejście użytkownika i tekst pobranych stron, kawałkami po najwyżej 4000 znaków (najwyżej pierwsze ok. 95 tys. znaków), przed wysłaniem do modelu",
         "purpose": "Wykrywanie wstrzyknięć przed modelem"
       },
       {
