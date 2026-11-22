@@ -10,6 +10,9 @@
   These tokens change the web page and the panel. The extension widget has its own copy of the old
   values in extension/widget.css, and everything under `[data-host]` (platform mocks, the Discord
   mock) keeps the old values through the two rules at the end of this file.
+
+  The display settings (dark high-contrast theme, text-size scale) live in tokens/display.css,
+  imported after this file.
 */
 
 @custom-variant dark (&:where(.dark, .dark *, [data-theme=dark], [data-theme=dark] *));
