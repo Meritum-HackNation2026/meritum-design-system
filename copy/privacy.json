@@ -216,7 +216,7 @@
         "name": "Google i Microsoft (logowanie)",
         "region": "USA",
         "data": "Imię i nazwisko, adres e-mail i identyfikator konta, tylko gdy się logujesz",
-        "purpose": "Opcjonalne logowanie, jeśli starczy czasu"
+        "purpose": "Opcjonalne logowanie obywatela (historia na serwerze) i logowanie zespołu (moderatorzy, administratorzy)"
       },
       {
         "id": "speech_to_text",

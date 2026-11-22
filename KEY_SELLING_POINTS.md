@@ -126,7 +126,7 @@ Co jest przetwarzane w UE, a co poza nią. Ten sam rejestr jest w ADR-14 dokumen
 | Jasnopis (jeśli przez API) | do sprawdzenia | próbka odpowiedzi z ewaluacji | ocena zrozumiałości |
 | Discord | USA | nazwa i identyfikator użytkownika, treść wiadomości, wiadomości głosowe i odpowiedź | kanał Discord |
 | SMS Gateway for Android, sms-gate.app (tryb Cloud) | api.sms-gate.app; dostawca nie podaje regionu, poza gwarancją EOG | numer telefonu, treść SMS-a i odpowiedź | kanał SMS (US-WTY-07) |
-| Google i Microsoft (logowanie) | USA | identyfikator konta | opcjonalne logowanie, jeśli starczy czasu |
+| Google i Microsoft (logowanie) | USA | imię i nazwisko, adres e-mail i identyfikator konta | opcjonalne logowanie obywatela (historia na serwerze) i logowanie zespołu (moderatorzy, administratorzy) |
 
 ### Funkcje premiowane
 
