@@ -13,9 +13,8 @@
   const citation = c => {
     const s = c.source;
     const meta = s.published_at ? fill(T.result.source_meta, { publisher: s.publisher, date: day(s.published_at) }) : fill(T.result.source_undated, { publisher: s.publisher });
-    return `<li><a href="${safeUrl(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a>
-      <span class="m-sub">${esc(meta)}. ${esc(cap(T.source_kind[s.kind]))}, ${esc(T.source_tier[s.tier])}${s.via === 'web_search' ? `, ${esc(T.result.via_web)}` : ''}.</span>
-      <blockquote class="m-frag"><span class="m-sr">${esc(T.result.fragment)}: </span>„${esc(c.fragment)}”</blockquote></li>`;
+    return `<li><blockquote class="m-frag"><span class="m-sr">${esc(T.result.fragment)}: </span>${esc(c.fragment)}”</blockquote>
+      <span class="m-sub"><a href="${safeUrl(s.url)}" target="_blank" rel="noopener noreferrer">${esc(s.title)}</a> ${esc(meta)}. ${esc(cap(T.source_kind[s.kind]))}, ${esc(T.source_tier[s.tier])}${s.via === 'web_search' ? `, ${esc(T.result.via_web)}` : ''}.</span></li>`;
   };
   const LEVEL = { strong: 3, moderate: 2, weak: 1 };
 
@@ -40,9 +39,10 @@
       c.technique ? `<p class="m-note">Technika: <span class="m-t" tabindex="0">${esc(T.techniques[c.technique].name)}<span class="m-tip l">${esc(T.techniques[c.technique].how_to_spot)}</span></span></p>` : '',
     ].join('');
     return `<article class="m-claim">
-      <div class="m-claim-h"><h3><span class="m-sr">${esc(T.result.claim)}: </span>${esc(c.claim)}</h3><span class="m-badge ${c.verdict}">${esc(T.verdict[c.verdict])}</span></div>
+      <span class="m-verdict ${esc(c.verdict)}">${esc(T.verdict[c.verdict])}</span>
+      <h3><span class="m-sr">${esc(T.result.claim)}: </span>„${esc(c.claim)}”</h3>
       <p class="m-sub">${esc(T.verdict_hint[c.verdict])}</p>
-      <p class="m-expl">${esc(c.explanation)}</p><p class="m-sub">${esc(T.result.explanation_hint)}</p>
+      <p class="m-expl">${esc(c.explanation)}</p>
       ${sources}${strength}${notes}</article>`;
   }
 

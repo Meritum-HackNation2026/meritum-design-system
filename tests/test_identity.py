@@ -57,6 +57,35 @@ class Examples(unittest.TestCase):
         self.assertNotIn("gotówk", COPY["form"]["input_placeholder"])
 
 
+WIDGET = (ROOT / "extension" / "widget.css").read_text(encoding="utf-8")
+CARD_JS = (ROOT / "extension" / "reference" / "card.js").read_text(encoding="utf-8")
+
+
+class ExtensionWidget(unittest.TestCase):
+    """The widget and its framework-free card follow the same identity (design-system#129)."""
+
+    def test_card_js_reads_from_the_verdict_without_a_pill(self) -> None:
+        block = CARD_JS[CARD_JS.index("function claimBlock") :]
+        order = [block.index(s) for s in ("m-verdict", "esc(c.claim)", "c.explanation", "${sources}")]
+        self.assertEqual(order, sorted(order))
+        self.assertNotIn("m-badge", CARD_JS)
+        self.assertNotIn("explanation_hint", CARD_JS)
+
+    def test_quote_comes_before_its_attribution(self) -> None:
+        cite = CARD_JS[CARD_JS.index("const citation") : CARD_JS.index("const LEVEL")]
+        self.assertLess(cite.index("m-frag"), cite.index("s.title"))
+
+    def test_widget_css_has_a_verdict_scale_and_hanging_quote_mark(self) -> None:
+        self.assertRegex(WIDGET, r"\.m-verdict\{[^}]*font:700 28px")
+        self.assertRegex(WIDGET, r"\.m-frag:before\{content:\"\\201E\";position:absolute;left:-24px")
+        self.assertNotIn(".m-badge", WIDGET)
+
+    def test_widget_body_is_16px_and_claims_are_not_boxed(self) -> None:
+        self.assertRegex(WIDGET, r"\.m-expl\{[^}]*font-size:16px")
+        self.assertNotRegex(WIDGET, r"\.m-frag\{[^}]*background")
+        self.assertNotRegex(WIDGET, r"\.m-claim\{[^}]*border")
+
+
 class Idea(unittest.TestCase):
     def test_design_system_names_the_one_idea(self) -> None:
         self.assertRegex(DESIGN, r"(?m)^### Idea przewodnia: cytat jest dowodem")

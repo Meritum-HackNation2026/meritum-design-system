@@ -283,7 +283,7 @@ liczby bez dopisku „dane symulowane” albo bez danych do odtworzenia.
 - `tokens/meritum.css`: te same tokeny dla strony, panelu i wtyczki.
 
 ### Wtyczka Chrome (programista)
-- `extension/widget.css`: style widżetu dla Shadow DOM (`:host`), tokeny jasne i ciemne, skórki platform przez `:host([data-host=…])`.
+- `extension/widget.css`: style widżetu dla Shadow DOM (`:host`), tokeny jasne i ciemne, skórki platform przez `:host([data-host=…])`. Karta ma tę samą tożsamość co komponenty React: werdykt jako słowo `.m-verdict` w skali 28 px, cytat `.m-frag` z wiszącym „ i bez pola, tekst 16 px, informacja o AI raz w stopce.
 - `extension/manifest.json` i `extension/reference/`: referencyjny skrypt (MV3) bez frameworka: wykrywa platformę, znajduje posty selektorami z `demo/platforms/SELECTORS.md`, wstawia przycisk we własnym Shadow DOM i wykrywa motyw gospodarza. Przycisk „Sprawdź” wysyła post dopiero po kliknięciu, pasek analizy i karta wyniku (`reference/card.js`) mają tę samą budowę co komponenty React. Na razie woła atrapę API (`reference/api.js`); połączenie z prawdziwym API opisuje `extension/README.md`.
 - `extension/popup/`, `extension/onboarding/`, `extension/icons/`. Opis techniczny po angielsku: `extension/README.md`.
 
