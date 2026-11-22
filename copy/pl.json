@@ -8,6 +8,10 @@
       "Każde ustalenie ma źródło. Gdy źródeł brak, mówimy to wprost."
     ]
   },
+  "layout": {
+    "$comment": "Page frame shared by every route. skip_to_content is the first focusable link on each page and moves focus to <main> (meritum-frontend#89).",
+    "skip_to_content": "Przejdź do treści"
+  },
   "form": {
     "$comment": "audio_transcription_warning is shown next to the audio field before sending; result.transcript_hint is shown on the result card next to the transcript (meritum-frontend#22, frontend/007). audio_provider, audio_cost and audio_retention sit under the audio field; {days} is the same check-record retention as in form.privacy (design-system#69). delete_session_* confirm „Usuń moje sprawdzenia” on the page (design-system#74).",
     "title": "Sprawdź informację",
