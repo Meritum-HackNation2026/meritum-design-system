@@ -189,6 +189,20 @@ class Processors(unittest.TestCase):
             with self.subTest(channel=channel):
                 self.assertTrue(POLICIES[channel]["planned_processors_lead"].strip())
 
+    def test_reranker_providers_are_listed_with_region_and_data(self) -> None:
+        # design-system#68: reranker is off by default; optional providers must be accurate
+        self.assertIn("Domyślnie reranker jest wyłączony", PRIVACY["processors"]["planned_lead"])
+        openrouter = ACTIVE["openrouter"]
+        self.assertIn("porządkowanie fragmentów", openrouter["purpose"])
+        self.assertIn("Cohere", openrouter["purpose"])
+        self.assertIn("Amazon Bedrock", openrouter["region"])
+        for processor, region in (("vertex_ai_ranking", "global (poza UE)"), ("cloudflare_workers_ai", "bez gwarancji regionu UE")):
+            with self.subTest(processor=processor):
+                self.assertIn(region, PLANNED[processor]["region"])
+                self.assertIn("twierdzenie po zamaskowaniu", PLANNED[processor]["data"].lower())
+                self.assertIn("fragmenty źródeł z korpusu", PLANNED[processor]["data"])
+        self.assertNotIn("vertex_ai_ranking", " ".join(ACTIVE))
+
     def test_conservative_regions(self) -> None:
         for processor in ("fact_check_tools", "moderator_notifications"):
             with self.subTest(processor=processor):
