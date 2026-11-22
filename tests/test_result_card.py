@@ -26,7 +26,9 @@ def render(result: dict) -> str:
         "const [copy, result] = JSON.parse(require('fs').readFileSync(0, 'utf8'));"
         "MeritumCard.use(copy); process.stdout.write(MeritumCard.card(result));"
     )
-    out = subprocess.run(["node", "-e", script], input=json.dumps([COPY, result]), capture_output=True, text=True, check=True)
+    out = subprocess.run(
+        ["node", "-e", script], input=json.dumps([COPY, result]), capture_output=True, text=True, encoding="utf-8", check=True
+    )
     return out.stdout
 
 

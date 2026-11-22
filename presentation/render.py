@@ -28,18 +28,18 @@ def brand(b):
     pg = b.new_page()
     marks = {"light": "meritum-mark.svg", "dark": "meritum-mark-on-dark.svg", "mono": "meritum-mark-mono.svg"}
     for name, f in marks.items():
-        svg = (DS / "brand" / f).read_text()
+        svg = (DS / "brand" / f).read_text(encoding="utf-8")
         for s in (512, 1024):
             svg_page(pg, svg, s, s)
             pg.screenshot(path=EXP / f"meritum-mark-{name}-{s}.png", omit_background=True)
-    icon = (DS / "brand" / "meritum-app-icon.svg").read_text()
+    icon = (DS / "brand" / "meritum-app-icon.svg").read_text(encoding="utf-8")
     for s in (16, 32, 48, 128, 256, 512):
         svg_page(pg, icon, s, s)
         pg.screenshot(path=EXP / f"meritum-app-icon-{s}.png", omit_background=True)
     pg.close()
     pg = b.new_page(device_scale_factor=2)
     for f in sorted(EXP.glob("meritum-lockup-*.svg")):
-        svg = f.read_text()
+        svg = f.read_text(encoding="utf-8")
         vb = [float(v) for v in svg.split('viewBox="')[1].split('"')[0].split()]
         svg_page(pg, svg, int(vb[2] * 3), int(vb[3] * 3))  # 3x the SVG units, at 2x pixel density
         pg.screenshot(path=EXP / f"{f.stem}@2x.png", omit_background=True)
@@ -104,26 +104,26 @@ def icons(b):
     deck = DS / "presentation" / "slides" / "index.html"
     syms = []
     for f in sorted(src.glob("*.svg")):
-        inner = re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(), re.S).group(1).strip()
+        inner = re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(encoding="utf-8"), re.S).group(1).strip()
         syms.append(f'<symbol id="i-{f.stem}" viewBox="0 0 24 24">{re.sub(chr(10) + " *", "", inner)}</symbol>')
     # Simple Icons (CC0) brand logos of the stack: filled single-colour paths, ids b-<slug>
     for f in sorted((src / "brands").glob("*.svg")):
-        inner = re.sub(r"<title>.*?</title>", "", re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(), re.S).group(1))
+        inner = re.sub(r"<title>.*?</title>", "", re.search(r"<svg[^>]*>(.*)</svg>", f.read_text(encoding="utf-8"), re.S).group(1))
         syms.append(f'<symbol id="b-{f.stem}" viewBox="0 0 24 24">{inner.strip()}</symbol>')
-    html = deck.read_text()
+    html = deck.read_text(encoding="utf-8")
     a, z = "<!-- icons:start -->", "<!-- icons:end -->"
     assert a in html and z in html, "icon sprite markers missing in slides/index.html"
-    deck.write_text(html[:html.index(a) + len(a)] + "\n" + "\n".join(syms) + "\n" + html[html.index(z):])
+    deck.write_text(html[:html.index(a) + len(a)] + "\n" + "\n".join(syms) + "\n" + html[html.index(z):], encoding="utf-8")
     out = src / "png"
     out.mkdir(exist_ok=True)
     pg = b.new_page(viewport={"width": 128, "height": 128})
     for f in sorted(src.glob("*.svg")):
         for suffix, colour in (("", "#1D6A86"), ("-white", "#FFFFFF")):
-            svg = f.read_text().replace('width="24"', 'width="128"').replace('height="24"', 'height="128"').replace("currentColor", colour)
+            svg = f.read_text(encoding="utf-8").replace('width="24"', 'width="128"').replace('height="24"', 'height="128"').replace("currentColor", colour)
             pg.set_content(f"<html><body style='margin:0;background:transparent'>{svg}</body></html>")
             pg.screenshot(path=out / f"{f.stem}{suffix}.png", omit_background=True, clip={"x": 0, "y": 0, "width": 128, "height": 128})
     for f in sorted((src / "brands").glob("*.svg")):
-        svg = f.read_text().replace("<svg ", '<svg width="128" height="128" fill="#14191E" ', 1)
+        svg = f.read_text(encoding="utf-8").replace("<svg ", '<svg width="128" height="128" fill="#14191E" ', 1)
         pg.set_content(f"<html><body style='margin:0;background:transparent'>{svg}</body></html>")
         pg.screenshot(path=out / f"brand-{f.stem}.png", omit_background=True, clip={"x": 0, "y": 0, "width": 128, "height": 128})
 
