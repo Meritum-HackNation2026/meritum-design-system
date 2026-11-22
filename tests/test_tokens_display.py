@@ -6,8 +6,13 @@ Run: python3 -m unittest discover -s tests
 
 import re
 import unittest
+from pathlib import Path
 
-from test_tokens_atrament import TOKENS, contrast
+from test_tokens_atrament import TOKENS as BASE
+from test_tokens_atrament import contrast
+
+TOKENS = (Path(__file__).parent.parent / "tokens" / "display.css").read_text(encoding="utf-8")
+MAX_LINES = 250  # meritum-architecture rule 6; meritum-frontend relies on the limit being kept here
 
 AAA_TEXT = 7.0  # WCAG 2.2 AAA, normal text: the bar for a theme people pick because AA is not enough
 NON_TEXT = 3.0  # WCAG 2.2 1.4.11, borders of controls
@@ -35,11 +40,20 @@ class TextSize(unittest.TestCase):
                 self.assertEqual(rule.group(1).strip(), size)
 
     def test_no_text_size_token_is_in_pixels(self) -> None:
-        for name, value in re.findall(r"(--text-[a-z0-9]+):\s*([^;]+);", TOKENS):
+        for name, value in re.findall(r"(--text-[a-z0-9]+):\s*([^;]+);", BASE):
             self.assertTrue(value.strip().endswith("rem"), f"{name}: {value}")
 
     def test_file_says_layout_must_hold_at_the_largest_size(self) -> None:
         self.assertRegex(TOKENS, r"Breakpoints do not follow this scale[^*]*150%[^*]*320 px[^*]*WCAG 1\.4\.4, 1\.4\.10")
+
+
+class Files(unittest.TestCase):
+    def test_both_token_files_stay_within_the_line_limit(self) -> None:
+        for text in (BASE, TOKENS):
+            self.assertLessEqual(len(text.splitlines()), MAX_LINES)
+
+    def test_base_file_points_at_the_display_file(self) -> None:
+        self.assertIn("tokens/display.css", BASE)
 
 
 class HighContrast(unittest.TestCase):
@@ -60,9 +74,13 @@ class HighContrast(unittest.TestCase):
             self.assertGreaterEqual(ratio, NON_TEXT, f"{name}: {ratio:.2f}:1")
 
     def test_popups_get_an_outline_and_focus_a_thick_ring(self) -> None:
-        rules = TOKENS[TOKENS.index("/* high contrast: edges") :]
-        self.assertRegex(rules, r"border:\s*1px solid var\(--border\)")
-        self.assertRegex(rules, r":focus-visible[^{]*\{\s*outline:\s*3px solid var\(--ring\)")
+        # the declaration is matched together with its high-contrast selector, so a rule elsewhere cannot satisfy it
+        popup = r'\[data-contrast="more"\] :is\((?:\[data-slot="[a-z-]+-content"\](?:, )?)+\) \{ border: 1px solid var\(--border\); \}'
+        focus = r'\[data-contrast="more"\] :focus-visible \{ outline: 3px solid var\(--ring\); outline-offset: 2px; \}'
+        self.assertRegex(TOKENS, popup)
+        self.assertRegex(TOKENS, focus)
+        for slot in ("popover-content", "dropdown-menu-content", "tooltip-content", "dialog-content", "alert-dialog-content"):
+            self.assertIn(f'[data-slot="{slot}"]', TOKENS)
 
 
 def media_blocks() -> list[str]:
