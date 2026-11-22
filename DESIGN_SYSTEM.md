@@ -20,7 +20,7 @@ Meritum nie wygląda jak czat: nie ma dymków ani pola przyklejonego do dołu ek
 
 ## 2. Logo
 
-Znak **„Dwa łuki”**: małe „m” z dwóch łuków. Łuki to twierdzenie i źródło, wspólny środkowy trzon (w kolorze akcentu) to miejsce, w którym się spotykają, a kropka nad nim to ustalenie.
+Znak **„Dwa łuki”**: małe „m” z dwóch łuków. Łuki to twierdzenie i źródło, wspólny środkowy trzon to miejsce, w którym się spotykają, a kropka nad nim to ustalenie.
 
 | Plik | Kiedy używać |
 |---|---|
@@ -151,7 +151,7 @@ Jedna kolumna, działa od 320 px szerokości. Na stronie WWW formularz jest pole
 2. Pole „Tekst albo link” (do 4000 znaków), przyjmuje wklejony tekst albo pełny adres zaczynający się od http:// albo https:// (do 2083 znaków, jak `CheckRequest.url`). Pod nim drugorzędny przycisk „Albo nagranie (plik audio)” (`form.audio_label`). Nad polem jedno zdanie, że odpowiada system AI (`ai_notice.first_contact`).
 3. Przycisk główny „Sprawdź”, aktywny zawsze poza wysyłką. Za krótki tekst, za długi albo błędny link dają po kliknięciu komunikat pod polem (`errors`). W trakcie: „Sprawdzamy…” i pasek analizy (6.3).
 4. Pod przyciskiem informacja o prywatności: konto nie jest potrzebne, maskowanie oczywistych danych osobowych, termin usunięcia zapisu, link „Usuń moje sprawdzenia”.
-5. Pod formularzem lista „Twoje sprawdzenia” (`history`): sprawdzenia z tej rozmowy, od najnowszego; kliknięcie otwiera kartę wyniku. Bez logowania lista pochodzi z sessionStorage, a notatka mówi, że historia jest tylko w tej przeglądarce: w tej karcie i w kartach z niej otwartych (przeglądarka kopiuje sessionStorage do takich kart). Pusta lista pokazuje `history.empty`.
+5. Pod formularzem lista „Twoje sprawdzenia” (`history`): sprawdzenia z tej karty przeglądarki, od najnowszego; kliknięcie otwiera kartę wyniku. Bez logowania lista pochodzi z sessionStorage, a notatka mówi, że historia jest tylko w tej przeglądarce: w tej karcie i w kartach z niej otwartych (przeglądarka kopiuje sessionStorage do takich kart). Pusta lista pokazuje `history.empty`.
 6. Przy liście opcjonalne logowanie (`account`): dwa przyciski drugorzędne „Zaloguj się kontem Google” i „Zaloguj się kontem Microsoft” oraz zdanie, że logowanie nie jest potrzebne. Po zalogowaniu historia jest na serwerze, a w miejscu przycisków są „Usuń moją historię”, „Usuń konto i historię” i „Wyloguj się”.
 
 Błędy pod polem, słowami z `copy/pl.json` (`errors`), bez czyszczenia wpisanej treści.
@@ -169,7 +169,7 @@ Jeden wynik na sprawdzenie, a w nim lista twierdzeń. Na stronie WWW wynik nie m
 - **Podsumowanie:** „Co sprawdziliśmy” z liczbą twierdzeń (`result.claims_count`) i licznikami werdyktów jako plakietkami.
 - **Lista twierdzeń:** shadcn `Accordion`, wszystkie wiersze domyślnie rozwinięte. Wiersz to plakietka werdyktu (`VerdictBadge` sm) w stałej kolumnie, twierdzenie w cudzysłowie w stylu Twierdzenie i strzałka. Plakietka stoi obok wyzwalacza, nie w nim, żeby mogła się objaśnić (6.10). Wiersz podświetla się przy najechaniu (`--muted`) i ma kursor wskazujący; między wierszami nie ma linii. Od 576 px szerokości listy treść rozwinięcia wyrównuje się do tekstu twierdzenia, węziej stoi pod plakietką.
 - **Werdykt:** słowo („Potwierdzone”, „Fałszywe”, „Wprowadzające w błąd”, „Brak wystarczających dowodów”, „Nie podlega weryfikacji”) w plakietce w kolorach werdyktu; dwa nierozstrzygające są neutralne. Objaśnienie z `verdict_hint` pokazuje się po najechaniu, fokusie albo dotknięciu plakietki. We wtyczce werdykt zostaje słowem w stylu Werdykt, bez pigułki.
-- **Wyjaśnienie:** 1–3 zdania. Bez podpisu o AI przy każdym twierdzeniu: informacja o AI pada raz (stopka karty albo, w rozmowie, nad polem wiadomości). `result.explanation_hint` nie jest już pokazywany.
+- **Wyjaśnienie:** 1–3 zdania. Bez podpisu o AI przy każdym twierdzeniu: informacja o AI pada raz (pod przełącznikiem ograniczeń albo na stronie nowego sprawdzenia). `result.explanation_hint` nie jest już pokazywany.
 - **Na czym się opieramy:** każde źródło jako dowód: najpierw dosłowny fragment w stylu Tekst, z cudzysłowem „ wysuniętym na margines w kolorze `--verified`, bez tła i ramki; pod nim przypis: tytuł (link), wydawca, data publikacji, rodzaj i poziom (urzędowe lub pierwotne, wtórne). Źródło z wyszukiwania w sieci ma dopisek „znalezione w wyszukiwaniu w zatwierdzonych serwisach”.
 - **Siła podstawy:** tylko przy werdyktach rozstrzygających. Słowo i trzy kreski poziomu; objaśnienie poziomu (`strength_hint`) pokazuje się jak przy plakietkach. Przesłanki słowami są dostępne na żądanie: liczba niezależnych wydawców zgodnych z werdyktem, ile z nich urzędowych, data najnowszego źródła i data, której dotyczy twierdzenie (`result.newest`), czy źródła są zgodne. Przy sprzecznych źródłach nie ma siły: werdykt to „Brak wystarczających dowodów”, cytaty obu stron stoją obok siebie, a nad nimi jest jedno zdanie, czym się różnią (`result.conflict`).
 - **Czego nie udało się ustalić:** obowiązkowe przy „Brak wystarczających dowodów”.
@@ -261,7 +261,7 @@ Nigdy nie wstawiamy logotypu platformy do widżetu i nigdy nie udajemy treści p
 
 ## 10. Dostępność
 
-WCAG 2.2 AA w obu trybach, także na tle cudzych feedów. Werdykty oznaczone słowem, nie tylko kolorem. Widoczny pierścień fokusu (2 px, kolor akcentu). Klawisz Esc zamyka okienko i oddaje fokus przyciskowi. Wynik ogłasza region `aria-live`. Formularz działa na telefonie bez przewijania w poziomie. Polskie teksty są dłuższe niż angielskie, więc komponenty muszą wytrzymać długie etykiety, np. „Brak wystarczających dowodów”.
+WCAG 2.2 AA w obu trybach, także na tle cudzych feedów. Werdykty oznaczone słowem, nie tylko kolorem. Widoczny pierścień fokusu (2 px, kolor atramentu). Klawisz Esc zamyka okienko i oddaje fokus przyciskowi. Wynik ogłasza region `aria-live`. Formularz działa na telefonie bez przewijania w poziomie. Polskie teksty są dłuższe niż angielskie, więc komponenty muszą wytrzymać długie etykiety, np. „Brak wystarczających dowodów”.
 
 **Menu „Wygląd”** w belce (`display` w `copy/pl.json`) daje dwa ustawienia bez szukania ich w przeglądarce:
 - **Motyw:** jasny, ciemny albo ciemny o wysokim kontraście. Bez zapisanego wyboru strona idzie za systemem, a tryb ciemny bierze wartości wysokiego kontrastu, gdy system prosi o większy kontrast. W wysokim kontraście okienka mają obrys 1 px, a fokus obrys 3 px. Tokeny obu ustawień są w `tokens/display.css`, importowanym po `tokens/meritum.css`.
@@ -320,7 +320,7 @@ wymyślone źródła i cytaty, liczby bez dopisku „dane symulowane” albo bez
 ## 13. Kto czego używa
 
 ### Strona WWW i panel (React)
-- `components/meritum/`: komponenty React (shadcn/ui) typowane kontraktami: `CheckForm` i `CheckHistory` (6.1), `Composer`, `Question`, `Reply`, `Welcome` i `Attachment` (6.8), `CheckButton` (6.2), `AnalysisSteps` (6.3), `ResultCard` z `VerdictBadge`, `CitationItem` i `StrengthMeter` (6.4), `ModerationQueue` (6.5). Instalacja i podgląd: `components/meritum/README.md`.
+- `components/meritum/`: komponenty React (shadcn/ui) typowane kontraktami: `CheckForm` i `CheckHistory` (6.1), `Composer`, nagłówek-cytat i `Attachment` (6.8; `Question`, `Reply` i `Welcome` znikają razem z widokiem rozmowy w design-system#150), `CheckButton` (6.2), `AnalysisSteps` (6.3), `ResultCard` z `VerdictBadge`, `CitationItem` i `StrengthMeter` (6.4), `ModerationQueue` (6.5). Instalacja i podgląd: `components/meritum/README.md`.
 - `tokens/meritum.css`: te same tokeny dla strony, panelu i wtyczki.
 
 ### Wtyczka Chrome (programista)
