@@ -33,7 +33,7 @@ class ModeratorAnswerCopy(unittest.TestCase):
 
     def test_sent_note_says_the_answer_is_not_public_and_names_no_asker(self) -> None:
         # US-MOD-04: not published; the panel never says who asked
-        self.assertIn("nie jest publiczna", ANSWER["sent_note"])
+        self.assertIn("Nie jest publiczna", ANSWER["sent_note"])
 
     def test_form_never_mentions_a_channel_or_an_identifier(self) -> None:
         for key in KEYS:
