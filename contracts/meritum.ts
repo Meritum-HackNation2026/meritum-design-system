@@ -246,6 +246,10 @@ export type CheckId1 = string;
  * @minItems 1
  */
 export type Steps = [AnalysisStep, ...AnalysisStep[]];
+/**
+ * Streamed draft of the answer, personal data masked; a preview, never a verdict.
+ */
+export type Draft = string | null;
 export type Location = "input" | "source";
 export type Action = "instruction_removed" | "source_dropped";
 export type SourceUrl = string | null;
@@ -709,6 +713,7 @@ export interface AnalysisStatus {
   check_id: CheckId1;
   steps: Steps;
   result?: CheckResult | null;
+  draft?: Draft;
 }
 /**
  * Instructions found in the input or a source. Logged and never executed.
