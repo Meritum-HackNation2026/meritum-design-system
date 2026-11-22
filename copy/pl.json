@@ -398,6 +398,17 @@
       "citation_not_verbatim": "Cytat {n} nie przeszedł weryfikacji: tego fragmentu nie ma dosłownie w tekście źródła. Popraw go albo usuń. Odpowiedź nie została wysłana.",
       "sources_failed": "Nie udało się wczytać źródeł z katalogu. Odśwież stronę.",
       "not_sent": "Nie udało się wysłać odpowiedzi. Twoje wpisy zostały. Spróbuj jeszcze raz."
+    },
+    "asker_answer": {
+      "$comment": "The moderator's answer as the asker reads it at /odpowiedzi/{case_id} (meritum-frontend#85, US-MOD-07, F-39). Never names who else asked.",
+      "title": "Odpowiedź moderatora",
+      "loading": "Wczytujemy odpowiedź…",
+      "citations_title": "Cytaty ze źródeł",
+      "note": "Tę odpowiedź dostają tylko osoby, które pytały. Nie jest publiczna.",
+      "not_found_title": "Nie ma tu odpowiedzi",
+      "not_found": "Nie znaleźliśmy odpowiedzi do tej sprawy dla tej przeglądarki. Odpowiedź otwiera się tylko tam, gdzie przyszło powiadomienie.",
+      "error": "Nie udało się wczytać odpowiedzi. Sprawdź połączenie i spróbuj jeszcze raz.",
+      "retry": "Spróbuj jeszcze raz"
     }
   },
   "staff": {
