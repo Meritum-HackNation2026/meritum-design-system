@@ -446,6 +446,11 @@
       "system": "{message}",
       "eval_run_done": "Przebieg ewaluacji się zakończył. Zobacz wyniki."
     },
+    "system_message": {
+      "maintenance_planned": "Planujemy prace techniczne. Meritum może na chwilę przestać działać.",
+      "service_degraded": "Meritum działa wolniej niż zwykle. Sprawdzenia mogą potrwać dłużej albo się nie udać.",
+      "service_restored": "Meritum znów działa normalnie."
+    },
     "status": {
       "unread": "nieprzeczytane",
       "read": "przeczytane"

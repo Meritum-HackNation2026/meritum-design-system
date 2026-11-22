@@ -1,6 +1,6 @@
 """Checks that every code in the contract copy (contracts/meritum.schema.json) has text in copy/pl.json.
 
-Features: US-ZRD-06, US-SPR-06, US-SPR-02, US-POW-01, US-ZRD-11, US-BEZ-03, F-17, F-18, F-26, ADR-29, design-system#10, design-system#66, design-system#89
+Features: US-ZRD-06, US-SPR-06, US-SPR-02, US-POW-01, US-ZRD-11, US-BEZ-03, F-17, F-18, F-26, ADR-29, design-system#10, design-system#66, design-system#89, design-system#92
 Run: python3 -m unittest discover -s tests
 """
 
@@ -38,6 +38,7 @@ ENUM_COPY = (
     ("AnalysisStep", "status", ("analysis.step_status",), ()),
     ("Notification", "kind", ("notifications.kind",), ()),
     ("Notification", "status", ("notifications.status",), ()),
+    ("Notification", "message_code", ("notifications.system_message",), ()),
     ("IncidentMatch", "match_basis", ("match_basis",), ()),
     ("IncidentMatch", "database", ("result.incident_database",), ()),
     ("EvidenceStrength", "level", ("strength",), ()),

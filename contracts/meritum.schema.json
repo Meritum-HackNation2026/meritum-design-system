@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Meritum contracts",
-  "x-contract-version": 8,
+  "x-contract-version": 9,
   "$defs": {
     "CheckRequest": {
       "additionalProperties": false,
@@ -1911,6 +1911,51 @@
           ],
           "default": null,
           "title": "Case Id"
+        },
+        "step_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "receive",
+                "fetch_url",
+                "transcribe_audio",
+                "screen_injection",
+                "extract_claims",
+                "search_corpus",
+                "search_web",
+                "search_fact_checks",
+                "assess_evidence",
+                "verify_citations",
+                "write_answer",
+                "save_record"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "check_progress only: the finished pipeline step; the text is analysis.steps.<code> in copy/pl.json.",
+          "title": "Step Code"
+        },
+        "message_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "maintenance_planned",
+                "service_degraded",
+                "service_restored"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "system only: what the message says; the text is notifications.system_message.<code> in copy/pl.json, never free text.",
+          "title": "Message Code"
         },
         "link": {
           "description": "In-app path to open.",
