@@ -1,6 +1,6 @@
 """Checks copy/pl.json texts for hand-off and error-report failures on the result card.
 
-Features: US-MOD-03, US-MOD-06, F-24, F-17, design-system#64, design-system#80
+Features: US-MOD-03, US-MOD-06, F-24, F-17, design-system#64, design-system#80, design-system#91
 Run: python3 -m unittest discover -s tests
 """
 
@@ -53,6 +53,14 @@ class HandoffCopy(unittest.TestCase):
         # Gherkin "dołączenie do sprawy nie zdradza innych pytających"
         self.assertEqual(lookup("escalation.updated"), lookup("escalation.created"))
         self.assertIn("shows created in both states", COPY["escalation"]["$comment"])
+
+    def test_not_saved_comment_covers_every_server_failure(self) -> None:
+        # Gherkin "komentarz opisuje, kiedy pada not_saved" (design-system#91)
+        comment = COPY["escalation"]["$comment"]
+        for part in ("5xx", "unreadable response", "without a case number"):
+            with self.subTest(part=part):
+                self.assertIn(part, comment)
+        self.assertNotIn("on HTTP 503", comment)
 
 
 if __name__ == "__main__":
