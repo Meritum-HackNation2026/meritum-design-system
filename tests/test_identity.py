@@ -12,6 +12,7 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 COPY = json.loads((ROOT / "copy" / "pl.json").read_text(encoding="utf-8"))
 CARD = (ROOT / "components" / "meritum" / "result-card.tsx").read_text(encoding="utf-8")
+ROW = (ROOT / "components" / "meritum" / "claim-row.tsx").read_text(encoding="utf-8")
 CONVERSATION = (ROOT / "components" / "meritum" / "conversation.tsx").read_text(encoding="utf-8")
 TOKENS = (ROOT / "tokens" / "meritum.css").read_text(encoding="utf-8")
 DESIGN = (ROOT / "DESIGN_SYSTEM.md").read_text(encoding="utf-8")
@@ -20,9 +21,10 @@ DESIGN = (ROOT / "DESIGN_SYSTEM.md").read_text(encoding="utf-8")
 class VerdictFirst(unittest.TestCase):
     # shortcut: no TS test runner in this repo, so the card is checked by source; render it once one exists
     def test_claim_block_reads_from_the_verdict(self) -> None:
-        # Gherkin "wynik czyta się od werdyktu": verdict, then the claim, then the explanation, then the quotes
-        block = CARD[CARD.index("function ClaimBlock") :]
-        order = [block.index(s) for s in ('size="lg"', "{c.claim}", "{c.explanation}", "<CitationItem")]
+        # Gherkin "wynik czyta się od werdyktu": verdict, then the claim, then the explanation, then the quotes;
+        # since design-system#148 the claim is a list row led by its verdict label
+        block = ROW[ROW.index("function ClaimRow") :]
+        order = [block.index(s) for s in ("<VerdictBadge", "„{c.claim}”", "{c.explanation}", "<CitationItem")]
         self.assertEqual(order, sorted(order))
 
     def test_verdict_has_its_own_large_size(self) -> None:
@@ -36,7 +38,7 @@ class VerdictFirst(unittest.TestCase):
 
 class AiNoticeOnce(unittest.TestCase):
     def test_claim_block_drops_the_per_claim_ai_line(self) -> None:
-        self.assertNotIn("explanation_hint", CARD)
+        self.assertNotIn("explanation_hint", CARD + ROW)
 
     def test_card_in_a_reply_leaves_the_ai_line_to_the_thread(self) -> None:
         line = next(l for l in CARD.splitlines() if "ai_disclosure" in l)
