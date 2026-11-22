@@ -26,7 +26,7 @@ Znak **„Dwa łuki”**: małe „m” z dwóch łuków. Łuki to twierdzenie i
 |---|---|
 | `brand/meritum-mark.svg` | na jasnym tle |
 | `brand/meritum-mark-on-dark.svg` | na ciemnym tle |
-| `brand/meritum-mark-mono.svg` | druk jednobarwny, grawer, pieczątka |
+| `brand/meritum-mark-mono.svg` | strona WWW i panel (wzór dla komponentu `MeritumMark`), druk jednobarwny, grawer, pieczątka |
 | `brand/meritum-app-icon.svg` | ikona wtyczki, favicon, avatar w social media |
 
 **Logotyp:** znak + słowo „meritum” małymi literami, krój Archivo, grubość 650, szerokość 112%, światło −0,02 em. Pod spodem opcjonalny podtytuł „obywatelski radar dezinformacji” w Archivo 400, kolor drugorzędny.
@@ -34,11 +34,12 @@ Znak **„Dwa łuki”**: małe „m” z dwóch łuków. Łuki to twierdzenie i
 **Zasady:**
 - Minimalny rozmiar znaku: 14 px na ekranie, 6 mm w druku.
 - Pole ochronne: wysokość kropki nad „m” z każdej strony.
-- Trzon i kropka zawsze w kolorze akcentu (`#1D6A86` jasno, `#5DB3CF` ciemno). Łuki w kolorze tekstu.
+- W plikach marki, we wtyczce, na makietach i slajdach trzon i kropka są morskie (`#1D6A86` jasno, `#5DB3CF` ciemno), a łuki w kolorze tekstu.
+- Na stronie WWW i w panelu znak jest jednobarwny: trzon, kropka i łuki w kolorze atramentu, jak w `brand/meritum-mark-mono.svg`. Motyw Atrament nie ma koloru akcentu, a zielony trzon znaczyłby „Potwierdzone” przy każdym wyniku, także fałszywym.
 - W widżecie na platformach znak ma 14 px i stoi przed słowem „Meritum” w małym nagłówku.
 - Gotowe pliki PNG (512, 1024), ikony 16 do 512 px i poziomy logotyp z podtytułem są w `brand/exports/`. Logotyp z podtytułem ma tekst „obywatelski radar dezinformacji”.
 
-**Nie wolno:** obracać znaku, dodawać cienia ani gradientu, zmieniać koloru trzonu na inny niż akcent, umieszczać znaku obok logotypów platform tak, jakby był ich częścią, ani rozciągać go.
+**Nie wolno:** obracać znaku, dodawać cienia ani gradientu, zmieniać koloru trzonu na inny niż morski albo atrament, umieszczać znaku obok logotypów platform tak, jakby był ich częścią, ani rozciągać go.
 
 ---
 
@@ -91,7 +92,7 @@ Zmierzony kontrast (WCAG 2.2 AA wymaga 4,5:1 dla tekstu): tekst główny na stro
 - Stan nigdy nie jest oznaczony samym kolorem: zawsze ma też słowo („Potwierdzone”, „Fałszywe”) albo znak.
 - Na wykresach jakości są co najwyżej 4 kolory: atrament, zieleń, czerwień tylko dla błędów i szary dla przeszłości.
 - Przycisk główny jest w kolorze atramentu. Nie ma koloru akcentu: linki są w kolorze atramentu i podkreślone.
-- Kolor morski `#1D6A86` zostaje tylko w znaku „Dwa łuki” (sekcja 2) i w skórkach platform (sekcja 7).
+- Kolor morski `#1D6A86` zostaje tylko w plikach marki (sekcja 2) i w skórkach platform (sekcja 7). Na stronie i w panelu znak jest w kolorze atramentu.
 
 **Zakazane:** kremowe, beżowe i każde inne kolorowe tło strony; biała karta na tle w innym kolorze; granatowy tryb ciemny; gradienty; fiolet; zielony tekst na czarnym tle w stylu „hakerskim”; neonowe poświaty; granat z czerwienią w stylu urzędowym.
 
@@ -263,7 +264,7 @@ Nigdy nie wstawiamy logotypu platformy do widżetu i nigdy nie udajemy treści p
 WCAG 2.2 AA w obu trybach, także na tle cudzych feedów. Werdykty oznaczone słowem, nie tylko kolorem. Widoczny pierścień fokusu (2 px, kolor akcentu). Klawisz Esc zamyka okienko i oddaje fokus przyciskowi. Wynik ogłasza region `aria-live`. Formularz działa na telefonie bez przewijania w poziomie. Polskie teksty są dłuższe niż angielskie, więc komponenty muszą wytrzymać długie etykiety, np. „Brak wystarczających dowodów”.
 
 **Menu „Wygląd”** w belce (`display` w `copy/pl.json`) daje dwa ustawienia bez szukania ich w przeglądarce:
-- **Motyw:** jasny, ciemny albo ciemny o wysokim kontraście. Bez zapisanego wyboru strona idzie za systemem, a tryb ciemny bierze wartości wysokiego kontrastu, gdy system prosi o większy kontrast. W wysokim kontraście okienka mają obrys 1 px, a fokus obrys 3 px.
+- **Motyw:** jasny, ciemny albo ciemny o wysokim kontraście. Bez zapisanego wyboru strona idzie za systemem, a tryb ciemny bierze wartości wysokiego kontrastu, gdy system prosi o większy kontrast. W wysokim kontraście okienka mają obrys 1 px, a fokus obrys 3 px. Tokeny obu ustawień są w `tokens/display.css`, importowanym po `tokens/meritum.css`.
 - **Rozmiar tekstu:** domyślny, 112,5%, 125% albo 150%, jako procent na elemencie `html` (`data-text`). Procent mnoży rozmiar ustawiony w przeglądarce i skaluje wszystko w `rem`: tekst, odstępy i szerokości, jak Ctrl i plus. Rozmiarów nie podajemy w pikselach.
 
 Wybór zapisuje się w przeglądarce. Punkty łamania układu nie zależą od rozmiaru tekstu, więc każda strona musi mieścić się bez przewijania w poziomie przy 150% na szerokości 320 px (WCAG 1.4.4 i 1.4.10).
@@ -358,6 +359,7 @@ wymyślone źródła i cytaty, liczby bez dopisku „dane symulowane” albo bez
 |---|---|
 | `DESIGN_SYSTEM.md` | ta specyfikacja |
 | `tokens/meritum.css` | tokeny CSS i `@theme` dla Tailwind v4 + shadcn/ui, tryb ciemny, skórki platform |
+| `tokens/display.css` | ustawienia wyświetlania strony i panelu: tryb ciemny o wysokim kontraście i skala rozmiaru tekstu |
 | `components/meritum/` | komponenty React: `CheckForm`, `CheckHistory`, `CheckButton`, `AnalysisSteps`, `ResultCard`, `VerdictBadge`, `CitationItem`, `StrengthMeter`, `ModerationQueue`, `MeritumMark` |
 | `components/legacy/` | komponenty z wcześniejszego zakresu (NASK, notatki społeczności), poza produktem dla MSZ |
 | `contracts/` | kopia kontraktów z meritum-core, odświeżana skryptem `sync.sh`, nie do ręcznej edycji: Pydantic, JSON Schema, typy TS, przykłady |

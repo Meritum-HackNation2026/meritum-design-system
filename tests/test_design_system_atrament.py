@@ -149,6 +149,20 @@ class AgentPrompt(unittest.TestCase):
         self.assertNotIn("#1D6A86", text)
 
 
+class Mark(unittest.TestCase):
+    def test_mark_is_ink_on_the_page_and_sea_in_the_brand_files(self) -> None:
+        text = section("2")
+        self.assertRegex(text, r"Na stronie WWW i w panelu znak jest jednobarwny")
+        self.assertIn("meritum-mark-mono.svg", text)
+        self.assertIn("#1D6A86", text)
+
+
+class DisplayTokens(unittest.TestCase):
+    def test_spec_names_the_display_token_file(self) -> None:
+        self.assertIn("`tokens/display.css`", section("10"))
+        self.assertIn("| `tokens/display.css` |", section("14"))
+
+
 class OtherSurfacesWait(unittest.TestCase):
     def test_spec_says_widget_mocks_and_slides_keep_their_look(self) -> None:
         self.assertRegex(SPEC, r"(?s)Wtyczka, makiety platform[^.]*slajdy[^.]*dotychczasow")
