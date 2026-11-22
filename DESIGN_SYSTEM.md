@@ -57,8 +57,8 @@ Jedna biała powierzchnia, jeden atrament, żadnego koloru akcentu. Kolor na str
 | Tekst drugorzędny | `--muted-foreground` | `#5A5D62` | `#A1A1A1` | podpisy, etykiety, wydawcy i daty źródeł |
 | Ciche pole | `--muted` | `#F3F4F6` | `#161616` | wiersz pod kursorem, pole z wersją wstępną |
 | Podniesione tło | `--secondary` | `#EEF0F2` | `#1F1F1F` | plakietki rodzaju źródła, tor paska postępu |
-| Linia pola | `--border` | `#E3E5E8` | `#262626` | obrys okienek i tabel |
-| Obrys pola | `--input` | `#C6C9CE` | `#3A3A3A` | obrys pola wiadomości i pól formularzy |
+| Linia pola | `--border` | `#E3E5E8` | `#262626` | obrys okienek i tabel; dekoracyjna, nigdy jako jedyna granica pola do pisania |
+| Obrys pola | `--input` | `#858A93` | `#6B6B6B` | obrys pola wiadomości i pól formularzy; kontrast do strony 3,5:1 i 3,7:1 (WCAG 1.4.11 wymaga 3:1) |
 
 Szarości trybu jasnego są lekko chłodne, żeby podświetlenie obok bieli nigdy nie wyglądało na beż. Tryb ciemny jest czarny i neutralny: żaden token tła nie ma przewagi niebieskiego.
 
@@ -305,7 +305,7 @@ Styl: „Atrament”: spokojne, schludne narzędzie, które nie rzuca się w ocz
 powierzchnia, dużo powietrza, bez kart, bez linii między sekcjami, bez ramek w ramkach.
 Strona nie wygląda jak czat: bez dymków i bez pola przyklejonego do dołu.
 Kolory: strona i karta #FFFFFF, tekst #0A0A0A, tekst drugorzędny #5A5D62, ciche pole #F3F4F6,
-obrys pola #C6C9CE; tryb ciemny: strona #0A0A0A, tekst #EDEDED. Bez koloru akcentu:
+obrys pola #858A93; tryb ciemny: strona #0A0A0A, tekst #EDEDED. Bez koloru akcentu:
 przycisk główny, linki i fokus w kolorze tekstu. „Potwierdzone” #0B7A4B,
 „Wprowadzające w błąd” #B7791F, „Fałszywe” #C8213A (tylko tam), brak dowodów i stany
 techniczne neutralne.

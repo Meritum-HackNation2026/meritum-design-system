@@ -1,6 +1,6 @@
 """Checks the Atrament theme in tokens/meritum.css: one white surface, a black dark mode, green "Potwierdzone".
 
-Features: US-SPR-01, US-DST-01, F-01, design-system#144
+Features: US-SPR-01, US-DST-01, F-01, design-system#144, design-system#156
 Run: python3 -m unittest discover -s tests
 """
 
@@ -25,6 +25,7 @@ SKIN = block("[data-host] {")
 SKIN_DARK = block(':is(.dark, [data-theme="dark"]) [data-host],')
 GROUNDS = ("--background", "--card", "--popover", "--secondary", "--muted", "--accent", "--sidebar", "--sidebar-accent")
 AA_TEXT = 4.5  # WCAG 2.2 AA, normal text
+NON_TEXT = 3.0  # WCAG 2.2 AA 1.4.11, boundaries of controls
 
 
 def rgb(colour: str) -> tuple[int, int, int]:
@@ -103,6 +104,15 @@ class Contrast(unittest.TestCase):
             for name in ("--verified-foreground", "--contested-foreground", "--scam-foreground"):
                 ratio = contrast(mode[name], mode["--background"])
                 self.assertGreaterEqual(ratio, AA_TEXT, f"{label} {name} on the page: {ratio:.2f}:1")
+
+
+class FieldOutline(unittest.TestCase):
+    def test_field_outline_and_focus_ring_meet_non_text_contrast(self) -> None:
+        # WCAG 2.2 1.4.11: the boundary that shows where a field is needs 3:1 against the page (design-system#156)
+        for label, mode in (("light", LIGHT), ("dark", DARK)):
+            for name in ("--input", "--ring"):
+                ratio = contrast(mode[name], mode["--background"])
+                self.assertGreaterEqual(ratio, NON_TEXT, f"{label} {name} on the page: {ratio:.2f}:1")
 
 
 class InkInsteadOfAccent(unittest.TestCase):
