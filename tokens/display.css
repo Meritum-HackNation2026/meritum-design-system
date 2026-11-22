@@ -1,7 +1,9 @@
 /*
   Meritum, obywatelski radar dezinformacji
   Display settings for the web page and the panel: a dark high-contrast theme and a text-size
-  scale. Import after tokens/meritum.css; the rules only override custom properties declared there.
+  scale. Import after tokens/meritum.css. The rules only override custom properties declared there
+  and win over `:root` and `.dark` on specificity; the order matters for one tie only, with the dark
+  platform-skin rule `[data-host]:is(.dark, [data-theme="dark"])` at the end of that file.
   The platform skins and the extension do not load this file.
 */
 
