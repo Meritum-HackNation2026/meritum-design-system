@@ -16,7 +16,7 @@
     "input_placeholder": "Np. „Od stycznia nie zapłacisz w sklepie gotówką”",
     "submit": "Sprawdź",
     "checking": "Sprawdzamy…",
-    "privacy": "Konto nie jest potrzebne. Oczywiste dane osobowe (telefon, e-mail, PESEL) ukrywamy przed analizą. Zapis sprawdzenia usuwamy po {days} dniach.",
+    "privacy": "Konto nie jest potrzebne. Ukrywamy przed analizą oczywiste identyfikatory (telefon, e-mail, PESEL, dowód osobisty, paszport, numer konta, karta płatnicza). Nazwisk osób publicznych, nazw instytucji, dat i kwot nie ruszamy. Zapis sprawdzenia usuwamy po {days} dniach.",
     "delete_session": "Usuń moje sprawdzenia",
     "delete_session_title": "Usunąć twoje sprawdzenia?",
     "delete_session_text": "Usuniemy sprawdzenia z tej karty przeglądarki i ich zapisy na naszym serwerze. Tego nie da się cofnąć.",
