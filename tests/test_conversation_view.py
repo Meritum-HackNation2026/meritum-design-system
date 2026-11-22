@@ -32,11 +32,11 @@ class ConversationView(unittest.TestCase):
         self.assertRegex(TOKENS, r"--text-headline:\s*1\.875rem;\s*--text-headline--line-height:\s*2\.25rem;")
         self.assertRegex(TOKENS, r"--animate-enter:\s*rise 0\.24s var\(--ease-out-meritum\) both;")
 
-    def test_design_system_describes_the_conversation(self) -> None:
-        # Gherkin "design system opisuje widok rozmowy"
-        section = SPEC.split("### 6.8 Widok rozmowy", 1)[-1].split("\n---", 1)[0]
-        self.assertIn("### 6.8 Widok rozmowy", SPEC)
-        for part in ("cytowanym listem", "podpis", "Powitanie", "przyklejone pole wiadomości", "`Composer`", "`Welcome`"):
+    def test_design_system_describes_the_check_page(self) -> None:
+        # design-system#146: the check page replaced the conversation view; the components follow in #150
+        section = SPEC.split("### 6.8 Strona sprawdzenia", 1)[-1].split("\n### ", 1)[0]
+        self.assertIn("### 6.8 Strona sprawdzenia", SPEC)
+        for part in ("nagłówek-cytat", "bez dymków", "nie jest przyklejone", "`Composer`", "`CheckHistory`"):
             with self.subTest(part=part):
                 self.assertIn(part, section)
 
