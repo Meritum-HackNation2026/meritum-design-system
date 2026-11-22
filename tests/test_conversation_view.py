@@ -1,6 +1,6 @@
 """Checks that the conversation view of the web page is described, tokenised and exported.
 
-Features: US-SPR-01, US-SPR-09, F-01, design-system#79
+Features: US-SPR-01, US-SPR-09, F-01, design-system#79, design-system#103
 Run: python3 -m unittest discover -s tests
 """
 
@@ -20,6 +20,13 @@ class ConversationView(unittest.TestCase):
         self.assertIsNotNone(exported)
         names = {name.strip() for name in exported.group(1).split(",")} if exported else set()
         self.assertEqual(names, {"Attachment", "Composer", "Question", "Reply", "Welcome"})
+
+    def test_composer_takes_a_placeholder_and_is_shorter_on_a_phone(self) -> None:
+        # design-system#103
+        composer = (ROOT / "components" / "meritum" / "conversation.tsx").read_text(encoding="utf-8")
+        self.assertIn("placeholder = t.form.input_placeholder", composer)
+        self.assertIn("placeholder={placeholder}", composer)
+        self.assertRegex(composer, r"max-h-\d+ min-h-11 sm:max-h-48")
 
     def test_tokens_have_the_welcome_size_and_the_entry_motion(self) -> None:
         self.assertRegex(TOKENS, r"--text-headline:\s*1\.875rem;\s*--text-headline--line-height:\s*2\.25rem;")
