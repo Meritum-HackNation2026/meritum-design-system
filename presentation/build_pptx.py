@@ -142,7 +142,7 @@ def _plain(fragment):
     return re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", "", fragment))).strip()
 
 
-SECTIONS = re.findall(r'<section class="slide.*?</section>', (HERE / "slides" / "index.html").read_text(), re.S)
+SECTIONS = re.findall(r'<section class="slide.*?</section>', (HERE / "slides" / "index.html").read_text(encoding="utf-8"), re.S)
 TITLES = [_plain(re.search(r"<h[12][^>]*>(.*?)</h[12]>", sec, re.S).group(1)) for sec in SECTIONS]
 NOTES = [_plain(re.search(r"<aside>(.*?)</aside>", sec, re.S).group(1)) for sec in SECTIONS]
 TOTAL = len(SECTIONS)

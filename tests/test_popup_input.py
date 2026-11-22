@@ -21,7 +21,7 @@ process.stdout.write(JSON.stringify(inputs.map(v => MeritumInput.toRequest(v, "e
 
 def validate(*inputs: str) -> list:
     out = subprocess.run(
-        ["node", "-e", RUN, json.dumps(inputs)], cwd=ROOT, check=True, capture_output=True, text=True, timeout=10
+        ["node", "-e", RUN, json.dumps(inputs)], cwd=ROOT, check=True, capture_output=True, text=True, encoding="utf-8", timeout=10
     ).stdout
     return json.loads(out)
 
