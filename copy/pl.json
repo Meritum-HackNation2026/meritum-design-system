@@ -121,6 +121,8 @@
     "limitations": "Ograniczenia",
     "incident": "Podobne do znanego przypadku dezinformacji z bazy {database}: {title} ({date}). To kontekst, a nie podstawa oceny.",
     "incident_domain": "Ten link prowadzi do serwisu z bazy {database} ({title}). To informacja o serwisie, a nie ocena tej treści.",
+    "incident_link": "Opis przypadku",
+    "context_title": "Kontekst, który nie zmienia werdyktu",
     "ai_disclosure": "Odpowiedź przygotował system z użyciem AI. Sprawdź źródła sam: linki prowadzą do oryginałów.",
     "via_web": "znalezione w wyszukiwaniu w zatwierdzonych serwisach",
     "superseded": "Ten dowód zastąpił nowszy dokument z {date}.",
@@ -137,6 +139,7 @@
     "transcript_hint": "Transkrypcję przygotował system automatycznie. Może zawierać błędy.",
     "claim_review": "Według {publisher}: „{rating}”.",
     "claim_review_context": "Ocena fact-checkera {publisher}: „{rating}”. To kontekst, a nie podstawa naszej oceny.",
+    "claim_review_meta": "Ocena fact-checkera z {date}, bez fragmentu strony",
     "fact_check_unavailable": "Nie mogę teraz sprawdzić indeksu Google Fact Check z powodu błędu dostępu. To nie znaczy, że takiej oceny nie ma.",
     "no_result_hint": "Brak wyniku w naszych źródłach nie oznacza, że tak nie jest.",
     "no_change_hint": "Brak wyniku w naszych źródłach nie oznacza, że zmiany nie było.",
@@ -227,7 +230,8 @@
     "not_saved": "Sprawy nie zapisaliśmy u moderatorów. Spróbuj jeszcze raz."
   },
   "source_warning": {
-    "eu_sanctioned_entity": "Ta treść pochodzi od podmiotu z listy sankcji UE ({entity}). To informacja o źródle, a nie ocena samej treści."
+    "eu_sanctioned_entity": "Ta treść pochodzi od podmiotu z listy sankcji UE ({entity}). To informacja o źródle, a nie ocena samej treści.",
+    "basis_link": "Wpis na liście sankcji"
   },
   "analysis": {
     "title": "Meritum sprawdza",
