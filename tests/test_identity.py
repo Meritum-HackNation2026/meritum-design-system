@@ -54,6 +54,7 @@ class Examples(unittest.TestCase):
         examples = COPY["conversation"]["examples"]
         self.assertFalse(any("gotówk" in e for e in examples))
         self.assertTrue(any("płaca minimalna" in e for e in examples))
+        self.assertNotIn("gotówk", COPY["form"]["input_placeholder"])
 
 
 class Idea(unittest.TestCase):

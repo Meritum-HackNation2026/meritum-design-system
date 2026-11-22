@@ -13,7 +13,7 @@
     "title": "Sprawdź informację",
     "lead": "Wklej tekst albo link. Sprawdzimy twierdzenia w opisanych źródłach i pokażemy, na czym opieramy odpowiedź.",
     "input_label": "Tekst albo link",
-    "input_placeholder": "Np. „Od stycznia nie zapłacisz w sklepie gotówką”",
+    "input_placeholder": "Np. „Od 1 stycznia 2026 płaca minimalna wynosi 4806 zł”",
     "submit": "Sprawdź",
     "checking": "Sprawdzamy…",
     "privacy": "Konto nie jest potrzebne. Ukrywamy przed analizą oczywiste identyfikatory (telefon, e-mail, PESEL, dowód osobisty, paszport, numer konta, karta płatnicza). Nazwisk osób publicznych, nazw instytucji, dat i kwot nie ruszamy. Zapis sprawdzenia usuwamy po {days} dniach.",
