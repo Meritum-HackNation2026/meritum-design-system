@@ -30,6 +30,7 @@ Without installing anything: `demo/live/<platform>/` loads the same `reference/a
 | `pl.json` | Symlink to `../copy/pl.json`: every string the widget shows, keyed by contract codes |
 | `reference/content.js` | Content script: platform detection, post discovery, injection, theme detection, the check on click |
 | `reference/card.js` | `MeritumCard`: the result card and the analysis strip as HTML strings (same structure as `components/meritum/result-card.tsx`), shared by the content script and the popup |
+| `reference/input.js` | `MeritumInput.toRequest(raw, channel)`: the popup's input check, same rules and `errors` keys as `toRequest()` in `components/meritum/check-form.tsx` (`tests/test_popup_input.py` keeps the limits equal) |
 | `reference/api.js` | Mocked API, `MeritumAPI.check(request, onStatus)`: contract-shaped `CheckResult` and `AnalysisStatus` for the stage demo only (see below) |
 | `reference/background.js` | Service-worker stub: first-run tab, default settings; this is where the real `fetch` to the check API goes |
 | `ui.css` | Tokens and small components for the extension's own pages |
