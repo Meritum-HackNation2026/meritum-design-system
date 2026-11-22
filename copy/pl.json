@@ -84,6 +84,7 @@
     "checked": "Sprawdzono",
     "popup_title": "Sprawdź tekst albo link",
     "page_hint": "Wysyłamy treść posta dopiero po kliknięciu „Sprawdź”.",
+    "post_too_short": "W tym poście jest za mało tekstu do sprawdzenia. Wklej treść w okienku wtyczki albo wybierz inny post.",
     "popup_connecting": "Łączymy z serwerem Meritum…",
     "popup_api_ok": "Połączono z serwerem Meritum ({api}).",
     "popup_api_down": "Serwer Meritum nie odpowiada. Spróbuj za kilka minut.",
