@@ -35,11 +35,11 @@ class TextSize(unittest.TestCase):
                 self.assertEqual(rule.group(1).strip(), size)
 
     def test_no_text_size_token_is_in_pixels(self) -> None:
-        for name, value in re.findall(r"(--text-[a-z]+):\s*([^;]+);", TOKENS):
+        for name, value in re.findall(r"(--text-[a-z0-9]+):\s*([^;]+);", TOKENS):
             self.assertTrue(value.strip().endswith("rem"), f"{name}: {value}")
 
     def test_file_says_layout_must_hold_at_the_largest_size(self) -> None:
-        self.assertRegex(TOKENS, r"150%[^*]*320 px")
+        self.assertRegex(TOKENS, r"Breakpoints do not follow this scale[^*]*150%[^*]*320 px[^*]*WCAG 1\.4\.4, 1\.4\.10")
 
 
 class HighContrast(unittest.TestCase):
@@ -65,16 +65,42 @@ class HighContrast(unittest.TestCase):
         self.assertRegex(rules, r":focus-visible[^{]*\{\s*outline:\s*3px solid var\(--ring\)")
 
 
+def media_blocks() -> list[str]:
+    """Bodies of every `@media (prefers-contrast: more) { ... }` block, cut out by matching braces."""
+    blocks, marker, start = [], "@media (prefers-contrast: more) {", 0
+    while (at := TOKENS.find(marker, start)) != -1:
+        depth, end = 1, at + len(marker)
+        while depth:
+            depth += {"{": 1, "}": -1}.get(TOKENS[end], 0)
+            end += 1
+        blocks.append(TOKENS[at + len(marker) : end - 1])
+        start = end
+    return blocks
+
+
 class FollowsTheSystem(unittest.TestCase):
     def test_system_preference_gives_the_same_tokens(self) -> None:
-        # Gherkin "system prosi o większy kontrast": dark mode with no stored choice
-        media = TOKENS[TOKENS.index("@media (prefers-contrast: more)") :]
-        self.assertIn(SYSTEM, media)
-        self.assertEqual(declarations(SYSTEM), CONTRAST)
+        # Gherkin "system prosi o większy kontrast": dark mode with no stored choice, inside the media query
+        inside = "".join(media_blocks())
+        self.assertIn(SYSTEM, inside)
+        body = inside[inside.index(SYSTEM) + len(SYSTEM) :]
+        tokens = {name: value.strip() for name, value in re.findall(r"(--[a-z0-9-]+):\s*([^;]+);", body[: body.index("}")])}
+        self.assertEqual(tokens, CONTRAST)
 
-    def test_a_stored_choice_beats_the_system(self) -> None:
-        # the app writes data-contrast="more" or "normal" once the person picks a theme
-        self.assertIn(":not([data-contrast])", SYSTEM)
+    def test_without_the_system_setting_plain_dark_stays_plain(self) -> None:
+        # the no-stored-choice selector may only stand inside the media query, never on its own
+        outside = TOKENS
+        for block in media_blocks():
+            outside = outside.replace(block, "")
+        self.assertNotIn(":not([data-contrast])", outside)
+
+    def test_edges_apply_only_in_high_contrast(self) -> None:
+        outside = TOKENS
+        for block in media_blocks():
+            outside = outside.replace(block, "")
+        for rule in re.findall(r"^[^\n{}]*(?:border: 1px solid var\(--border\)|outline: 3px solid var\(--ring\))", outside, re.M):
+            self.assertIn('[data-contrast="more"]', rule)
+        self.assertIn(":focus-visible", "".join(media_blocks()))
 
 
 if __name__ == "__main__":
