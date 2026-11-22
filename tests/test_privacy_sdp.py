@@ -32,11 +32,11 @@ class SensitiveDataProtection(unittest.TestCase):
 
 class WebMaskedDataTypes(unittest.TestCase):
     def test_web_policy_lists_all_masked_data_types(self) -> None:
-        # Criterion: policies.web.data lists phone, e-mail, PESEL, address,
-        # document numbers, accounts and cards (DESIGN_SYSTEM.md §8 tone).
+        # Criterion: policies.web.data lists the identifiers masked after core#102: phone, e-mail, PESEL,
+        # ID card, passport, account and card (no street address; see test_masking_copy.py) (DESIGN_SYSTEM.md §8 tone).
         # Full parenthetical so „adres e-mail” / „karcie przeglądarki” alone cannot pass.
         self.assertIn(
-            "(telefon, e-mail, PESEL, adres, numery dokumentów, konta i karty)",
+            "(telefon, e-mail, PESEL, dowód osobisty, paszport, numer konta, karta płatnicza)",
             WEB_DATA,
         )
 
