@@ -31,8 +31,8 @@
     "text_title": "Rozmiar tekstu",
     "text": {
       "m": "Domyślny",
-      "l": "Większy",
-      "xl": "Duży",
+      "l": "Duży",
+      "xl": "Większy",
       "xxl": "Największy"
     }
   },
@@ -398,10 +398,10 @@
   },
   "source_kind_hint": {
     "$comment": "One sentence behind each source_kind label, shown on hover, focus and tap (design-system#148).",
-    "akt_prawny": "Ustawa, rozporządzenie albo inny akt opublikowany urzędowo, cytowany dosłownie.",
+    "akt_prawny": "Ustawa, rozporządzenie albo inny akt opublikowany urzędowo.",
     "dane_publiczne": "Dane opublikowane przez instytucję publiczną, na przykład w serwisie dane.gov.pl.",
     "instytucja": "Oficjalna strona urzędu albo agencji państwowej.",
-    "fact_check": "Ustalenie redakcji fact-checkingowej, która działa według kodeksu IFCN albo EFCSN.",
+    "fact_check": "Ustalenie redakcji, która zawodowo sprawdza fakty, na przykład sygnatariusza kodeksu IFCN albo EFCSN.",
     "media": "Publikacja redakcji z katalogu źródeł.",
     "transcript": "Zapis wypowiedzi, na przykład stenogram z posiedzenia."
   },
@@ -412,9 +412,9 @@
   },
   "strength_hint": {
     "$comment": "One sentence behind each strength level, following the rule in the contract (EvidenceStrength, design-system#148).",
-    "strong": "Co najmniej dwóch niezależnych wydawców zgodnych z werdyktem, w tym jeden pierwotny, i aktualne dowody.",
-    "moderate": "Dwóch zgodnych wydawców albo jedno źródło urzędowe lub pierwotne.",
-    "weak": "Jeden wydawca, który nie jest źródłem pierwotnym, albo dowód nieaktualny."
+    "strong": "Co najmniej dwóch niezależnych wydawców zgodnych z werdyktem, w tym co najmniej jeden urzędowy lub pierwotny, i aktualne dowody.",
+    "moderate": "Co najmniej dwóch wydawców zgodnych z werdyktem albo jedno źródło urzędowe lub pierwotne.",
+    "weak": "Jeden wydawca spoza źródeł urzędowych i pierwotnych albo dowód nieaktualny."
   },
   "match_basis": {
     "$comment": "IncidentMatch.match_basis: the words joined into {fields} of result.match_basis. A content match needs title, topic and date (jury scenario I).",
@@ -698,12 +698,14 @@
     "path": {
       "$comment": "First section of the page (meritum-monorepo#39): the steps of analysis.steps in order.",
       "title": "Co dzieje się z twoim pytaniem",
-      "lead": "Każde sprawdzenie przechodzi te same kroki, w tej kolejności. Trzy wyszukiwania działają równolegle."
+      "lead": "Każde sprawdzenie przechodzi przez te same kroki. Trzy wyszukiwania działają równolegle, a kroki linku i nagrania tylko wtedy, gdy są potrzebne."
     },
     "verdicts": {
+      "$comment": "Heading above the five verdicts with their verdict_hint texts (meritum-monorepo#39).",
       "title": "Pięć możliwych odpowiedzi"
     },
     "details": {
+      "$comment": "Heading above the sources, verdict, corrections, report_error, pilot and team sections shown as rows that open (meritum-monorepo#39).",
       "title": "Zasady w szczegółach"
     },
     "sources": {

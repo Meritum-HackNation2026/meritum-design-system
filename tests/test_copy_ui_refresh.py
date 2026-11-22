@@ -49,6 +49,21 @@ SCREEN_KEYS = (
 )
 
 
+NEW_SECTIONS = (
+    "nav",
+    "check_page",
+    "display",
+    "source_kind_hint",
+    "source_tier_hint",
+    "strength_hint",
+    "result.claims_count",
+    "result.strength_facts",
+    "method.path",
+    "method.verdicts",
+    "method.details",
+)
+
+
 class LabelHints(unittest.TestCase):
     def test_every_small_label_has_one_sentence_of_explanation(self) -> None:
         # Gherkin "każda mała etykieta ma objaśnienie"
@@ -64,9 +79,9 @@ class LabelHints(unittest.TestCase):
         # strong: two or more agreeing independent publishers, one of them primary, fresh evidence;
         # moderate: two agreeing publishers or one primary; weak: one non-primary publisher or outdated evidence
         strong, moderate, weak = (str(lookup(f"strength_hint.{level}")) for level in ("strong", "moderate", "weak"))
-        for word in ("dwóch", "pierwotny", "aktualne"):
+        for word in ("dwóch", "urzędowy lub pierwotny", "aktualne"):
             self.assertIn(word, strong)
-        for word in ("Dwóch", "albo", "pierwotne"):
+        for word in ("dwóch", "albo", "urzędowe lub pierwotne"):
             self.assertIn(word, moderate)
         for word in ("Jeden", "albo", "nieaktualny"):
             self.assertIn(word, weak)
@@ -79,7 +94,7 @@ class ClaimCount(unittest.TestCase):
         self.assertEqual(forms["one"].format(count=1), "1 twierdzenie")
         self.assertEqual(forms["few"].format(count=2), "2 twierdzenia")
         self.assertEqual(forms["many"].format(count=5), "5 twierdzeń")
-        self.assertIn("{count}", forms["other"])
+        self.assertEqual(forms["other"], "{count} twierdzenia")
 
 
 class ScreenTexts(unittest.TestCase):
@@ -94,9 +109,9 @@ class ScreenTexts(unittest.TestCase):
         self.assertEqual(str(lookup("analysis.step_of")).format(n=4, of=9), "Krok 4 z 9")
 
     def test_new_sections_say_who_uses_them(self) -> None:
-        for section in ("nav", "check_page", "display", "source_kind_hint", "source_tier_hint", "strength_hint"):
+        for section in NEW_SECTIONS:
             with self.subTest(section=section):
-                self.assertIn("#", str(lookup(f"{section}.$comment")))
+                self.assertRegex(str(lookup(f"{section}.$comment")), r"[a-z-]+#\d+")
 
 
 if __name__ == "__main__":
