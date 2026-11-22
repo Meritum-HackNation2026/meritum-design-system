@@ -358,6 +358,29 @@ export type UserId1 = string | null;
 export type CheckId3 = string | null;
 export type CaseId1 = string | null;
 /**
+ * check_progress only: the finished pipeline step; the text is analysis.steps.<code> in copy/pl.json.
+ */
+export type StepCode =
+  | (
+      | "receive"
+      | "fetch_url"
+      | "transcribe_audio"
+      | "screen_injection"
+      | "extract_claims"
+      | "search_corpus"
+      | "search_web"
+      | "search_fact_checks"
+      | "assess_evidence"
+      | "verify_citations"
+      | "write_answer"
+      | "save_record"
+    )
+  | null;
+/**
+ * system only: what the message says; the text is notifications.system_message.<code> in copy/pl.json, never free text.
+ */
+export type MessageCode = ("maintenance_planned" | "service_degraded" | "service_restored") | null;
+/**
  * In-app path to open.
  */
 export type Link = string;
@@ -762,6 +785,8 @@ export interface Notification {
   user_id?: UserId1;
   check_id?: CheckId3;
   case_id?: CaseId1;
+  step_code?: StepCode;
+  message_code?: MessageCode;
   link: Link;
   created_at: CreatedAt;
   retention_until: RetentionUntil1;
