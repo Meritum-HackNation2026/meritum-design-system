@@ -111,14 +111,14 @@ export function Welcome({
                 type="button"
                 disabled={disabled}
                 onClick={() => onPick(claim)}
+                aria-label={`„${claim}”`}
                 className={cn(
                   "relative w-full rounded-lg py-3 pr-4 pl-10 text-left text-title font-semibold tracking-tight text-pretty text-card-foreground hover:bg-secondary disabled:opacity-60",
                   PRESS,
                   FOCUS,
                 )}
               >
-                {/* not aria-hidden: the button's name keeps both quotes, „claim” */}
-                <span className="absolute top-2 left-3 select-none text-headline leading-none font-bold text-verified">
+                <span aria-hidden="true" className="absolute top-2 left-3 select-none text-headline leading-none font-bold text-verified">
                   „
                 </span>
                 {claim}”
