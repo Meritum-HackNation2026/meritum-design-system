@@ -20,7 +20,7 @@ Components for the MSZ "Prawdowid" flow: a citizen pastes text or a link in the 
 | `AnalysisSteps` | 6.3 | `steps: AnalysisStep[]` from `AnalysisStatus`, `draft` while citations are not verified yet |
 | `ResultCard` | 6.4 | `result: CheckResult`. One block per claim; non-verdict statuses get an icon and a sentence, never a badge. Conflicting sources are shown side by side with what differs. |
 | `VerdictBadge` | 3, 6.4 | `verdict`, `size: "sm" \| "md"`. Red only for "false". |
-| `CitationItem` | 6.4 | `citation: Citation`: linked title, publisher and date, kind and tier, verbatim fragment |
+| `CitationItem` | 6.4 | `citation: Citation`, `showDate` (default `true`): linked title, publisher and date, kind and tier, verbatim fragment; `showDate={false}` drops the date for the evidence timeline, which shows it itself |
 | `StrengthMeter` | 6.4 | `strength: EvidenceStrength`, `claimDate`, `claimDateSource`: word and three bars in ink, premises in words |
 | `ModerationQueue` | 6.5 | `cases: ModeratorCase[]`, `selectedId`, `onOpen(id)`. Question count is the sum of checks over a case's claims, the first question included; the line under it (`moderation.similar`, Polish plural forms) repeats that same number. |
 | `MeritumMark`, `MeritumLabel` | 2 | Logo B; the label heads every card. |
