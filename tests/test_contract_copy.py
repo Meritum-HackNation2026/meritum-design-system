@@ -1,6 +1,6 @@
 """Checks that every code in the contract copy (contracts/meritum.schema.json) has text in copy/pl.json.
 
-Features: US-ZRD-06, US-SPR-06, US-SPR-02, US-POW-01, US-ZRD-11, US-BEZ-03, F-17, F-18, F-26, ADR-29, design-system#10, design-system#66, design-system#89, design-system#92
+Features: US-ZRD-06, US-SPR-06, US-SPR-02, US-POW-01, US-ZRD-11, US-BEZ-03, F-17, F-18, F-26, ADR-29, design-system#10, design-system#66, design-system#89, design-system#92, design-system#94
 Run: python3 -m unittest discover -s tests
 """
 
@@ -18,7 +18,6 @@ SCHEMA = json.loads((ROOT / "contracts" / "meritum.schema.json").read_text(encod
 NOT_IN_CONTRACT = {
     "escalation.not_saved",
     "moderation.role.admin",
-    "notifications.kind.eval_run_done",
     "status_hint.out_of_scope_image",
     "status_hint.technical_failure_url",
 }
@@ -143,7 +142,7 @@ class JuryScenarioAnswers(unittest.TestCase):
         self.assertIn("nie potwierdza", str(lookup("result.image_date_hint")))
 
     def test_eval_run_done_notification_names_the_evaluation_run(self) -> None:
-        # core/015 key, before the EvalRun contract lands
+        # design-system#94, meritum-core v10 Notification.kind eval_run_done
         self.assertIn("ewaluacji", str(lookup("notifications.kind.eval_run_done")))
 
 
