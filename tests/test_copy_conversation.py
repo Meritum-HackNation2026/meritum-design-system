@@ -1,6 +1,6 @@
 """Checks copy/pl.json texts of the conversation view of the web page.
 
-Features: US-SPR-01, US-SPR-09, F-01, design-system#79
+Features: US-SPR-01, US-SPR-09, F-01, design-system#79, design-system#103
 Run: python3 -m unittest discover -s tests
 """
 
@@ -30,6 +30,13 @@ class ConversationCopy(unittest.TestCase):
                 self.assertLessEqual(len(example.split()), MAX_EXAMPLE_WORDS)
                 self.assertNotIn("!", example)
                 self.assertNotIn("?", example)
+
+    def test_next_placeholder_asks_for_another_claim_without_an_example(self) -> None:
+        # design-system#103: after the first check the field no longer repeats the example
+        text = COPY.get("conversation", {}).get("next_placeholder", "")
+        self.assertTrue(text.strip())
+        self.assertNotIn("Np.", text)
+        self.assertNotIn("!", text)
 
     def test_audio_question_names_the_file(self) -> None:
         self.assertIn("{name}", COPY.get("conversation", {}).get("audio_question", ""))
