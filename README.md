@@ -41,7 +41,7 @@ Z tych kluczy w `copy/pl.json` korzystają zgłoszenia frontendu:
 | `staff.sign_in.*` (logowanie personelu do panelu) | [meritum-frontend#24](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/24), frontend/010 |
 | `staff.admin.*` (konta personelu i tematy wysokiego ryzyka) | [meritum-frontend#31](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/31), frontend/021 |
 | `jury.*` (wejście z jednorazowego linku jury) | [meritum-frontend#27](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/27), frontend/011 |
-| `form.audio_*`, `errors.audio_*` (przesyłanie nagrania; nieobsługiwany format to istniejący `status_hint.out_of_scope_audio_format`) | [meritum-frontend#22](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/22), frontend/007 |
+| `form.audio_*`, `errors.audio_*` (przesyłanie nagrania; odrzucone nagranie to `out_of_scope_code.audio`, powód w `limitation_code`) | [meritum-frontend#22](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/22), frontend/007 |
 | `method.*` (strona „Jak działa Meritum”: metoda, katalog źródeł, mierniki, poprawki, „Zgłoś błąd”, pilotaż; tytuł to `result.how_it_works`) | [meritum-frontend#20](https://github.com/Meritum-HackNation2026/meritum-frontend/issues/20), frontend/012 |
 
 Testy kluczy, polityk prywatności i tonu (sekcja 8 w DESIGN_SYSTEM.md) uruchamia CI (`.github/workflows/copy.yml`), a lokalnie:

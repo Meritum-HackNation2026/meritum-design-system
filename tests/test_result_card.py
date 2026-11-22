@@ -1,6 +1,6 @@
 """Checks that the reference result cards word non-verdict states and limitations from copy, never `message`.
 
-Features: US-SPR-04, F-17, design-system#53
+Features: US-SPR-04, F-17, design-system#53, design-system#89
 Run: python3 -m unittest discover -s tests
 """
 
@@ -43,6 +43,15 @@ class ReferenceCardTest(unittest.TestCase):
             self.assertIn(COPY["status_hint"][status], html)
             self.assertNotIn(RAW, html)
 
+    def test_out_of_scope_code_text_never_message(self) -> None:
+        # Gherkin "wynik poza zakresem mówi, czego nie obsługujemy" from design-system#89
+        base = {**EXAMPLES["CheckResult.failure"], "status": "out_of_scope", "failure_code": None, "message": RAW}
+        for code in ("image", "audio", "not_informational"):
+            html = render({**base, "out_of_scope_code": code})
+            self.assertIn(COPY["out_of_scope_code"][code], html)
+            self.assertNotIn(RAW, html)
+        self.assertIn(COPY["status_hint"]["out_of_scope"], render({**base, "out_of_scope_code": None}))
+
     def test_limitation_codes_worded_from_copy(self) -> None:
         result = EXAMPLES["CheckResult.claim_review"]
         html = render(result)
@@ -56,4 +65,5 @@ class ResultCardSourceTest(unittest.TestCase):
         source = CARD_TSX.read_text(encoding="utf-8")
         self.assertIsNone(re.search(r"\bresult\.message\b", source))
         self.assertIn("failure_code", source)
+        self.assertIn("out_of_scope_code", source)
         self.assertIn("limitation_codes", source)
